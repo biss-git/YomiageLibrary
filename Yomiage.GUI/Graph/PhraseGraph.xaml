@@ -1,0 +1,60 @@
+﻿<UserControl x:Class="Yomiage.GUI.Graph.PhraseGraph"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Yomiage.GUI.Graph"
+             mc:Ignorable="d" 
+             SizeChanged="Grid_SizeChanged"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Name="grid"
+          MinHeight="100"
+          Background="Transparent"
+          MouseMove="OnMouseMove"
+          MouseDown="OnMouseDown"
+          MouseUp="OnMouseUp"
+          >
+        <!-- ベース、モーラとか -->
+        <Canvas Name="graph_base" HorizontalAlignment="Left">
+            <Canvas.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="MinHeight" Value="15"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="Transparent"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Opacity" Value="0.5"/>
+                </Style>
+            </Canvas.Resources>
+
+            <Label Name="maxText" Canvas.Top="7" Foreground="Gray">max100</Label>
+            <Line Name="topLine" X2="1000" Canvas.Top="30" StrokeThickness="1" Stroke="Gray"/>
+            <Label Name="minText" Canvas.Bottom="30" Foreground="Gray">min000</Label>
+            <Line Name="bottomLine" X2="1000" Canvas.Bottom="35" StrokeThickness="1" Stroke="Gray"/>
+            <Label Name="defaultText" Canvas.Top="50" Foreground="Gray">default50</Label>
+            <Line Name="defaultLine" X2="1000" StrokeThickness="1" Stroke="Gray"/>
+            <Label Name="unitText" Canvas.Bottom="10" Foreground="Gray">min000</Label>
+
+            <Line Name="positionBar" Canvas.Left="50" Y2="4000" Stroke="{DynamicResource MahApps.Brushes.Accent}" StrokeThickness="3"/>
+
+        </Canvas>
+        <!-- バックグラウンド、選択はされていないが表示されるパラメータ -->
+        <Canvas Name="graph_bg" HorizontalAlignment="Left" Opacity="0.3">
+        </Canvas>
+        <!-- グラフ、操作可能なパラメータ -->
+        <Canvas Name="graph" HorizontalAlignment="Left">
+        </Canvas>
+        <Grid Name="mouse_grid" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top"
+              Visibility="Collapsed"
+              MouseMove="OnMouseMove"
+              MouseDown="OnMouseDown"
+              MouseWheel="OnMouseWheel">
+            <Grid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="デフォルト値を設定" Click="MenuItem_Click"/>
+                    <MenuItem Header="設定値を削除" Click="MenuItem_Click"/>
+                    <MenuItem Header="全てのアクセント句の設定値を削除" Click="MenuItem_Click"/>
+                </ContextMenu>
+            </Grid.ContextMenu>
+        </Grid>
+    </Grid>
+</UserControl>

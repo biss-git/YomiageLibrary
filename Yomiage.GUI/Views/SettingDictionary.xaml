@@ -1,0 +1,62 @@
+﻿<UserControl x:Class="Yomiage.GUI.Views.SettingDictionary"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Yomiage.GUI.Views"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d">
+    <StackPanel Margin="6">
+        <GroupBox Margin="0,5,0,0">
+            <GroupBox.Header>
+                <!--<CheckBox x:Name="phrase" IsChecked="{Binding SettingService.PhraseDictionaryEnable}" Margin="3,0,3,0">フレーズ辞書</CheckBox>-->
+                <Label Margin="3,0,3,0">フレーズ辞書</Label>
+            </GroupBox.Header>
+            <!--<StackPanel Margin="10" IsEnabled="{Binding IsChecked, ElementName=phrase}">-->
+            <StackPanel Margin="10">
+                <DockPanel Margin="0,3,0,3">
+                    <Button Command="{Binding SelectCommand}" CommandParameter="Phrase" DockPanel.Dock="Right" Margin="3,0,0,0">参照...</Button>
+                    <TextBox Text="{Binding PhraseDictionaryPath.Value, UpdateSourceTrigger=PropertyChanged}"/>
+                </DockPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,3,0,3">
+                    <Button Command="{Binding NewCommand}" CommandParameter="Phrase">新規作成</Button>
+                    <!--<Button Margin="3,0,0,0">統合</Button>-->
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Margin="0,20,0,0">
+            <GroupBox.Header>
+                <!--<CheckBox x:Name="word" IsChecked="{Binding SettingService.WordDictionaryEnable}" Margin="3,0,3,0">単語辞書</CheckBox>-->
+                <Label Margin="3,0,3,0">単語辞書</Label>
+            </GroupBox.Header>
+            <StackPanel Margin="10">
+                <DockPanel Margin="0,3,0,3">
+                    <Button Command="{Binding SelectCommand}" CommandParameter="Word" DockPanel.Dock="Right" Margin="3,0,0,0">参照...</Button>
+                    <TextBox Text="{Binding WordDictionaryPath.Value, UpdateSourceTrigger=PropertyChanged}"/>
+                </DockPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,3,0,3">
+                    <Button Command="{Binding NewCommand}" CommandParameter="Word">新規作成</Button>
+                    <!--<Button Margin="3,0,0,0">統合</Button>-->
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Margin="0,20,0,0">
+            <GroupBox.Header>
+                <!--<CheckBox x:Name="pause" IsChecked="{Binding SettingService.PauseDictionaryEnable}" Margin="3,0,3,0">記号ポーズ辞書</CheckBox>-->
+                <Label Margin="3,0,3,0">記号ポーズ辞書</Label>
+            </GroupBox.Header>
+            <StackPanel Margin="10">
+                <DockPanel Margin="0,3,0,3">
+                    <Button Command="{Binding SelectCommand}" CommandParameter="Pause" DockPanel.Dock="Right" Margin="3,0,0,0">参照...</Button>
+                    <TextBox Text="{Binding PauseDictionaryPath.Value, UpdateSourceTrigger=PropertyChanged}"/>
+                </DockPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,3,0,3">
+                    <Button Command="{Binding NewCommand}" CommandParameter="Pause">新規作成</Button>
+                    <!--<Button Margin="3,0,0,0">統合</Button>-->
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+    </StackPanel>
+</UserControl>

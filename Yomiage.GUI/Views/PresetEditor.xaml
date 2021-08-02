@@ -1,0 +1,323 @@
+﻿<UserControl x:Class="Yomiage.GUI.Views.PresetEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Yomiage.GUI.Views"
+             xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:cont="clr-namespace:Yomiage.GUI.Controls"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <GridSplitter Grid.Column="1" Width="4"/>
+        
+        <!-- プリセット名 -->
+        <DockPanel Grid.Column="0" Margin="3">
+            <!-- ボタン -->
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" Height="35">
+                <Button Style="{StaticResource IconButton}"
+                        Command="{Binding SaveCommand}">
+                    <DockPanel>
+                        <icon:PackIconBoxIcons Kind="SolidSave" Margin="0,0,4,0"/>
+                        <TextBlock VerticalAlignment="Bottom">保存</TextBlock>
+                    </DockPanel>
+                </Button>
+                <Button Style="{StaticResource IconButton}"
+                        Command="{Binding ResetCommand}">
+                    <DockPanel>
+                        <icon:PackIconBoxIcons Kind="RegularUndo" Margin="0,0,4,0"/>
+                        <TextBlock VerticalAlignment="Bottom">戻す</TextBlock>
+                    </DockPanel>
+                </Button>
+                <Button Style="{StaticResource IconButton}"
+                        Command="{Binding InitializeCommand}">
+                    <DockPanel>
+                        <icon:PackIconBoxIcons Kind="RegularRefresh" Margin="0,0,4,0"/>
+                        <TextBlock VerticalAlignment="Bottom">初期値</TextBlock>
+                    </DockPanel>
+                </Button>
+            </StackPanel>
+            <Border DockPanel.Dock="Bottom" BorderBrush="DimGray" BorderThickness="0,0,0,1"/>
+
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <Label Padding="8,1,0,1"
+                   BorderThickness="0,0,0,1"
+                   BorderBrush="DimGray"
+                   VerticalAlignment="Center">
+                        プリセット名
+                    </Label>
+                    <TextBox Margin="0,3,0,10" Text="{Binding PresetName.Value, UpdateSourceTrigger=PropertyChanged}"
+                             IsReadOnly="{Binding NameReadOnly.Value}"/>
+
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Style="{StaticResource IconButton}"
+                                Command="{Binding OpenSettingsCommand}"
+                                CommandParameter="Main"
+                                Visibility="{Binding SinglePresetMode.Value, Converter={BoolToVisibilityConverter}}"
+                                Width="24" MinHeight="10" Height="20" Margin="0">
+                            <icon:PackIconBoxIcons Kind="SolidCog" Width="12"/>
+                        </Button>
+                        <Label Padding="8,1,0,1"
+                           BorderThickness="0,0,0,1"
+                           BorderBrush="DimGray"
+                           VerticalAlignment="Center">
+                            ボイス
+                        </Label>
+                    </DockPanel>
+                    <DockPanel Margin="0,3,0,5" Height="52"
+                               Visibility="{Binding SinglePresetMode.Value, Converter={BoolToVisibilityConverter}}"
+                               Background="{DynamicResource MahApps.Brushes.Gray10}">
+                        <Image Source="{Binding SelectedPreset.Value.Library.IconPath}" Height="38" Margin="5,0,15,0"/>
+                        <TextBlock VerticalAlignment="Center" FontSize="14" Text="{Binding SelectedPreset.Value.Library.Name}"
+                                   TextTrimming="CharacterEllipsis"/>
+                    </DockPanel>
+                    <Grid Visibility="{Binding SubPresetMode.Value, Converter={BoolToVisibilityConverter}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <DockPanel>
+                                <Button DockPanel.Dock="Right" Style="{StaticResource IconButton}"
+                                        Command="{Binding OpenSettingsCommand}"
+                                        CommandParameter="Main"
+                                        Width="24" Height="20" MinHeight="10" Margin="0">
+                                    <icon:PackIconBoxIcons Kind="SolidCog" Width="12"/>
+                                </Button>
+                                <Label Padding="8,1,0,1"
+                                   BorderBrush="DimGray"
+                                   VerticalAlignment="Center">
+                                    メイン
+                                </Label>
+                            </DockPanel>
+                            <Grid Margin="0,3,0,5" Height="52"
+                                  Background="{DynamicResource MahApps.Brushes.Gray10}"
+                                  ToolTip="{Binding SelectedPreset.Value.Library.Name}">
+                                <Image Source="{Binding SelectedPreset.Value.Library.IconPath}" Height="40"/>
+                            </Grid>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <DockPanel>
+                                <Button DockPanel.Dock="Right" Style="{StaticResource IconButton}"
+                                        Command="{Binding OpenSettingsCommand}"
+                                        CommandParameter="Sub"
+                                        Width="24" Height="20" MinHeight="10" Margin="0">
+                                    <icon:PackIconBoxIcons Kind="SolidCog" Width="12"/>
+                                </Button>
+                                <Label Padding="8,1,0,1"
+                                   BorderBrush="DimGray"
+                                   VerticalAlignment="Center">
+                                    サブ
+                                </Label>
+                            </DockPanel>
+                            <Button Margin="0,3,0,0" Height="52" BorderThickness="0"
+                                Command="{Binding SelectSubPresetCommand}"
+                                ToolTip="{Binding SelectedPreset.Value.SubPreset.Name}">
+                                <Image Source="{Binding SelectedPreset.Value.SubPreset.Library.IconPath}" Height="38"/>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    <DockPanel Margin="0,5,0,0">
+                        <Button DockPanel.Dock="Right" Style="{StaticResource IconButton}"
+                                Command="{Binding OpenSettingsCommand}"
+                                CommandParameter="Engine"
+                                Width="24" MinHeight="10" Height="20" Margin="0">
+                            <icon:PackIconBoxIcons Kind="SolidCog" Width="12"/>
+                        </Button>
+                        <Label Padding="8,1,0,1"
+                           BorderThickness="0,0,0,1"
+                           BorderBrush="DimGray"
+                           VerticalAlignment="Center">
+                            エンジン
+                        </Label>
+                    </DockPanel>
+                    <DockPanel Margin="0,3,0,5" Height="52"
+                               Background="{DynamicResource MahApps.Brushes.Gray10}">
+                        <Image Source="{Binding SelectedPreset.Value.Engine.IconPath}" Height="38" Margin="5,0,15,0"/>
+                        <TextBlock VerticalAlignment="Center" FontSize="14"
+                               Text="{Binding SelectedPreset.Value.Engine.Name}"
+                               TextTrimming="CharacterEllipsis"/>
+                    </DockPanel>
+
+                </StackPanel>
+            </ScrollViewer>
+        </DockPanel>
+
+        <ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
+            <StackPanel Orientation="Horizontal" Margin="3">
+                <StackPanel.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="#00000000"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Margin" Value="5,8,5,0"/>
+                    </Style>
+                </StackPanel.Resources>
+
+                <!-- 音声効果 -->
+                <Grid>
+                    <!--<Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>-->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Label Margin="3,0,3,0" Padding="8,1,0,1"
+                       BorderThickness="0,0,0,1"
+                       BorderBrush="DimGray"
+                       Grid.ColumnSpan="4" VerticalAlignment="Center">
+                        音声効果
+                    </Label>
+
+                    <StackPanel Orientation="Horizontal" Grid.Row="2">
+                        <cont:MySlider Grid.Row="2" Grid.Column="0"
+                                       ToolTip="{Binding VolumeConfig.Value.Description}"
+                                   Title="{Binding VolumeConfig.Value.Title}"
+                                   Unit="{Binding VolumeConfig.Value.Unit}"
+                                   Value="{Binding VolumeConfig.Value.Value.Value}"
+                                   DefaultValue="{Binding VolumeConfig.Value.Default}"
+                                   Minimum="{Binding VolumeConfig.Value.Min}"
+                                   Maximum="{Binding VolumeConfig.Value.Max}"
+                                   TickFrequency="{Binding VolumeConfig.Value.Tick}"
+                                   StringFormat="{Binding VolumeConfig.Value.Format}"
+                                   SmallChange="{Binding VolumeConfig.Value.Small}"
+                                   Foreground="Firebrick"
+                                   Visibility="{Binding VolumeConfig.Value.Hide, Converter={InverseBoolToVisibilityConverter}}"
+                                   Width="75"/>
+
+                        <cont:MySlider Grid.Row="2" Grid.Column="1"
+                                       ToolTip="{Binding SpeedConfig.Value.Description}"
+                                   Title="{Binding SpeedConfig.Value.Title}"
+                                   Unit="{Binding SpeedConfig.Value.Unit}"
+                                   Value="{Binding SpeedConfig.Value.Value.Value}"
+                                   DefaultValue="{Binding SpeedConfig.Value.Default}"
+                                   Minimum="{Binding SpeedConfig.Value.Min}"
+                                   Maximum="{Binding SpeedConfig.Value.Max}"
+                                   TickFrequency="{Binding SpeedConfig.Value.Tick}"
+                                   StringFormat="{Binding SpeedConfig.Value.Format}"
+                                   SmallChange="{Binding SpeedConfig.Value.Small}"
+                                   Foreground="ForestGreen"
+                                   Visibility="{Binding SpeedConfig.Value.Hide, Converter={InverseBoolToVisibilityConverter}}"
+                                   Width="75"/>
+
+                        <cont:MySlider Grid.Row="2" Grid.Column="2"
+                                       ToolTip="{Binding PitchConfig.Value.Description}"
+                                   Title="{Binding PitchConfig.Value.Title}"
+                                   Unit="{Binding PitchConfig.Value.Unit}"
+                                   Value="{Binding PitchConfig.Value.Value.Value}"
+                                   DefaultValue="{Binding PitchConfig.Value.Default}"
+                                   Minimum="{Binding PitchConfig.Value.Min}"
+                                   Maximum="{Binding PitchConfig.Value.Max}"
+                                   TickFrequency="{Binding PitchConfig.Value.Tick}"
+                                   StringFormat="{Binding PitchConfig.Value.Format}"
+                                   SmallChange="{Binding PitchConfig.Value.Small}"
+                                   Foreground="Orange"
+                                   Visibility="{Binding PitchConfig.Value.Hide, Converter={InverseBoolToVisibilityConverter}}"
+                                   Width="75"/>
+
+                        <cont:MySlider Grid.Row="2" Grid.Column="3"
+                                       ToolTip="{Binding EmphasisConfig.Value.Description}"
+                                   Title="{Binding EmphasisConfig.Value.Title}"
+                                   Unit="{Binding EmphasisConfig.Value.Unit}"
+                                   Value="{Binding EmphasisConfig.Value.Value.Value}"
+                                   DefaultValue="{Binding EmphasisConfig.Value.Default}"
+                                   Minimum="{Binding EmphasisConfig.Value.Min}"
+                                   Maximum="{Binding EmphasisConfig.Value.Max}"
+                                   TickFrequency="{Binding EmphasisConfig.Value.Tick}"
+                                   StringFormat="{Binding EmphasisConfig.Value.Format}"
+                                   SmallChange="{Binding EmphasisConfig.Value.Small}"
+                                   Foreground="MediumOrchid"
+                                   Visibility="{Binding EmphasisConfig.Value.Hide, Converter={InverseBoolToVisibilityConverter}}"
+                                   Width="75"/>
+                        <ItemsControl ItemsSource="{Binding AdditionalSettings}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <cont:MySlider Grid.Row="2" Grid.Column="3"
+                                       ToolTip="{Binding Description}"
+                                   Title="{Binding Title}"
+                                   Unit="{Binding Unit}"
+                                   Value="{Binding Value.Value}"
+                                   DefaultValue="{Binding Default}"
+                                   Minimum="{Binding Min}"
+                                   Maximum="{Binding Max}"
+                                   TickFrequency="{Binding Tick}"
+                                   StringFormat="{Binding Format}"
+                                   SmallChange="{Binding Small}"
+                                   Foreground="{Binding Color}"
+                                   Visibility="{Binding Hide, Converter={InverseBoolToVisibilityConverter}}"
+                                   Width="75"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                </Grid>
+
+                <!-- ポーズの長さ -->
+                <Grid Width="150" Margin="3,0,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Border Grid.ColumnSpan="2" BorderThickness="0,0,0,1" BorderBrush="DimGray" Height="18">
+                        <CheckBox x:Name="PauseEnable" Margin="10,0,3,0" Padding="4,1,0,1"
+                                  IsChecked="{Binding PauseOverride.Value}"
+                              BorderThickness="0,0,0,1"
+                              BorderBrush="DimGray"
+                              FontSize="14"
+                              Content="ポーズの長さ">
+                            <CheckBox.LayoutTransform>
+                                <ScaleTransform ScaleX="0.8" ScaleY="0.8"/>
+                            </CheckBox.LayoutTransform>
+                        </CheckBox>
+                    </Border>
+
+                    <cont:MySlider Grid.Row="2" Grid.Column="0"
+                                   Title="短ポーズ" Unit="[ﾐﾘ秒]"
+                                   Value="{Binding ShortPause.Value}"
+                                   DefaultValue="150"
+                                   Minimum="80" Maximum="500" TickFrequency="10" StringFormat="0"
+                                   SmallChange="1"
+                                   IsEnabled="{Binding IsChecked, ElementName=PauseEnable}"
+                                   Foreground="RoyalBlue"/>
+
+                    <cont:MySlider Grid.Row="2" Grid.Column="1"
+                                   Title="長ポーズ" Unit="[ﾐﾘ秒]"
+                                   Value="{Binding LongPause.Value}"
+                                   DefaultValue="370"
+                                   Minimum="100" Maximum="2000" TickFrequency="10" StringFormat="0"
+                                   SmallChange="1"
+                                   IsEnabled="{Binding IsChecked, ElementName=PauseEnable}"
+                                   Foreground="RoyalBlue"/>
+                </Grid>
+                
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+</UserControl>

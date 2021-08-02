@@ -1,0 +1,46 @@
+﻿<UserControl x:Class="Yomiage.GUI.Views.PresetStandard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Yomiage.GUI.Views"
+             xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <DockPanel>
+        <!-- 下部ボタン -->
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Height="35" Margin="3">
+            <Button Style="{StaticResource IconButton}" Command="{Binding CopyCommand}">
+                <DockPanel>
+                    <icon:PackIconBoxIcons Kind="RegularCopyAlt" Margin="0,0,4,0"/>
+                    <TextBlock VerticalAlignment="Bottom">コピー</TextBlock>
+                </DockPanel>
+            </Button>
+        </StackPanel>
+        <!-- キャラクターリスト -->
+        <ListView ItemsSource="{Binding Presets}" SelectedItem="{Binding SelectedPreset.Value}" Margin="0,3,0,0"
+                  VirtualizingPanel.IsVirtualizing="False"
+                  SelectionMode="Single"
+                  PreviewMouseMove="ListView_PreviewMouseMove">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <DockPanel Margin="1,3,1,3"
+                               MouseLeftButtonDown="ListView_MouseLeftButtonDown"
+                               MouseUp="ListView_MouseUp">
+                        <Image Source="{Binding Library.IconPath}" Stretch="Uniform"
+                               Width="{Binding Path=DataContext.SettingService.IconSizeNum.Value, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
+                               Height="{Binding Path=DataContext.SettingService.IconSizeNum.Value, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
+                               />
+                        <icon:PackIconBoxIcons Kind="SolidStar" VerticalAlignment="Top" Width="15"
+                                               Visibility="{Binding IsDirty, Converter={BoolToVisibilityConverter}}"/>
+                        <Label Content="{Binding Name}" VerticalAlignment="Center" Margin="15,0,0,0"/>
+                    </DockPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </DockPanel>
+</UserControl>

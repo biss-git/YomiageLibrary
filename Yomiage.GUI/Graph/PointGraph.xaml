@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="Yomiage.GUI.Graph.PointGraph"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Yomiage.GUI.Graph"
+             mc:Ignorable="d" >
+    <Canvas>
+        <Polygon Points="-5,-5 5,-5 5,5 -5,5"
+                                  Fill="{DynamicResource MahApps.Brushes.ThemeForeground}"
+                                  Stroke="{DynamicResource MahApps.Brushes.ThemeBackground}"
+                                  StrokeThickness="2"/>
+        <TextBlock Name="valueText" Canvas.Left="8" Canvas.Top="-19" Text="0.90" Background="{DynamicResource MahApps.Brushes.ThemeBackground}"/>
+    </Canvas>
+</UserControl>

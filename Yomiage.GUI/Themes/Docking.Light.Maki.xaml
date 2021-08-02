@@ -1,0 +1,431 @@
+﻿<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:options="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/AvalonDock.Themes.VS2013;component/Themes/Menu/DarkBrushs.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <!--  Accent Keys  -->
+    <Color x:Key="ControlAccentColorKey">#FF77001B</Color>
+    <Color x:Key="ControlAccentColorKey2">#FFA20025</Color>
+    <Color x:Key="ControlAccentColorKey3">#FF77001B</Color>
+    <Color x:Key="ControlAccentColorKey4">#FFA20025</Color>
+
+    <SolidColorBrush
+		x:Key="ControlAccentBrushKey"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey}" />
+
+    <!--General-->
+    <SolidColorBrush
+		x:Key="Background"
+		options:Freeze="true"
+		Color="#EEEEF2" />
+    <SolidColorBrush
+		x:Key="PanelBorderBrush"
+		options:Freeze="true"
+		Color="#CCCEDB" />
+    <SolidColorBrush
+		x:Key="TabBackground"
+		options:Freeze="true"
+		Color="#FFF5F5F5" />
+
+    <!--Auto Hide : Tab-->
+    <SolidColorBrush
+		x:Key="AutoHideTabDefaultBackground"
+		options:Freeze="true"
+		Color="#EEEEF2" />
+    <SolidColorBrush
+		x:Key="AutoHideTabDefaultBorder"
+		options:Freeze="true"
+		Color="#CCCEDB" />
+    <SolidColorBrush
+		x:Key="AutoHideTabDefaultText"
+		options:Freeze="true"
+		Color="#444444" />
+
+    <!--Mouse Over Auto Hide Button for (collapsed) Auto Hidden Elements-->
+    <SolidColorBrush
+		x:Key="AutoHideTabHoveredBackground"
+		options:Freeze="true"
+		Color="#EEEEF2" />
+    <!--AccentColor-->
+    <SolidColorBrush x:Key="AutoHideTabHoveredBorder" Color="{DynamicResource ControlAccentColorKey}" />
+
+    <!--AccentColor-->
+    <SolidColorBrush
+		x:Key="AutoHideTabHoveredText"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey}" />
+
+    <!--Document Well : Overflow Button-->
+    <SolidColorBrush
+		x:Key="DocumentWellOverflowButtonDefaultGlyph"
+		options:Freeze="true"
+		Color="#717171" />
+    <SolidColorBrush
+		x:Key="DocumentWellOverflowButtonHoveredBackground"
+		options:Freeze="true"
+		Color="#C9DEF5" />
+    <SolidColorBrush
+		x:Key="DocumentWellOverflowButtonHoveredBorder"
+		options:Freeze="true"
+		Color="#C9DEF5" />
+    <!--AccentColor-->
+    <SolidColorBrush
+		x:Key="DocumentWellOverflowButtonHoveredGlyph"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey}" />
+    <!--AccentColor-->
+    <SolidColorBrush
+		x:Key="DocumentWellOverflowButtonPressedBackground"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey}" />
+    <SolidColorBrush
+		x:Key="DocumentWellOverflowButtonPressedBorder"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey}" />
+    <SolidColorBrush
+		x:Key="DocumentWellOverflowButtonPressedGlyph"
+		options:Freeze="true"
+		Color="#FFFFFF" />
+
+    <!--Document Well : Tab  
+    Selected Document Highlight Header Top color (AccentColor)-->
+    <SolidColorBrush
+		x:Key="DocumentWellTabSelectedActiveBackground"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey}" />
+
+    <SolidColorBrush
+		x:Key="DocumentWellTabSelectedActiveText"
+		options:Freeze="true"
+		Color="#FFFFFF" />
+    <SolidColorBrush
+		x:Key="DocumentWellTabSelectedInactiveBackground"
+		options:Freeze="true"
+		Color="#CCCEDB" />
+    <SolidColorBrush
+		x:Key="DocumentWellTabSelectedInactiveText"
+		options:Freeze="true"
+		Color="#FFFFFF" />
+    <SolidColorBrush
+		x:Key="DocumentWellTabUnselectedBackground"
+		options:Freeze="true"
+		Color="#EEEEF2" />
+    <SolidColorBrush
+		x:Key="DocumentWellTabUnselectedText"
+		options:Freeze="true"
+		Color="#1E1E1E" />
+    <!--AccentColor-->
+    <SolidColorBrush
+		x:Key="DocumentWellTabUnselectedHoveredBackground"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey2}"/>
+    <SolidColorBrush
+		x:Key="DocumentWellTabUnselectedHoveredText"
+		options:Freeze="true"
+		Color="#FFFFFF" />
+
+    <!--Document Well : Tab : X Button Foreground color for selected document-->
+    <SolidColorBrush
+		x:Key="DocumentWellTabButtonSelectedActiveGlyph"
+		options:Freeze="true"
+		Color="#FFFFFF" />
+
+    <!--AccentColor-->
+    <SolidColorBrush
+		x:Key="DocumentWellTabButtonSelectedActiveHoveredBackground"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey2}" />
+    <!--AccentColor-->
+    <SolidColorBrush
+		x:Key="DocumentWellTabButtonSelectedActiveHoveredBorder"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey2}" />
+    <SolidColorBrush
+		x:Key="DocumentWellTabButtonSelectedActiveHoveredGlyph"
+		options:Freeze="true"
+		Color="#FFFFFF" />
+    <!--AccentColor-->
+    <SolidColorBrush
+		x:Key="DocumentWellTabButtonSelectedActivePressedBackground"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey3}" />
+    <!--AccentColor-->
+    <SolidColorBrush
+		x:Key="DocumentWellTabButtonSelectedActivePressedBorder"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey3}" />
+    <SolidColorBrush
+		x:Key="DocumentWellTabButtonSelectedActivePressedGlyph"
+		options:Freeze="true"
+		Color="#FFFFFF" />
+    <SolidColorBrush
+		x:Key="DocumentWellTabButtonSelectedInactiveGlyph"
+		options:Freeze="true"
+		Color="#6D6D70" />
+    <SolidColorBrush
+		x:Key="DocumentWellTabButtonSelectedInactiveHoveredBackground"
+		options:Freeze="true"
+		Color="#E6E7ED" />
+    <SolidColorBrush
+		x:Key="DocumentWellTabButtonSelectedInactiveHoveredBorder"
+		options:Freeze="true"
+		Color="#E6E7ED" />
+    <SolidColorBrush
+		x:Key="DocumentWellTabButtonSelectedInactiveHoveredGlyph"
+		options:Freeze="true"
+		Color="#717171" />
+    <SolidColorBrush
+		x:Key="DocumentWellTabButtonSelectedInactivePressedBackground"
+		options:Freeze="true"
+		Color="#B7B9C5" />
+    <SolidColorBrush
+		x:Key="DocumentWellTabButtonSelectedInactivePressedBorder"
+		options:Freeze="true"
+		Color="#B7B9C5" />
+    <SolidColorBrush
+		x:Key="DocumentWellTabButtonSelectedInactivePressedGlyph"
+		options:Freeze="true"
+		Color="#2D2D2D" />
+    <SolidColorBrush
+		x:Key="DocumentWellTabButtonUnselectedTabHoveredGlyph"
+		options:Freeze="true"
+		Color="#D0E6F5" />
+    <!--AccentColor-->
+    <SolidColorBrush
+		x:Key="DocumentWellTabButtonUnselectedTabHoveredButtonHoveredBackground"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey4}" />
+    <!--AccentColor-->
+    <SolidColorBrush
+		x:Key="DocumentWellTabButtonUnselectedTabHoveredButtonHoveredBorder"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey4}" />
+    <SolidColorBrush
+		x:Key="DocumentWellTabButtonUnselectedTabHoveredButtonHoveredGlyph"
+		options:Freeze="true"
+		Color="#FFFFFF" />
+    <!--AccentColor-->
+    <SolidColorBrush
+		x:Key="DocumentWellTabButtonUnselectedTabHoveredButtonPressedBackground"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey3}" />
+    <!--AccentColor-->
+    <SolidColorBrush
+		x:Key="DocumentWellTabButtonUnselectedTabHoveredButtonPressedBorder"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey3}" />
+    <SolidColorBrush
+		x:Key="DocumentWellTabButtonUnselectedTabHoveredButtonPressedGlyph"
+		options:Freeze="true"
+		Color="#FFFFFF" />
+
+    <!--Tool Window : Caption  
+    Background of selected toolwindow (AccentColor)-->
+    <SolidColorBrush
+		x:Key="ToolWindowCaptionActiveBackground"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey}" />
+    <SolidColorBrush
+		x:Key="ToolWindowCaptionActiveGrip"
+		options:Freeze="true"
+		Color="#59A8DE" />
+    <SolidColorBrush
+		x:Key="ToolWindowCaptionActiveText"
+		options:Freeze="true"
+		Color="#FFFFFF" />
+    <SolidColorBrush
+		x:Key="ToolWindowCaptionInactiveBackground"
+		options:Freeze="true"
+		Color="#EEEEF2" />
+    <SolidColorBrush
+		x:Key="ToolWindowCaptionInactiveGrip"
+		options:Freeze="true"
+		Color="#999999" />
+    <SolidColorBrush
+		x:Key="ToolWindowCaptionInactiveText"
+		options:Freeze="true"
+		Color="#444444" />
+
+    <!--Tool Window : Caption : Button-->
+    <SolidColorBrush
+		x:Key="ToolWindowCaptionButtonActiveGlyph"
+		options:Freeze="true"
+		Color="#FFFFFF" />
+    <!--AccentColor-->
+    <SolidColorBrush
+		x:Key="ToolWindowCaptionButtonActiveHoveredBackground"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey4}" />
+    <!--AccentColor-->
+    <SolidColorBrush
+		x:Key="ToolWindowCaptionButtonActiveHoveredBorder"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey4}" />
+    <SolidColorBrush
+		x:Key="ToolWindowCaptionButtonActiveHoveredGlyph"
+		options:Freeze="true"
+		Color="#FFFFFF" />
+    <!--(AccentColor)-->
+    <SolidColorBrush
+		x:Key="ToolWindowCaptionButtonActivePressedBackground"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey3}" />
+    <!--(AccentColor)-->
+    <SolidColorBrush
+		x:Key="ToolWindowCaptionButtonActivePressedBorder"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey3}" />
+
+    <SolidColorBrush
+		x:Key="ToolWindowCaptionButtonActivePressedGlyph"
+		options:Freeze="true"
+		Color="#FFFFFF" />
+    <SolidColorBrush
+		x:Key="ToolWindowCaptionButtonInactiveGlyph"
+		options:Freeze="true"
+		Color="#1E1E1E" />
+
+    <!--(AccentColor)-->
+    <SolidColorBrush
+		x:Key="ToolWindowCaptionButtonInactiveHoveredBackground"
+		options:Freeze="true"
+		Color="#F7F7F9" />
+    <SolidColorBrush
+		x:Key="ToolWindowCaptionButtonInactiveHoveredBorder"
+		options:Freeze="true"
+		Color="#F7F7F9" />
+    <SolidColorBrush
+		x:Key="ToolWindowCaptionButtonInactiveHoveredGlyph"
+		options:Freeze="true"
+		Color="#717171" />
+
+    <SolidColorBrush
+		x:Key="ToolWindowCaptionButtonInactivePressedBackground"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey3}" />
+    <SolidColorBrush
+		x:Key="ToolWindowCaptionButtonInactivePressedBorder"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey3}" />
+    <SolidColorBrush
+		x:Key="ToolWindowCaptionButtonInactivePressedGlyph"
+		options:Freeze="true"
+		Color="#FFFFFF" />
+
+    <!--Tool Window : Tab-->
+    <SolidColorBrush
+		x:Key="ToolWindowTabSelectedActiveBackground"
+		options:Freeze="true"
+		Color="#FFF5F5F5" />
+    <!--(AccentColor)-->
+    <SolidColorBrush
+		x:Key="ToolWindowTabSelectedActiveText"
+		options:Freeze="true"
+		Color="#0097FB" />
+    <SolidColorBrush
+		x:Key="ToolWindowTabSelectedInactiveBackground"
+		options:Freeze="true"
+		Color="#FFF5F5F5" />
+    <!--(AccentColor)-->
+    <SolidColorBrush
+		x:Key="ToolWindowTabSelectedInactiveText"
+		options:Freeze="true"
+		Color="#0097FB" />
+    <SolidColorBrush
+		x:Key="ToolWindowTabUnselectedBackground"
+		options:Freeze="true"
+		Color="#EEEEF2" />
+    <SolidColorBrush
+		x:Key="ToolWindowTabUnselectedText"
+		options:Freeze="true"
+		Color="#444444" />
+    <SolidColorBrush
+		x:Key="ToolWindowTabUnselectedHoveredBackground"
+		options:Freeze="true"
+		Color="#C9DEF5" />
+    <!--(AccentColor)-->
+    <SolidColorBrush
+		x:Key="ToolWindowTabUnselectedHoveredText"
+		options:Freeze="true"
+		Color="#1E1E1E" />
+
+    <!--Floating Document Window-->
+    <SolidColorBrush
+		x:Key="FloatingDocumentWindowBackground"
+		options:Freeze="true"
+		Color="#EEEEF2" />
+    <SolidColorBrush
+		x:Key="FloatingDocumentWindowBorder"
+		options:Freeze="true"
+		Color="#9B9FB9" />
+
+    <!--Floating Tool Window-->
+    <SolidColorBrush
+		x:Key="FloatingToolWindowBackground"
+		options:Freeze="true"
+		Color="#EEEEF2" />
+    <SolidColorBrush
+		x:Key="FloatingToolWindowBorder"
+		options:Freeze="true"
+		Color="#9B9FB9" />
+
+    <!--Navigator Window-->
+    <SolidColorBrush
+		x:Key="NavigatorWindowBackground"
+		options:Freeze="true"
+		Color="#EEEEEE" />
+    <SolidColorBrush
+		x:Key="NavigatorWindowForeground"
+		options:Freeze="true"
+		Color="#FF808080" />
+
+    <!--Background of selected text in NAvigator Window (AccentColor)-->
+    <SolidColorBrush
+		x:Key="NavigatorWindowSelectedBackground"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey}" />
+    <SolidColorBrush
+		x:Key="NavigatorWindowSelectedText"
+		options:Freeze="true"
+		Color="#FFFFFF" />
+
+    <!--DockingBrushKeys-->
+    <SolidColorBrush
+		x:Key="DockingButtonBackgroundBrushKey"
+		options:Freeze="true"
+		Color="#20000000" />
+    <SolidColorBrush
+		x:Key="DockingButtonForegroundBrushKey"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey}" />
+    <SolidColorBrush
+		x:Key="DockingButtonForegroundArrowBrushKey"
+		options:Freeze="true"
+		Color="Black" />
+
+
+    <SolidColorBrush
+		x:Key="DockingButtonStarBorderBrushKey"
+		options:Freeze="true"
+		Color="#40808080" />
+    <SolidColorBrush
+		x:Key="DockingButtonStarBackgroundBrushKey"
+		options:Freeze="true"
+		Color="#20000000" />
+
+    <!--Preview Box is the highlighted rectangle that shows when a drop area in a window is indicated-->
+    <SolidColorBrush
+		x:Key="PreviewBoxBorderBrushKey"
+		options:Freeze="true"
+		Color="{DynamicResource ControlAccentColorKey}" />
+    <SolidColorBrush
+		x:Key="PreviewBoxBackgroundBrushKey"
+		options:Freeze="true"
+		Opacity="0.5"
+		Color="{DynamicResource ControlAccentColorKey}" />
+
+</ResourceDictionary>

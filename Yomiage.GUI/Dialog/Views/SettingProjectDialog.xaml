@@ -1,0 +1,53 @@
+﻿<UserControl x:Class="Yomiage.GUI.Dialog.Views.SettingProjectDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Yomiage.GUI.Dialog.Views"
+             xmlns:view="clr-namespace:Yomiage.GUI.Views"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <DockPanel>
+        <!-- サイズ調整用 -->
+        <Label DockPanel.Dock="Top" MinWidth="620" Height="0"/>
+        <Label DockPanel.Dock="Left" MinHeight="300" Width="0"/>
+
+        <!-- OK, Cancel -->
+        <DockPanel DockPanel.Dock="Bottom" Margin="3">
+            <Button DockPanel.Dock="Right" Command="{Binding CancelCommand}">キャンセル</Button>
+            <Button DockPanel.Dock="Right" Command="{Binding OkCommand}" Margin="0,0,3,0">OK</Button>
+            <Label/>
+        </DockPanel>
+        
+        <!-- タブ -->
+        <DockingManager>
+            <LayoutRoot>
+                <LayoutPanel>
+                    <LayoutDocumentPane>
+                        <LayoutDocument Title="　　ボイス　　" CanClose="False" CanFloat="False" CanMove="False">
+                            <ScrollViewer Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
+                                <view:SettingVoice/>
+                            </ScrollViewer>
+                        </LayoutDocument>
+                        <LayoutDocument Title="　　ユーザー辞書　　" CanClose="False" CanFloat="False" CanMove="False">
+                            <ScrollViewer Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
+                                <view:SettingDictionary/>
+                            </ScrollViewer>
+                        </LayoutDocument>
+                        <LayoutDocument Title="　　音声合成　　" CanClose="False" CanFloat="False" CanMove="False">
+                            <ScrollViewer Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
+                                <view:SettingSynthe/>
+                            </ScrollViewer>
+                        </LayoutDocument>
+                        <LayoutDocument Title="　　音声ファイル保存　　" CanClose="False" CanFloat="False" CanMove="False">
+                            <ScrollViewer Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
+                                <view:SettingSave/>
+                            </ScrollViewer>
+                        </LayoutDocument>
+                    </LayoutDocumentPane>
+                </LayoutPanel>
+            </LayoutRoot>
+        </DockingManager>
+    </DockPanel>
+</UserControl>

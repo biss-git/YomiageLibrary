@@ -1,0 +1,37 @@
+﻿<UserControl x:Class="Yomiage.GUI.Dialog.Views.EngineListDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Yomiage.GUI.Dialog.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <DockPanel>
+        <!-- 下部ボタン -->
+        <DockPanel DockPanel.Dock="Bottom" Margin="3">
+            <Button DockPanel.Dock="Right" Command="{Binding OkCommand}" Margin="0,0,3,0">OK</Button>
+            <Button DockPanel.Dock="Left" Command="{Binding AddCommand}" Margin="0,0,3,0">追加</Button>
+            <Label/>
+        </DockPanel>
+
+        <!-- リスト -->
+        <ListView MinHeight="300" MinWidth="500" Margin="3"
+                  ItemsSource="{Binding Engines}" SelectedItem="{Binding SelectedEngine.Value}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <DockPanel Margin="1,3,1,3">
+                        <Image Source="{Binding IconPath}" Stretch="Uniform" Width="50"/>
+                        <Button Style="{StaticResource IconButton}"
+                                DockPanel.Dock="Right" Width="50"
+                                Command="{Binding DataContext.SettingCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+                                CommandParameter="{Binding}">
+                            <icon:PackIconBoxIcons Kind="RegularCog"/>
+                        </Button>
+                        <Label Content="{Binding EngineConfig.Name}" VerticalAlignment="Center"/>
+                    </DockPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </DockPanel>
+</UserControl>

@@ -1,0 +1,139 @@
+﻿<UserControl x:Class="Yomiage.GUI.Views.WordEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Yomiage.GUI.Views"
+             xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:const="clr-namespace:Yomiage.GUI.Data"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:graph="clr-namespace:Yomiage.GUI.Graph"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <GridSplitter Grid.Column="1" Width="4"/>
+        
+        <!-- 左側の編集エリア -->
+        <StackPanel Grid.Column="0" Margin="3">
+            <Label Padding="8,1,0,1"
+                   BorderThickness="0,0,0,1"
+                   BorderBrush="DimGray"
+                   VerticalAlignment="Center">
+                見出し（30文字以内）
+            </Label>
+            <TextBox Text="{Binding OriginalText.Value, UpdateSourceTrigger=PropertyChanged}" Margin="0,3,0,13" MaxLength="30"/>
+
+            <!--<Label Padding="8,1,0,1"
+                   BorderThickness="0,0,0,1"
+                   BorderBrush="DimGray"
+                   VerticalAlignment="Center">
+                読み（全角カタカナ30文字以内、日本語入力のみ有効）
+                --><!-- 日本語ではない全角カタカナは、？！、。などのことと思われる --><!--
+            </Label>
+            <TextBox Text="{Binding Yomi.Value}" Margin="0,3,0,13"/>-->
+
+            <!--<Label Padding="8,1,0,1"
+                   BorderThickness="0,0,0,1"
+                   BorderBrush="DimGray"
+                   VerticalAlignment="Center">
+                品詞
+            </Label>
+            <Button Margin="0,3,0,13" Padding="8,2,0,2" HorizontalContentAlignment="Left" FontSize="12"
+                    Command="{Binding OpenDialogCommand}" CommandParameter="HinshiSelectDialog">
+                普通名詞
+            </Button>-->
+
+            <Label Padding="8,1,0,1"
+                   BorderThickness="0,0,0,1"
+                   BorderBrush="DimGray"
+                   VerticalAlignment="Center">
+                優先度
+            </Label>
+            <ComboBox FontSize="12"
+                      ItemsSource="{x:Static const:ConstData.Prioritys}"
+                      SelectedItem="{Binding Priority.Value}"/>
+            <!--<CheckBox x:Name="PriorityEnable" Margin="0,3,0,0" HorizontalAlignment="Left">
+                <ComboBox FontSize="12" Width="100"
+                          IsEnabled="{Binding IsChecked, ElementName=PriorityEnable}"
+                          ItemsSource="{x:Static const:ConstData.Prioritys}"
+                          SelectedItem="{Binding Priority.Value}"/>
+            </CheckBox>-->
+        </StackPanel>
+        
+        <!-- 右の編集エリア -->
+        <DockPanel Grid.Column="2" Margin="3">
+            <!-- ボタン -->
+            <DockPanel DockPanel.Dock="Bottom" Height="35">
+                <Button Style="{StaticResource IconButton}"
+                        DockPanel.Dock="Right" IsEnabled="False" Visibility="Collapsed">
+                    <DockPanel>
+                        <icon:PackIconBoxIcons Kind="SolidShareAlt" RotationAngle="90" Margin="0,0,4,0"/>
+                        <TextBlock VerticalAlignment="Bottom">標準語に変換</TextBlock>
+                    </DockPanel>
+                </Button>
+                <StackPanel Orientation="Horizontal">
+                    <Button Style="{StaticResource IconButton}"
+                            Command="{Binding PlayCommand}">
+                        <DockPanel>
+                            <icon:PackIconBoxIcons Kind="RegularPlayCircle" Margin="0,0,4,0"/>
+                            <TextBlock VerticalAlignment="Bottom">再生</TextBlock>
+                        </DockPanel>
+                    </Button>
+                    <Button Style="{StaticResource IconButton}"
+                            Command="{Binding StopCommand}">
+                        <DockPanel>
+                            <icon:PackIconBoxIcons Kind="RegularStopCircle" Margin="0,0,4,0"/>
+                            <TextBlock VerticalAlignment="Bottom">停止</TextBlock>
+                        </DockPanel>
+                    </Button>
+                    <Button Style="{StaticResource IconButton}" Margin="18,0,6,0"
+                            Command="{Binding RegisterCommand}">
+                        <DockPanel>
+                            <icon:PackIconBoxIcons Kind="SolidSave" Margin="0,0,4,0"/>
+                            <TextBlock VerticalAlignment="Bottom">登録</TextBlock>
+                        </DockPanel>
+                    </Button>
+                    <Button Style="{StaticResource IconButton}"
+                            Command="{Binding UnRegisterCommand}">
+                        <DockPanel>
+                            <icon:PackIconMaterial Kind="TrashCanOutline" Margin="0,0,4,0"/>
+                            <TextBlock VerticalAlignment="Bottom">登録解除</TextBlock>
+                        </DockPanel>
+                    </Button>
+                    <Button Style="{StaticResource IconButton}" Command="{Binding OpenDialogCommand}" CommandParameter="WordListDialog">
+                        <DockPanel>
+                            <icon:PackIconMaterial Kind="FormatListBulletedSquare" Margin="0,0,6,0"/>
+                            <TextBlock VerticalAlignment="Bottom">一覧</TextBlock>
+                        </DockPanel>
+                    </Button>
+                    <Button Style="{StaticResource IconButton}" Margin="18,0,6,0"
+                            Command="{Binding ClearCommand}">
+                        <DockPanel>
+                            <icon:PackIconBoxIcons Kind="RegularRefresh" Margin="0,0,4,0"/>
+                            <TextBlock VerticalAlignment="Bottom">クリア</TextBlock>
+                        </DockPanel>
+                    </Button>
+                </StackPanel>
+            </DockPanel>
+
+            <!-- 編集グラフ -->
+            <ScrollViewer Grid.Row="1" Grid.Column="2"
+                          HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Hidden">
+                <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}">
+                    <Grid Background="DimGray" Height="15" VerticalAlignment="Top"/>
+                    <graph:PhraseGraph AccentSelected="true"
+                                   Phrase="{Binding Phrase.Value}"
+                                   UpdateCommand="{Binding UpdateCommand}"
+                                   />
+                </Grid>
+            </ScrollViewer>
+        </DockPanel>
+    </Grid>
+</UserControl>

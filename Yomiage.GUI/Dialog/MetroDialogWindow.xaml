@@ -1,0 +1,20 @@
+﻿<mah:MetroWindow x:Class="Yomiage.GUI.Dialog.MetroDialogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Yomiage.GUI.Dialog"
+        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+                 xmlns:beh="clr-namespace:Yomiage.GUI.Behavior"
+        mc:Ignorable="d"
+                 MinHeight="200"
+                 MinWidth="300"
+                 SizeToContent="WidthAndHeight"
+        Title="{Binding Title}"
+        TitleBarHeight="22">
+    <i:Interaction.Behaviors>
+        <beh:DisposeViewModelWhenClosedBehavior/>
+    </i:Interaction.Behaviors>
+    <!-- DialogService.Show で表示される Window のスタイルをここで定義している。 -->
+</mah:MetroWindow>

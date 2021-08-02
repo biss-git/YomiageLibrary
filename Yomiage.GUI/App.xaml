@@ -1,0 +1,107 @@
+﻿<prism:PrismApplication x:Class="Yomiage.GUI.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:prism="http://prismlibrary.com/"
+                        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                        xmlns:avalon="https://github.com/Dirkster99/AvalonDock"
+                        ShutdownMode="OnMainWindowClose">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Crimson.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Yomiage.GUI;component/Themes/Docking.Dark.Crimson.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            
+
+            <Style TargetType="GroupBox">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="FontSize" Value="16"/>
+            </Style>
+            <Style x:Key="MyMenuItem" TargetType="MenuItem">
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="FontFamily" Value="Yu Gothic UI"/>
+                <Setter Property="Padding" Value="6,4,8,4"/>
+            </Style>
+            <Style TargetType="icon:PackIconBoxIcons">
+                <Setter Property="Width" Value="24"/>
+                <Setter Property="Height" Value="22"/>
+            </Style>
+            <Style TargetType="icon:PackIconMaterial">
+                <Setter Property="Width" Value="24"/>
+                <Setter Property="Height" Value="22"/>
+            </Style>
+            <Style TargetType="ListView">
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Background" Value="Transparent"/>
+            </Style>
+            <Style TargetType="Button" BasedOn="{StaticResource MahApps.Styles.Button}">
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="FontFamily" Value="Yu Gothic UI"/>
+                <Setter Property="FontWeight" Value="Normal"/>
+                <Setter Property="MinWidth" Value="80"/>
+                <!--<Setter Property="Focusable" Value="False"/>-->
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Opacity" Value="0.5" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="IconButton" TargetType="Button" BasedOn="{StaticResource MahApps.Styles.Button}">
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Margin" Value="2,0,4,0"/>
+                <Setter Property="Padding" Value="3,0,3,0"/>
+                <Setter Property="FontWeight" Value="Normal"/>
+                <Setter Property="mah:ControlsHelper.FocusBorderThickness" Value="0"/>
+                <Setter Property="Focusable" Value="False"/>
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Opacity" Value="0.5" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style TargetType="ComboBox" BasedOn="{StaticResource MahApps.Styles.ComboBox}">
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Opacity" Value="0.5" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style TargetType="mah:NumericUpDown">
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Opacity" Value="0.5" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style TargetType="Slider" BasedOn="{StaticResource MahApps.Styles.Slider.Flat}">
+                <Setter Property="mah:SliderHelper.EnableMouseWheel" Value="MouseHover"/>
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Opacity" Value="0.5" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style TargetType="CheckBox" BasedOn="{StaticResource MahApps.Styles.CheckBox}">
+                <Setter Property="FontSize" Value="14"/>
+            </Style>
+            <Style TargetType="TextBox" BasedOn="{StaticResource MahApps.Styles.TextBox}">
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+            </Style>
+            <Style TargetType="Label" BasedOn="{StaticResource MahApps.Styles.Label}">
+                <Setter Property="FontSize" Value="14"/>
+            </Style>
+            <Style TargetType="RadioButton" BasedOn="{StaticResource MahApps.Styles.RadioButton}">
+                <Setter Property="FontSize" Value="14"/>
+                <!--<Setter Property="Focusable" Value="False"/>-->
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</prism:PrismApplication>

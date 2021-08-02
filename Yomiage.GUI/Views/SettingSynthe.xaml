@@ -1,0 +1,43 @@
+﻿<UserControl x:Class="Yomiage.GUI.Views.SettingSynthe"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Yomiage.GUI.Views"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <StackPanel Margin="6">
+        <!--<GroupBox Margin="0,10,0,0">
+            <GroupBox.Header>
+                <Label Margin="3,0,3,0">音声ファイル保存時のポーズ</Label>
+            </GroupBox.Header>
+            <StackPanel Margin="10">
+                <StackPanel Orientation="Horizontal" Margin="0,3,0,3">
+                    <Label Width="90">開始ポーズ</Label>
+                    <mah:NumericUpDown UpDownButtonsWidth="18" Width="100"
+                                       Value="100"
+                                       Minimum="0" Maximum="60000"/>
+                    <Label>[ﾐﾘ秒]</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,3,0,3">
+                    <Label Width="90">終了ポーズ</Label>
+                    <mah:NumericUpDown UpDownButtonsWidth="18" Width="100"
+                                       Value="800"
+                                       Minimum="0" Maximum="60000"/>
+                    <Label>[ﾐﾘ秒]</Label>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>-->
+        <GroupBox Margin="0,5,0,0">
+            <GroupBox.Header>
+                <Label Margin="3,0,3,0">テキスト</Label>
+            </GroupBox.Header>
+            <StackPanel Margin="10">
+                <CheckBox IsChecked="{Binding SettingService.SplitByEnter}" Margin="0,3,0,3" HorizontalAlignment="Left">改行を文末と見なす</CheckBox>
+            </StackPanel>
+        </GroupBox>
+    </StackPanel>
+</UserControl>

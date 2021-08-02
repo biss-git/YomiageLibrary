@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="Yomiage.GUI.Dialog.Views.PauseCharacterDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Yomiage.GUI.Dialog.Views"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d" >
+    <StackPanel Margin="3">
+        <Grid Height="100" Margin="40">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="80"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">見出し</Label>
+            <TextBox Text="{Binding PauseCharacter.Value, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
+            <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">ポーズの長さ</Label>
+            <mah:NumericUpDown Value="{Binding PauseSpan_ms.Value}" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" UpDownButtonsWidth="16" Minimum="-300" Maximum="30000"/>
+            <Label Grid.Row="1" Grid.Column="2" VerticalAlignment="Center">[ﾐﾘ秒]</Label>
+        </Grid>
+        <Separator/>
+        <DockPanel>
+            <Button Command="{Binding CancelCommand}" DockPanel.Dock="Right" Width="80" Margin="3">キャンセル</Button>
+            <Button Command="{Binding OkCommand}" DockPanel.Dock="Right" Width="80" Margin="3">OK</Button>
+            <Label/>
+        </DockPanel>
+    </StackPanel>
+</UserControl>

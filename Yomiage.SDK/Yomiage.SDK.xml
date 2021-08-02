@@ -1,0 +1,1141 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Yomiage.SDK</name>
+    </assembly>
+    <members>
+        <member name="T:Yomiage.SDK.Common.IFixAble">
+            <summary>
+            これを継承しているやつは
+            JsonUtil でオブジェクトクローンしたり、
+            json にしてファイルに保存したりするときに、
+            不正値をはじく処理を実行する。
+            
+            Common という名前空間はなんかダサい。Utilとかのほうが良かったかも。
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Common.IFixAble.Fix">
+            <summary>
+            不正値をはじく
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.Common.JsonUtil">
+            <summary>
+            json にしてファイルに保存したり、読み込んだり、
+            シリアライズを利用してディープクローンしたりするユーティリティクラス。
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Common.JsonUtil.DeepClone``1(``0)">
+            <summary>
+            ディープクローンを返す。
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Common.JsonUtil.Serialize``1(``0,System.String,System.Boolean,System.Text.Json.Serialization.JsonIgnoreCondition)">
+            <summary>
+            json ファイルに保存する。
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Common.JsonUtil.Deserialize``1(System.String)">
+            <summary>
+            json からデシリアライズ
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.Config.CharacterConfig">
+            <summary>
+            キャラクターの描画に関する設定
+            character.config.json として音声ライブラリと一緒に置いておく
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.CharacterConfig.Type">
+            <summary>
+            どうやってキャラクターを描画するか
+            今のところ BasicFormat のみ
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.CharacterConfig.BasicFormat">
+            <summary>
+            １～５枚の画像ファイルを使う標準的な方法
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.CharacterConfig.DarkBackGroundColor">
+            <summary>
+            アプリが黒ベースのときの背景色
+            色はHTML形式で指定
+            つまり、#AARRGGBB とか #RRGGBB の形式
+            例　#FF0000 で赤
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.CharacterConfig.LightBackGroundColor">
+            <summary>
+            アプリが白ベースのときの背景色
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.BasicFormat.Base">
+            <summary>
+            何もしていないときの立ち絵画像
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.BasicFormat.MouthOpen">
+            <summary>
+            発音しているときの口を空けている立ち絵画像（口パク用）
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.BasicFormat.EyeClose">
+            <summary>
+            目を閉じている立ち絵画像（目パチ用）
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.BasicFormat.Sleep1">
+            <summary>
+            寝ているときの立ち絵１
+            １と２は１秒くらいずつで交互に表示される。寝息用。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.BasicFormat.Sleep2">
+            <summary>
+            寝ているときの立ち絵２
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.Config.ConfigBase">
+            <summary>
+            設定内容
+            json に保存・読み込みされるので、
+            エンジン開発者や音声ライブラリ開発者が用途に合わせて編集する
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.ConfigBase.Key">
+            <summary>
+            固有のキー。
+            これは他の開発者とも重複しないようになるべくユニークな名前にすること。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.ConfigBase.Name">
+            <summary>
+            表示上の名前。
+            被っても大丈夫だけど、わかりずらいので、なるべくユニークな名前にすること。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.ConfigBase.Description">
+            <summary>
+            簡単な説明文。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.ConfigBase.LibraryFormat">
+            <summary>
+            音声ライブラリのフォーマット。
+            このフォーマット名が一致する音声ライブラリとエンジンがセットで利用される。
+            他の開発者と被らない名前にしておく。
+            または他の開発者のフォーマットに倣う場合は同じにしておく。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.ConfigBase.OS">
+            <summary>
+            対応OS
+            まあ今のところ Windows10 しか対応できないですが。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.ConfigBase.AssmblyName">
+            <summary>
+            音声ライブラリまたは音声合成エンジンのdllの.config.jsonからの相対パス
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.ConfigBase.ModuleName">
+            <summary>
+            音声ライブラリまたは音声合成エンジンのモジュール名
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.ConfigBase.TypeName">
+            <summary>
+            音声ライブラリまたは音声合成エンジンのクラス名
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.ConfigBase.Language">
+            <summary>
+            対応言語
+            まあ今のところ Japanese しか対応できないですが。
+            変数名は Culture のほうが自然かな？とも思ったけど
+            別に時刻とかまで変えるわけじゃないから Language でいいや。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.ConfigBase.VolumeSetting">
+            <summary>
+            音量の設定
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.ConfigBase.SpeedSetting">
+            <summary>
+            話速の設定
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.ConfigBase.PitchSetting">
+            <summary>
+            高さの設定
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.ConfigBase.EmphasisSetting">
+            <summary>
+            抑揚の設定
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.ConfigBase.AdditionalSettings">
+            <summary>
+            追加の設定
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Config.ConfigBase.Fix">
+            <summary>
+            不正な値を取り除く
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.Config.EngineConfig">
+            <summary>
+            エンジンの設定内容
+            engine.config.json としてエンジンと一緒に置いておく
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.EngineConfig.AccentEnable">
+            <summary>
+            アクセント句のアクセントを編集可能にする。
+            AccentEnable が false のとき、フレーズの分割や結合、発音の変更はできても、アクセントの丸い点を上下にはできない。
+            AccentEnable が true  のとき、アクセントの丸い点を上下にできる。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.EngineConfig.AccentHide">
+            <summary>
+            アクセント句を非表示にする。
+            調声ができないタイプのエンジンの場合に true にする。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.EngineConfig.AccentRule">
+            <summary>
+            アクセントの入力規則。
+            今は特に使わない。デフォルトではA.I.VOICEと同じアクセントを入力できるようにする。（アクセントは同じアクセント句の中では一度しか下がらず、下がったあとは上がらない。）
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.EngineConfig.SubPresetEnable">
+            <summary>
+            サブプリセット（ボイスフュージョン）機能を有効にする。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.EngineConfig.EngineSaveEnable">
+            <summary>
+            エンジンが保存処理まで行いたい場合は true にする。
+            その場合、保存時には Save が呼ばれる。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.EngineConfig.ShortPauseSetting">
+            <summary>
+            短ポーズの設定
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Config.EngineConfig.LongPauseSetting">
+            <summary>
+            長ポーズの設定
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Config.EngineConfig.Fix">
+            <summary>
+            不正値をはじく
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.Config.LibraryConfig">
+            <summary>
+            音声ライブラリの設定内容
+            library.config.json として音声ライブラリと一緒に置いておく
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Config.LibraryConfig.Fix">
+            <summary>
+            不正値をはじく
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.IVoiceBase">
+            <summary>
+            IVoiceEngine と IVoiceLibrary の共通項目
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.IVoiceBase.IsActivated">
+            <summary>
+            ライセンスが通っているかどうか
+            ライセンスとかつけないよって場合は
+            常に true を返せばいい
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.IVoiceBase.Activate(System.String)">
+            <summary>
+            ライセンスのアクティベーション
+            ライセンスキーがGUIから送られる
+            </summary>
+            <param name="key">ライセンスキー</param>
+            <returns>true: 成功、 false: 失敗 (失敗した場合はStateTextに理由を入れておいて欲しい)</returns>
+        </member>
+        <member name="M:Yomiage.SDK.IVoiceBase.DeActivate">
+            <summary>
+            ライセンスのディスアクティベーション
+            </summary>
+            <returns>true: 成功、 false: 失敗 (失敗した場合はStateTextに理由を入れておいて欲しい)</returns>
+        </member>
+        <member name="P:Yomiage.SDK.IVoiceBase.IsEnable">
+            <summary>
+            使用可能かどうか
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.IVoiceBase.StateText">
+            <summary>
+            処理に成功したとか失敗したとか
+            ユーザーに伝えたい情報があればここで返す。
+            GUIのどこかに表示される。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.IVoiceBase.MajorVersion">
+            <summary>
+            メジャーバージョン
+            過去のバージョンと互換性がなくなるような変更時にインクリメントしてください。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.IVoiceBase.MinorVersion">
+            <summary>
+            マイナーバージョン
+            過去のバージョンと互換性が保たれるような修正に対してインクリメントしてください。
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.IVoiceEngine">
+            <summary>
+            音声合成エンジンのインターフェース
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.IVoiceEngine.Config">
+            <summary>
+            音声ライブラリのコンフィグ
+            GUIからは変えられないシステム的な設定値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.IVoiceEngine.Settings">
+            <summary>
+            エンジンのセッティング
+            GUIから変更可能な設定値
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.IVoiceEngine.Initialize(System.String,System.String,Yomiage.SDK.Config.EngineConfig)">
+            <summary>
+            初期化処理
+            </summary>
+            <param name="configDirectory"> ライブラリconfigのディレクトリ </param>
+            <param name="dllDirectory"> ライブラリdllのディレクトリ </param>
+            <param name="config"> エンジンのコンフィグ、GUIからは変えられないシステム的な設定値 </param>
+        </member>
+        <member name="M:Yomiage.SDK.IVoiceEngine.Play(Yomiage.SDK.VoiceConfig,Yomiage.SDK.VoiceConfig,Yomiage.SDK.Talk.TalkScript,Yomiage.SDK.VoiceEffects.MasterEffectValue,System.Action{System.Int32})">
+            <summary>
+            音声の合成処理
+            再生ボタンや保存ボタンを押されたときに呼ばれる。
+            </summary>
+            <param name="mainVoice"> 読み上げてほしい子のボイス設定 </param>
+            <param name="subVoice"> サブの音声情報。EnginConfig で VoiceFusionEnable を true にしたときにのみ呼ばれる。基本的には使わなくていい。 </param>
+            <param name="talkScript"> 読み上げる内容 </param>
+            <param name="MasterEffect"> マスターコントロールの音声効果 </param>
+            <param name="SamplingRate_Hz"> サンプリング周波数を教えてほしい </param>
+            <returns> 音声波形 </returns>
+        </member>
+        <member name="M:Yomiage.SDK.IVoiceEngine.Save(Yomiage.SDK.VoiceConfig,Yomiage.SDK.VoiceConfig,Yomiage.SDK.Talk.TalkScript[],Yomiage.SDK.VoiceEffects.MasterEffectValue,System.String,System.Int32,System.Int32,System.Boolean,System.Text.Encoding)">
+            <summary>
+            音声の保存処理
+            基本的には実装しなくてよい。
+            EngineSaveEnable が true の場合、保存ボタンを押したときに呼ばれる。
+            UI 側で保存処理は行われないので、この関数内で保存処理を行う。
+            </summary>
+            <param name="voicePreset"> 読み上げてほしい子のボイス設定 </param>
+            <param name="subPreset"> サブの音声情報。EnginConfig で VoiceFusionEnable を true にしたときにのみ呼ばれる。基本的には使わなくていい。 </param>
+            <param name="talkScripts"> 読み上げる内容 </param>
+            <param name="masterEffect"> マスターコントロールの音声効果 </param>
+            <param name="filePath"> 保存先の指定アドレス (拡張子は .wav, .mp3 の可能性がある) </param>
+            <param name="startPause"> 保存時の前ポーズ [ms] </param>
+            <param name="endPause"> 保存時の後ポーズ [ms] </param>
+            <param name="saveWithText"> テキストを一緒に保存するかどうか </param>
+            <param name="encoding"> テキストのエンコード情報 </param>
+            <returns> 音声波形 </returns>
+        </member>
+        <member name="M:Yomiage.SDK.IVoiceEngine.Stop">
+            <summary>
+            音声生成の中断処理
+            </summary>
+            <returns> true: 成功、false: 失敗 (まあ失敗することは無いと思いますが) </returns>
+        </member>
+        <member name="T:Yomiage.SDK.IVoiceLibrary">
+            <summary>
+            音声ライブラリのインターフェース
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.IVoiceLibrary.Config">
+            <summary>
+            音声ライブラリのコンフィグ
+            GUIからは変えられないシステム的な設定値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.IVoiceLibrary.Settings">
+            <summary>
+            音声ライブラリのセッティング
+            GUIから変更可能な設定値
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.IVoiceLibrary.Initialize(System.String,System.String,Yomiage.SDK.Config.LibraryConfig)">
+            <summary>
+            初期化処理
+            </summary>
+            <param name="configDirectory"> ライブラリconfigのディレクトリ </param>
+            <param name="dllDirectory"> ライブラリdllのディレクトリ </param>
+            <param name="config"> エンジンのコンフィグ、GUIからは変えられないシステム的な設定値 </param>
+        </member>
+        <member name="M:Yomiage.SDK.IVoiceLibrary.GetValue(System.String,System.String)">
+            <summary>
+            ライブラリの値を取得する。
+            どんな値を返すかはエンジンの設計に任せる。
+            </summary>
+            <param name="command"> キー１ </param>
+            <param name="key"> キー２ </param>
+            <returns> キーに対応する値、型指定とか面倒くさい人向け </returns>
+        </member>
+        <member name="M:Yomiage.SDK.IVoiceLibrary.TryGetValue``1(System.String,System.String,``0@)">
+            <summary>
+            ライブラリの値を取得する。
+            どんな値を返すかはエンジンの設計に任せる。
+            </summary>
+            <typeparam name="T"> 型指定したい場合はこれを渡す。 </typeparam>
+            <param name="command"> キー１ </param>
+            <param name="key"> キー２ </param>
+            <param name="value"> キーに対応する値 </param>
+            <returns> 成功したかどうか </returns>
+        </member>
+        <member name="M:Yomiage.SDK.IVoiceLibrary.GetValues(System.String,System.String[])">
+            <summary>
+            ライブラリの値を複数同時に取得する。
+            </summary>
+            <param name="command"> キー１ </param>
+            <param name="keys"> キー２ </param>
+            <returns> キーに対応する値、型指定とか面倒くさい人向け </returns>
+        </member>
+        <member name="M:Yomiage.SDK.IVoiceLibrary.TryGetValues``1(System.String,System.String[],System.Collections.Generic.Dictionary{System.String,``0}@)">
+            <summary>
+            ライブラリの値を複数同時に取得する。
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="command"> キー１ </param>
+            <param name="keys"> キー２ </param>
+            <param name="values"> キーに対応する値 </param>
+            <returns> 成功したかどうか </returns>
+        </member>
+        <member name="T:Yomiage.SDK.Settings.BoolSetting">
+            <summary>
+            真偽値の設定
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.BoolSetting.Value">
+            <summary>
+            設定値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.BoolSetting.DefaultValue">
+            <summary>
+            初期値
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.BoolSetting.ResetValue">
+            <summary>
+            初期値を設定値に代入
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.BoolSetting.Fix">
+            <summary>
+            不正な値をはじく
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.Settings.DoubleSetting">
+            <summary>
+            実数値の設定
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.DoubleSetting.Value">
+            <summary>
+            設定値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.DoubleSetting.DefaultValue">
+            <summary>
+            初期値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.DoubleSetting.Min">
+            <summary>
+            設定可能な最小値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.DoubleSetting.Max">
+            <summary>
+            設定可能な最大値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.DoubleSetting.SmallStep">
+            <summary>
+            GUIでの最小ステップ
+            ただし、入力の最小値ではない。
+            例えば SmallStep = 2 としても、偶数のみ、奇数のみの入力になるわけではない。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.DoubleSetting.StringFormat">
+            <summary>
+            0.00 
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.DoubleSetting.ResetValue">
+            <summary>
+            初期値を設定値に代入
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.DoubleSetting.Fix">
+            <summary>
+            不正な値をはじく
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.Settings.DoubleExtension">
+            <summary>
+            double の拡張メソッド
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.DoubleExtension.IsNotNumber(System.Double)">
+            <summary>
+            非数値の判定
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.DoubleExtension.Fix(System.Double)">
+            <summary>
+            非数値の場合はデフォルト値を返す。
+            default(double) とか気取った書き方してるけど、要するに非数値の場合は 0 を返す。
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.DoubleExtension.Clamp(System.Double,System.Double,System.Double)">
+            <summary>
+            [min, max] の区間に納めて返す。
+            区間が0以下の場合は min を返す。（Math.Clampだとエラーを返すので使えない）
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.Settings.EngineSettings">
+            <summary>
+            エンジンの設定
+            engine.settings.json としてエンジンと一緒に置いておく
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.Settings.IntSetting">
+            <summary>
+            整数値の設定
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.IntSetting.Value">
+            <summary>
+            設定値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.IntSetting.DefaultValue">
+            <summary>
+            初期値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.IntSetting.Min">
+            <summary>
+            設定可能な最小値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.IntSetting.Max">
+            <summary>
+            設定可能な最大値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.IntSetting.SmallStep">
+            <summary>
+            GUIでの最小ステップ
+            ただし、入力の最小値ではない。
+            例えば SmallStep = 2 としても、偶数のみ、奇数のみの入力になるわけではない。
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.IntSetting.ResetValue">
+            <summary>
+            初期値を設定値に代入
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.IntSetting.Fix">
+            <summary>
+            不正な値をはじく
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.IntExtension.IsNotNumber(System.Int32)">
+            <summary>
+            非数値の判定
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.IntExtension.Fix(System.Int32)">
+            <summary>
+            非数値の場合はデフォルト値を返す。
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.IntExtension.Clamp(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            [min, max] の区間に納めて返す。
+            区間が0以下の場合は min を返す。（Math.Clampだとエラーを返すので使えない）
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.Settings.LibrarySettings">
+            <summary>
+            音声ライブラリの設定
+            library.settings.json として音声ライブラリと一緒に置いておく
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.Settings.SettingBase">
+            <summary>
+            設定の共通項目
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.SettingBase.Key">
+            <summary>
+            設定値のキー。重複しないようにしておいたほうがいい。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.SettingBase.Name">
+            <summary>
+            GUI上に表示される名前。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.SettingBase.Description">
+            <summary>
+            GUI上に表示される説明文。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.SettingBase.Order">
+            <summary>
+            GUI上に表示される順番。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.SettingBase.Type">
+            <summary>
+            GUIからの入力方法を指定する。主に 文字列 用。
+            以下のうちどれかにしておく
+            textbox | combobox | file 
+            上記に該当しない、または有効な値でない場合はデフォルトになる
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.SettingBase.Hide">
+            <summary>
+            GUI上に表示させたくない場合は true にする。
+            ユーザーに操作させたくない場合や、
+            テスト機能のために内部的に設定値を用意したい場合などに利用してください。
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.SettingBase.ResetValue">
+            <summary>
+            初期値を設定値に代入
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.SettingBase.Fix">
+            <summary>
+            不正な値をはじく
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.ISetting.Key">
+            <summary>
+            設定値のキー。重複しないようにしておいたほうがいい。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.ISetting.Name">
+            <summary>
+            GUI上に表示される名前。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.ISetting.Description">
+            <summary>
+            GUI上に表示される説明文。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.ISetting.Order">
+            <summary>
+            GUI上に表示される順番。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.ISetting.Type">
+            <summary>
+            GUIからの入力方法を指定する。
+            以下のうちどれかにしておく
+            combobox | textbox | file 
+            上記に該当しない、または有効な値でない場合はデフォルトになる
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.ISetting.Hide">
+            <summary>
+            GUI上に表示させたくない場合は true にする。
+            ユーザーに操作させたくない場合や、
+            テスト機能のために内部的に設定値を用意したい場合などに利用してください。
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.ISetting.ResetValue">
+            <summary>
+            初期値を設定値に代入
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.Settings.SettingsBase">
+            <summary>
+            プラグイン（音声合成エンジン、音声ライブラリのこと）の設定内容。
+            つまり、プラグインの開発者が決めた設定項目であり、
+            Hide を False にしておけばGUIからも変更可能で、ユーザーに設定内容を任せることもできる。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.SettingsBase.Bools">
+            <summary>
+            真偽値の設定値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.SettingsBase.Ints">
+            <summary>
+            整数値の設定値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.SettingsBase.Doubles">
+            <summary>
+            実数値の設定値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.SettingsBase.Strings">
+            <summary>
+            文字列の設定値
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.SettingsBase.ResetAllValues">
+            <summary>
+            初期値を設定値に代入
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.SettingsBase.Fix">
+            <summary>
+            不正な値をはじく
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.Settings.SettingList`1">
+            <summary>
+            一応Dictionaryっぽくkeyで見つけられるようにしとく
+            でもkeyの重複とかは別に気にしてない。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.SettingList`1.Item(System.String)">
+            <summary>
+            キーに対応する設定を返す。
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.SettingList`1.Keys">
+            <summary>
+            全てのキーを返す。
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.SettingList`1.ContainsKey(System.String)">
+            <summary>
+            キーが登録されているか
+            </summary>
+            <returns> true:登録されている、false:登録されていない</returns>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.SettingList`1.ResetValues">
+            <summary>
+            初期値を設定値に代入
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.SettingList`1.Fix">
+            <summary>
+            null や 空白 をはじく
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.Settings.StringSetting">
+            <summary>
+            文字列の設定
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.StringSetting.Value">
+            <summary>
+            設定値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.StringSetting.DefaultValue">
+            <summary>
+            初期値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.StringSetting.FileDialogFilter">
+            <summary>
+            Type を file としたときの拡張子のフォーマット
+            OpenFileDialog の Filter に渡されるので、例えば以下のように書く。
+            "テキスト(.txt)|*.txt|全てのファイル|*.*"
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.StringSetting.MaxLength">
+            <summary>
+            文字列の最大長さ
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Settings.StringSetting.ComboItems">
+            <summary>
+            Type を combobox としたときの選択肢
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.StringSetting.ResetValue">
+            <summary>
+            初期値を設定値に代入
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.StringSetting.Fix">
+            <summary>
+            不正な値をはじく
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Settings.StringExtension.Fix(System.String)">
+            <summary>
+            不正な値をはじく
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.Talk.EndSection">
+            <summary>
+            語尾情報
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Talk.EndSection.Pause">
+            <summary>
+            フレーズ編集の最後のポーズ
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Talk.EndSection.EndSymbol">
+            <summary>
+            "！" , "？", "。", "♪", "" など
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Talk.EndSection.Fill(Yomiage.SDK.VoiceEffects.VoiceEffectValue,Yomiage.SDK.VoiceEffects.VoiceEffectValue,Yomiage.SDK.Config.EngineConfig,System.Int32,System.Int32)">
+            <summary>
+            nullになっている部分を全て埋める
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.Talk.Mora">
+            <summary>
+            モーラ情報。
+            モーラ も VoiceEffectValueBase を継承して、音量や話速をモーラ単位で設定できるようにしているのは誤りではない。
+            今後、全分割せずに、各モーラの音声効果を設定できるようなオプションをつけるときのため。つけるかわからないけど。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Talk.Mora.Character">
+            <summary>
+            モーラの記号
+            日本語の場合は　ア　とか全角文字で来るはず。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Talk.Mora.Accent">
+            <summary>
+            アクセント
+            true なら上、false なら下 (上とか下とかはGUI上の丸の位置のこと)
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Talk.Mora.Voiceless">
+            <summary>
+            無声化のこと。
+            true : 無声音 の指定 ▽
+            false: 有声音 の指定 ▼
+            null : 指定なし
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Talk.Mora.Fill(Yomiage.SDK.VoiceEffects.VoiceEffectValue)">
+            <summary>
+            nullになっている部分を全て埋める
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.Talk.Pause">
+            <summary>
+            ポーズ情報
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Talk.Pause.Span_ms">
+            <summary>
+            ポーズ時間
+            単位 [ms]
+            基本的には非負整数だけど、とりあえず int で（負の数を入れたい変態がいるかもしれないので）
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Talk.Pause.Type">
+            <summary>
+            ポーズの種類
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.Talk.PauseType">
+            <summary>
+            ポーズの種類
+            </summary>
+        </member>
+        <member name="F:Yomiage.SDK.Talk.PauseType.None">
+            <summary>
+            ポーズ無し
+            </summary>
+        </member>
+        <member name="F:Yomiage.SDK.Talk.PauseType.Manual">
+            <summary>
+            指定された時間
+            </summary>
+        </member>
+        <member name="F:Yomiage.SDK.Talk.PauseType.Short">
+            <summary>
+            短ポーズ
+            </summary>
+        </member>
+        <member name="F:Yomiage.SDK.Talk.PauseType.Long">
+            <summary>
+            長ポーズ
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.Talk.Section">
+            <summary>
+            アクセント句(ポーズ + 複数モーラ)のこと。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Talk.Section.Pause">
+            <summary>
+            アクセント句の直前のポーズ情報
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Talk.Section.Moras">
+            <summary>
+            アクセント句のモーラ情報
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Talk.Section.Fill(Yomiage.SDK.VoiceEffects.VoiceEffectValue,Yomiage.SDK.VoiceEffects.VoiceEffectValue,System.Int32,System.Int32)">
+            <summary>
+            nullになっている部分を全て埋める
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.Talk.TalkScript">
+            <summary>
+            文章の読み上げ指示情報
+            フレーズ編集情報
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Talk.TalkScript.OriginalText">
+            <summary>
+            ユーザーが打ち込んだ文字列そのもの
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Talk.TalkScript.SpeachText">
+            <summary>
+            読めるように変換された文字列。
+            日本語の場合は全角カタカナと全角スペースのみに変換される（予定）。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Talk.TalkScript.Sections">
+            <summary>
+            複数のmoraとポーズからなるアクセント句のリスト。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Talk.TalkScript.EndSection">
+            <summary>
+            文末のポーズと音声効果。モーラは無いかわりに、？や！などの記号情報が入る。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.Talk.TalkScript.MoraCount">
+            <summary>
+            モーラのトータル数
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Talk.TalkScript.GetYomi">
+            <summary>
+            読み（全部カタカナ）を取得する。
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Talk.TalkScript.Fill(Yomiage.SDK.Config.EngineConfig,System.Int32,System.Int32)">
+            <summary>
+            nullになっている部分を全て埋める
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Talk.TalkScript.GetPhraseJsonText_toSave">
+            <summary>
+            Jsonに保存する用のテキストを取得する。
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.Talk.TalkScript.GetTalkScript_fromPhraseJsonText(System.String)">
+            <summary>
+            GetPhraseJsonText_toSave() で作った保存用テキストから
+            読み上げ指示情報　を復元する。
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.VoiceConfig">
+            <summary>
+            ボイス設定
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceConfig.Library">
+            <summary>
+            音声ライブラリー
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceConfig.VoiceEffect">
+            <summary>
+            音声効果
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.VoiceConfig.#ctor(Yomiage.SDK.IVoiceLibrary,Yomiage.SDK.VoiceEffects.VoiceEffectValue)">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="library"> 音声ライブラリ </param>
+            <param name="voiceEffect"> 音声効果 </param>
+        </member>
+        <member name="T:Yomiage.SDK.VoiceEffects.EffectSetting">
+            <summary>
+            音声効果用のクラス。
+            DoubleSetting とほぼ同じだが、
+            単位を設定できる、入力範囲の拡張ができる、色を設定できる、といった違いがある。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.EffectSetting.Unit">
+            <summary>
+            表示単位 特になければ空文字でいい
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.EffectSetting.Value">
+            <summary>
+            設定値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.EffectSetting.DefaultValue">
+            <summary>
+            初期値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.EffectSetting.Min">
+            <summary>
+            設定可能な最小値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.EffectSetting.MinExtend">
+            <summary>
+            設定可能な最小値（入力範囲が拡張されたとき）
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.EffectSetting.Max">
+            <summary>
+            設定可能な最大値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.EffectSetting.MaxExtend">
+            <summary>
+            設定可能な最大値（入力範囲が拡張されたとき）
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.EffectSetting.SmallStep">
+            <summary>
+            GUIでの最小ステップ。マウスホイールとかで一度に動く値。
+            ただし、入力の最小値ではない。
+            例えば SmallStep = 2 としても、偶数のみ、奇数のみの入力になるわけではない。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.EffectSetting.StringFormat">
+            <summary>
+            0.00 とすると小数点２桁まで表示
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.EffectSetting.StringRule">
+            <summary>
+            範囲毎に表示を変えたい場合に使う。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.EffectSetting.Color">
+            <summary>
+            色はHTML形式で指定
+            つまり、#AARRGGBB とか #RRGGBB の形式
+            例　#FF0000 で赤
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.EffectSetting.IconKind">
+            <summary>
+            フレーズ編集に利用されるアイコン名
+            MahApps.Metro.IconPacks の BoxIcons の Kind に適用される。
+            どんなアイコンがあるのかは公式のデモアプリをご確認ください。
+            https://github.com/MahApps/MahApps.Metro.IconPacks
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.VoiceEffects.EffectSetting.ResetValue">
+            <summary>
+            初期値に戻す
+            </summary>
+        </member>
+        <member name="M:Yomiage.SDK.VoiceEffects.EffectSetting.Fix">
+            <summary>
+            不正な値をはじく
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.VoiceEffects.MasterEffectValue">
+            <summary>
+            マスター音声効果
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.MasterEffectValue.ShortPause">
+            <summary>
+            短ポーズの設定値 [ms]
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.MasterEffectValue.LongPause">
+            <summary>
+            長ポーズの設定値 [ms]
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.MasterEffectValue.EndPause">
+            <summary>
+            文末ポーズの設定値 [ms]
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.VoiceEffects.VoiceEffectValue">
+            <summary>
+            プリセット毎の音声効果
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.VoiceEffectValue.PauseOverride">
+            <summary>
+            短・長ポーズをボイス毎の設定を使うか
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.VoiceEffectValue.ShortPause">
+            <summary>
+            短ポーズの設定値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.VoiceEffectValue.LongPause">
+            <summary>
+            長ポーズの設定値
+            </summary>
+        </member>
+        <member name="T:Yomiage.SDK.VoiceEffects.VoiceEffectValueBase">
+            <summary>
+            基本的な音声情報
+            音量、話速、高さ、抑揚　の４つ。
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.VoiceEffectValueBase.Volume">
+            <summary>
+            音量の設定値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.VoiceEffectValueBase.Speed">
+            <summary>
+            話速の設定値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.VoiceEffectValueBase.Pitch">
+            <summary>
+            高さの設定値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.VoiceEffectValueBase.Emphasis">
+            <summary>
+            抑揚の設定値
+            </summary>
+        </member>
+        <member name="P:Yomiage.SDK.VoiceEffects.VoiceEffectValueBase.AdditionalEffect">
+            <summary>
+            追加の設定
+            </summary>
+        </member>
+    </members>
+</doc>

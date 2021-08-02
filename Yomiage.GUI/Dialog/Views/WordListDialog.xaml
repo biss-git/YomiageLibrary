@@ -1,0 +1,169 @@
+﻿<UserControl x:Class="Yomiage.GUI.Dialog.Views.WordListDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:conv="clr-namespace:Yomiage.GUI.Converters"
+             xmlns:local="clr-namespace:Yomiage.GUI.Dialog.Views"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <conv:EnumToBooleanConverter x:Key="EnumToBoolean"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <DockPanel Margin="0">
+        <!-- 初期サイズを設定するためのタグ -->
+        <Label MinWidth="700" Height="0" DockPanel.Dock="Top"/>
+        <Label MinHeight="600" Width="0" DockPanel.Dock="Left"/>
+        <!-- 検索 -->
+        <DockPanel DockPanel.Dock="Top" Margin="3">
+            <ToggleButton x:Name="detail" DockPanel.Dock="Right" Width="80" Margin="3,0,0,0" Padding="0" FontSize="12">▼ 詳細</ToggleButton>
+            <TextBox         Text="{Binding SearchText.Value, UpdateSourceTrigger=PropertyChanged}"
+                             mah:TextBoxHelper.ClearTextButton="True"
+                             mah:TextBoxHelper.UseFloatingWatermark="True"
+                             mah:TextBoxHelper.Watermark="Search... 半角スペースで区切り">
+                <TextBox.Style>
+                    <Style BasedOn="{StaticResource MahApps.Styles.TextBox.Search}" TargetType="{x:Type TextBox}">
+                        <Style.Triggers>
+                            <Trigger Property="mah:TextBoxHelper.HasText" Value="True">
+                                <Setter Property="mah:TextBoxHelper.ButtonContent" Value="r" />
+                                <Setter Property="mah:TextBoxHelper.ButtonContentTemplate" Value="{x:Null}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+        </DockPanel>
+        <Border DockPanel.Dock="Top" Margin="3" CornerRadius="2"
+                BorderThickness="1" BorderBrush="{DynamicResource MahApps.Brushes.ThemeForeground}"
+                Visibility="{Binding IsChecked, ElementName=detail, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel Margin="20">
+                <StackPanel Orientation="Horizontal">
+                    <Label Width="120">検索対象</Label>
+                    <RadioButton IsChecked="{Binding TargetAll.Value}" Width="120">すべて</RadioButton>
+                    <RadioButton IsChecked="{Binding TargetText.Value}" Width="120">見出し</RadioButton>
+                    <RadioButton IsChecked="{Binding TargetYomi.Value}" Width="120">読み</RadioButton>
+                </StackPanel>
+                <Separator Margin="0,5,0,5"/>
+                <StackPanel Orientation="Horizontal">
+                    <Label Width="120">一致箇所</Label>
+                    <RadioButton IsChecked="{Binding MatchTypeStart.Value}" Width="120">前方一致</RadioButton>
+                    <RadioButton IsChecked="{Binding MatchTypeAny.Value}" x:Name="partRadio" Width="120">部分一致</RadioButton>
+                    <RadioButton IsChecked="{Binding MatchTypeEnd.Value}" Width="120">後方一致</RadioButton>
+                </StackPanel>
+                <Separator Margin="0,5,0,5"/>
+                <StackPanel Orientation="Horizontal" IsEnabled="{Binding IsChecked, ElementName=partRadio}">
+                    <Label Width="120">AND / OR</Label>
+                    <RadioButton IsChecked="{Binding MatchTypeAnd.Value}" Width="120">AND(かつ)</RadioButton>
+                    <RadioButton IsChecked="{Binding MatchTypeOr.Value}" Width="120">OR(または)</RadioButton>
+                </StackPanel>
+                <Separator Margin="0,5,0,5"/>
+                <StackPanel Orientation="Horizontal">
+                    <Label Width="120">１ページの表示件数</Label>
+                    <mah:NumericUpDown Width="120" UpDownButtonsWidth="18"
+                                       Minimum="1" Maximum="60000" Value="{Binding ListSize.Value}"
+                                       Padding="10,0,0,0"
+                                       TextAlignment="Left"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+
+        <!-- ボタン -->
+        <DockPanel DockPanel.Dock="Bottom" Margin="6">
+            <Button Command="{Binding OkCommand}" DockPanel.Dock="Right" Style="{StaticResource IconButton}">
+                <DockPanel>
+                    <icon:PackIconBoxIcons Kind="RegularExit" Margin="0,0,4,0"/>
+                    <TextBlock VerticalAlignment="Bottom">閉じる</TextBlock>
+                </DockPanel>
+            </Button>
+            <Button Command="{Binding DeleteCommand}" DockPanel.Dock="Right" Style="{StaticResource IconButton}">
+                <DockPanel>
+                    <icon:PackIconMaterial Kind="TrashCanOutline" Margin="0,0,4,0"/>
+                    <TextBlock VerticalAlignment="Bottom">削除</TextBlock>
+                </DockPanel>
+            </Button>
+            <Button Command="{Binding EditCommand}" DockPanel.Dock="Right" Style="{StaticResource IconButton}">
+                <DockPanel>
+                    <icon:PackIconBoxIcons Kind="RegularEditAlt" Margin="0,0,4,0"/>
+                    <TextBlock VerticalAlignment="Bottom">編集</TextBlock>
+                </DockPanel>
+            </Button>
+            <Label/>
+        </DockPanel>
+
+        <!-- リスト -->
+        <DockPanel>
+            <!-- ページング -->
+            <DockPanel DockPanel.Dock="Top">
+                <DockPanel.Resources>
+                    <Style TargetType="RadioButton" BasedOn="{StaticResource MahApps.Styles.ToggleButton}">
+                        <Setter Property="FontWeight" Value="Normal"/>
+                        <Setter Property="FontSize" Value="16"/>
+                        <Setter Property="Padding" Value="2"/>
+                        <Setter Property="MinWidth" Value="28"/>
+                        <Setter Property="Margin" Value="3,3,3,3"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    </Style>
+                </DockPanel.Resources>
+                <RadioButton IsChecked="{Binding Group.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=All}" DockPanel.Dock="Left">全</RadioButton>
+                <RadioButton IsChecked="{Binding Group.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=A}" DockPanel.Dock="Left">ア</RadioButton>
+                <RadioButton IsChecked="{Binding Group.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=K}" DockPanel.Dock="Left">カ</RadioButton>
+                <RadioButton IsChecked="{Binding Group.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=S}" DockPanel.Dock="Left">サ</RadioButton>
+                <RadioButton IsChecked="{Binding Group.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=T}" DockPanel.Dock="Left">タ</RadioButton>
+                <RadioButton IsChecked="{Binding Group.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=N}" DockPanel.Dock="Left">ナ</RadioButton>
+                <RadioButton IsChecked="{Binding Group.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=H}" DockPanel.Dock="Left">ハ</RadioButton>
+                <RadioButton IsChecked="{Binding Group.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=M}" DockPanel.Dock="Left">マ</RadioButton>
+                <RadioButton IsChecked="{Binding Group.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=Y}" DockPanel.Dock="Left">ヤ</RadioButton>
+                <RadioButton IsChecked="{Binding Group.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=R}" DockPanel.Dock="Left">ラ</RadioButton>
+                <RadioButton IsChecked="{Binding Group.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=W}" DockPanel.Dock="Left">ワ</RadioButton>
+
+                <!--<Button DockPanel.Dock="Right" Style="{StaticResource IconButton}">
+                    <icon:PackIconMaterial Kind="SkipNextCircleOutline" Margin="2"/>
+                </Button>
+                <Button DockPanel.Dock="Right" Style="{StaticResource IconButton}">
+                    <icon:PackIconMaterial Kind="ChevronRightCircleOutline" Margin="2"/>
+                </Button>-->
+                <Label DockPanel.Dock="Right" Width="100" Content="{Binding PageSize.Value}" VerticalAlignment="Center"/>
+                <Label DockPanel.Dock="Right" Content=" / " VerticalAlignment="Center"/>
+                <mah:NumericUpDown DockPanel.Dock="Right" ButtonsAlignment="Opposite" SwitchUpDownButtons="True" Width="130"
+                                   Value="{Binding PageIndex.Value}" Minimum="1" Maximum="{Binding PageSize.Value}" TextAlignment="Center"/>
+                <!--<Button DockPanel.Dock="Right" Style="{StaticResource IconButton}">
+                    <icon:PackIconMaterial Kind="ChevronLeftCircleOutline" Margin="2"/>
+                </Button>
+                <Button DockPanel.Dock="Right" Style="{StaticResource IconButton}">
+                    <icon:PackIconMaterial Kind="SkipPreviousCircleOutline" Margin="2"/>
+                </Button>-->
+                <Label/>
+            </DockPanel>
+
+            <!-- 件数表示 -->
+            <DockPanel DockPanel.Dock="Bottom">
+                <Label DockPanel.Dock="Right">件目を表示</Label>
+                <Label DockPanel.Dock="Right" Content="{Binding EndIndex.Value}"/>
+                <Label DockPanel.Dock="Right">-</Label>
+                <Label DockPanel.Dock="Right" Content="{Binding StartIndex.Value}"/>
+                <Label DockPanel.Dock="Right">件ヒット</Label>
+                <Label DockPanel.Dock="Right" Content="{Binding FilterdSize.Value}"/>
+                <Label DockPanel.Dock="Right">件中</Label>
+                <Label DockPanel.Dock="Right" Content="{Binding TotalSize.Value}"/>
+                <Label/>
+            </DockPanel>
+
+            <!-- フレーズ一覧 -->
+            <ListView Margin="3" SelectionMode="Single" ItemsSource="{Binding WordList}" SelectedItem="{Binding Selected.Value}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="見出し" DisplayMemberBinding="{Binding OriginalText}" Width="250"/>
+                        <GridViewColumn Header="読み" DisplayMemberBinding="{Binding Yomi}" Width="250"/>
+                        <GridViewColumn Header="優先度" DisplayMemberBinding="{Binding Priority}" Width="100"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </DockPanel>
+
+    </DockPanel>
+</UserControl>

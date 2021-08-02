@@ -1,0 +1,26 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib"
+                    xmlns:options="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+                    xmlns:avalon="https://github.com/Dirkster99/AvalonDock">
+
+
+    <!--  Metadata  -->
+    <system:String x:Key="Theme.Name">Light.Aoi</system:String>
+    <system:String x:Key="Theme.Origin">MahAppsMetroThemesSample</system:String>
+    <system:String x:Key="Theme.DisplayName">Aoi(Light)</system:String>
+    <system:String x:Key="Theme.BaseColorScheme">Light</system:String>
+    <system:String x:Key="Theme.ColorScheme">Aoi</system:String>
+    <Color x:Key="Theme.PrimaryAccentColor">#FFD80073</Color>
+    <SolidColorBrush x:Key="Theme.ShowcaseBrush" Color="#FFD80073" options:Freeze="True" />
+
+    <SolidColorBrush x:Key="AccentFillBrush" Color="DimGray"/>
+
+    
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/AvalonDock.Themes.VS2013;component/LightBrushs.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/AvalonDock.Themes.VS2013;component/Themes/Generic.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>

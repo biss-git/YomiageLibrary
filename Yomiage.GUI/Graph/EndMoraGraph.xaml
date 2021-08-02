@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="Yomiage.GUI.Graph.EndMoraGraph"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Yomiage.GUI.Graph"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="25">
+    <Canvas>
+        <Canvas.ContextMenu>
+            <ContextMenu Padding="0,6,0,6">
+                <MenuItem x:Name="end1" Header="通常。" Click="MenuItem_Click"/>
+                <MenuItem x:Name="end2" Header="呼びかけ♪" Click="MenuItem_Click"/>
+                <MenuItem x:Name="end3" Header="疑問？" Click="MenuItem_Click"/>
+                <MenuItem x:Name="end4" Header="断定！" Click="MenuItem_Click"/>
+                <MenuItem x:Name="end5" Header="なし" Click="MenuItem_Click"/>
+            </ContextMenu>
+        </Canvas.ContextMenu>
+        <Line Canvas.Top="0" Canvas.Left="0"
+                                  X1="0" Y1="0"
+                                  X2="0" Y2="3000"
+                                  Opacity="0.15"
+                                  Stroke="DarkGray"
+                                  StrokeThickness="1"/>
+        <TextBlock Name="moraText" Canvas.Bottom="0" Canvas.Left="-12" Width="25" Padding="0,10,0,3"
+                                   Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
+                                   TextAlignment="Center"
+                                   Text="ア"
+                   MouseDown="moraText_MouseDown">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.Accent}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+    </Canvas>
+</UserControl>
