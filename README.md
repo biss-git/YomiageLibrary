@@ -1,0 +1,2 @@
+# YomiageLibrary
+トークソフト用GUIプラットフォーム
