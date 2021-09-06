@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Yomiage.Core.Types;
 using Yomiage.GUI.EventMessages;
 using Yomiage.GUI.Models;
 
@@ -27,21 +28,21 @@ namespace Yomiage.GUI.ViewModels
 
         public ReactiveCommand<string> PauseCharacterCommand { get; }
 
-        PauseDictionaryService pauseCharacterService;
+        PauseDictionaryService pauseDictionaryService;
 
         public MasterControlViewModel(
-            PauseDictionaryService pauseCharacterService,
+            PauseDictionaryService pauseDictionaryService,
             IDialogService _dialogService,
             SettingService settingService) : base(_dialogService)
         {
             this.SettingService = settingService;
-            this.pauseCharacterService = pauseCharacterService;
+            this.pauseDictionaryService = pauseDictionaryService;
 
             PauseCharacterCommand = new ReactiveCommand<string>().WithSubscribe(PauseCharacterAction).AddTo(Disposables);
 
             settingService.ExpandEffectRange.Subscribe(SetRange).AddTo(Disposables);
 
-            this.PauseList = pauseCharacterService.PauseDictionary;
+            this.PauseList = pauseDictionaryService.PauseDictionary;
         }
 
         private void SetRange(bool isExpand)
@@ -58,15 +59,15 @@ namespace Yomiage.GUI.ViewModels
             switch (param)
             {
                 case "Create":
-                    pauseCharacterService.Create();
+                    pauseDictionaryService.Create();
                     break;
                 case "Edit":
                     if(Selected.Value == null) { return; }
-                    pauseCharacterService.Edit(Selected.Value.key);
+                    pauseDictionaryService.Edit(Selected.Value.key);
                     break;
                 case "Remove":
                     if (Selected.Value == null) { return; }
-                    pauseCharacterService.Remove(Selected.Value.key);
+                    pauseDictionaryService.Remove(Selected.Value.key);
                     break;
             }
         }

@@ -25,10 +25,6 @@ namespace Yomiage.GUI.Models
 {
     public class VoicePlayerService
     {
-        private VoicePresetService voicePresetService;
-        private TextService textService;
-        private SettingService settingService;
-
         private IWavePlayer wavPlayer;
         private MMDevice mmDevice;
 
@@ -45,20 +41,32 @@ namespace Yomiage.GUI.Models
         public ReactiveProperty<bool> IsPlaying { get; } = new ReactiveProperty<bool>(false);
         public ReactiveProperty<bool> CanPlay { get; }
 
+        private VoicePresetService voicePresetService;
+        private VoiceEngineService voiceEngineService;
+        private TextService textService;
+        private SettingService settingService;
         PhraseDictionaryService phraseDictionaryService;
-        IMessageBroker messageBroker;
+        WordDictionaryService wordDictionaryService;
+        PauseDictionaryService pauseDictionaryService;
+    IMessageBroker messageBroker;
         public VoicePlayerService(
             SettingService settingService,
             VoicePresetService voicePresetService,
+            VoiceEngineService voiceEngineService,
             TextService textService,
             PhraseDictionaryService phraseDictionaryService,
+            WordDictionaryService wordDictionaryService,
+            PauseDictionaryService pauseDictionaryService,
             IMessageBroker messageBroker)
         {
             this.settingService = settingService;
             this.messageBroker = messageBroker;
             this.voicePresetService = voicePresetService;
+            this.voiceEngineService = voiceEngineService;
             this.textService = textService;
             this.phraseDictionaryService = phraseDictionaryService;
+            this.wordDictionaryService = wordDictionaryService;
+            this.pauseDictionaryService = pauseDictionaryService;
             this.CanPlay = this.IsPlaying.Select(x => !x).ToReactiveProperty();
         }
 
@@ -86,12 +94,12 @@ namespace Yomiage.GUI.Models
             while (this.wavPlayer.PlaybackState != PlaybackState.Stopped &&
                   (bufferedWaveProvider.BufferedBytes > 0 || buffer.Count > 0))
             {
-                if(bufferedWaveProvider.BufferedBytes < bytesLimit)
+                if (bufferedWaveProvider.BufferedBytes < bytesLimit)
                 {
                     buffer.TryDequeue(out double[] temp); // 分析結果を取り出す
                     if (temp != null)
                     {
-                        if(tempWave.Count > bufferLimit)
+                        if (tempWave.Count > bufferLimit)
                         {
                             tempWave.RemoveRange(0, tempWave.Count - bufferLimit);
                         }
@@ -137,16 +145,16 @@ namespace Yomiage.GUI.Models
             while (this.wavPlayer.PlaybackState != PlaybackState.Stopped &&
                   (bufferedWaveProvider.BufferedBytes > 0 || buffer.Count > 0 || scriptIndex < scripts.Length))
             {
-                if(nextBuffer == null && scriptIndex < scripts.Length)
+                if (nextBuffer == null && scriptIndex < scripts.Length)
                 {
                     nextBuffer = await GetVoiceBuffer(scripts[scriptIndex], preset, fs);
                     scriptIndex += 1;
-                    if(nextBuffer?.Count == 0)
+                    if (nextBuffer?.Count == 0)
                     {
                         nextBuffer = null;
                     }
                 }
-                if(nextBuffer != null && buffer.Count <= 1)
+                if (nextBuffer != null && buffer.Count <= 1)
                 {
                     nextBuffer.ForEach(l => buffer.Enqueue(l));
                     nextBuffer = null;
@@ -180,6 +188,10 @@ namespace Yomiage.GUI.Models
 
         private async Task<List<double[]>> GetVoiceBuffer(TalkScript script, VoicePreset preset = null, int target_fs = 44100)
         {
+            if (script.MoraCount == 0)
+            {
+                return new List<double[]>();
+            }
             var wave = await GetVoice(script, preset, target_fs);
             if (wave == null) { return null; }
 
@@ -208,7 +220,7 @@ namespace Yomiage.GUI.Models
                 x => fs = x);
 
             // サンプリングレート変更　音質が劣化するかもしれないという不安から MediaFoundationEncoder を使っているが必要ないかも
-            if(fs == target_fs) { return wave; }
+            if (fs == target_fs) { return wave; }
 
             var reSampledWave = new List<double>();
             SaveWav(wave, "original.wav", fs);
@@ -283,7 +295,7 @@ namespace Yomiage.GUI.Models
             var scriptsList = new List<TalkScript[]>();
             foreach (var t in texts)
             {
-                var scripts = this.textService.Parse(t, settingService.SplitByEnter, phraseDictionaryService.SearchDictionary);
+                var scripts = this.textService.Parse(t, settingService.SplitByEnter, phraseDictionaryService.SearchDictionary, this.wordDictionaryService.WordDictionarys, this.pauseDictionaryService.PauseDictionary.ToList());
                 scriptsList.Add(scripts);
             }
             if (scriptsList.Count <= 0) { return; }
@@ -364,6 +376,11 @@ namespace Yomiage.GUI.Models
                 scripts == null ||
                 scripts.Length <= 0 ||
                 scripts.All(s => s.MoraCount <= 0)) { return false; }
+            var directory = Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
             if (preset == null)
             {
                 preset = this.voicePresetService.SelectedPreset.Value;
@@ -510,6 +527,10 @@ namespace Yomiage.GUI.Models
         public async Task Stop()
         {
             this.wavPlayer?.Stop();
+            foreach (var engine in this.voiceEngineService.AllEngines)
+            {
+                engine.VoiceEngine?.Stop();
+            }
             await Task.Delay(100);
             this.mmDevice?.Dispose();
             this.wavPlayer?.Dispose();
@@ -519,6 +540,7 @@ namespace Yomiage.GUI.Models
 
         private string FileNameWithNumber(string fileName, int num, string text, VoicePreset preset)
         {
+            var result = "";
             if (fileName == null)
             {
                 // ファイル命名規則を指定して選択する
@@ -540,10 +562,7 @@ namespace Yomiage.GUI.Models
                             name = name.Replace(match, Math.Max(num, 0).ToString(String.Join("", Enumerable.Repeat("0", settingService.RuleNumDigits))));
                             break;
                         case "{Text}":
-                            foreach (var c in Path.GetInvalidFileNameChars())
-                            {
-                                text = text.Replace(c.ToString(), "");
-                            }
+                            text = RemoveInvalidChar(text);
                             if (text.Length > settingService.RuleTextLength)
                             {
                                 text = text.Substring(0, settingService.RuleTextLength);
@@ -556,10 +575,6 @@ namespace Yomiage.GUI.Models
                     }
                 }
 
-                foreach (var c in Path.GetInvalidFileNameChars())
-                {
-                    name = name.Replace(c.ToString(), "");
-                }
 
                 if (!Matches.Contains("{Number}") && num >= 0 ||
                     name == string.Empty)
@@ -570,7 +585,8 @@ namespace Yomiage.GUI.Models
                 var ext = ".wav";
                 if (settingService.OutputModeMp3) { ext = ".mp3"; }
                 if (settingService.OutputModeWma) { ext = ".wma"; }
-                return Path.Combine(tempDirectory, name + ext);
+                result = Path.Combine(tempDirectory, name + ext);
+                return result;
             }
             // ファイル保存ダイアログで選択する
             if (num < 0)
@@ -578,8 +594,23 @@ namespace Yomiage.GUI.Models
                 return fileName;
             }
             var extension = Path.GetExtension(fileName);
-            return Path.Combine(Path.GetDirectoryName(fileName),
+            result = Path.Combine(Path.GetDirectoryName(fileName),
                 Path.GetFileNameWithoutExtension(fileName) + "-" + num.ToString() + extension);
+            return result;
+        }
+
+        /// <summary>
+        /// ファイル名から禁止文字を取り除く。
+        /// </summary>
+        /// <param name="filePath"></param>
+        private static string RemoveInvalidChar(string filePath)
+        {
+            var invalids = Path.GetInvalidFileNameChars();
+            foreach(var i in invalids)
+            {
+                filePath = filePath.Replace(i.ToString(), "");
+            }
+            return filePath;
         }
     }
 }

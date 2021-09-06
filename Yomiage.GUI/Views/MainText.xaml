@@ -26,9 +26,9 @@
                       Visibility="{Binding IsLineNumberVisible.Value, Converter={StaticResource BooleanToVisibilityConverter}}">
             <RichTextBox x:Name="richNumber" DockPanel.Dock="Left" Width="40" BorderThickness="0"
                      VerticalScrollBarVisibility="Hidden"
-                     FontSize="16"
+                     FontSize="{Binding SettingService.FontSize.Value}"
+                     FontFamily="{Binding SettingService.FontFamily.Value}"
                      Block.LineHeight="1"
-                     FontFamily="Meiriyo"
                      AcceptsReturn="True"
                      IsReadOnly="True"
                      Opacity="0.6"
@@ -115,6 +115,7 @@
                     <KeyBinding Gesture="Ctrl+U" Command="{Binding RemovePresetCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"/>
                     <KeyBinding Gesture="Ctrl+W" Command="{Binding WordCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"/>
                     <KeyBinding Gesture="F5" Command="{Binding PlayCommand}"/>
+                    <KeyBinding Gesture="Shift+F5" Command="{Binding PlayCommand}"/>
                 </RichTextBox.InputBindings>
                 <RichTextBox.ContextMenu>
                     <ContextMenu>

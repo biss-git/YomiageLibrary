@@ -51,6 +51,7 @@ namespace Yomiage.GUI.ViewModels
         public AsyncReactiveCommand SaveCommand { get; }
 
         public Func<string> GetSelectedText;
+        public Func<string> GetCursorText;
 
         public ReactiveProperty<FlowDocument> Document { get; }
         private PhraseService phraseService;
@@ -58,6 +59,7 @@ namespace Yomiage.GUI.ViewModels
         public SettingService SettingService { get; }
         private WordDictionaryService wordDictionaryService;
         private VoicePresetService voicePresetService;
+        PauseDictionaryService pauseDictionaryService;
 
         public MainTextViewModel(
             IDialogService _dialogService,
@@ -70,6 +72,7 @@ namespace Yomiage.GUI.ViewModels
             LayoutService layoutService,
             WordDictionaryService wordDictionaryService,
             TextService textService,
+            PauseDictionaryService pauseDictionaryService,
             IMessageBroker messageBroker) : base(_dialogService)
         {
             this.ScriptService = scriptService;
@@ -80,6 +83,7 @@ namespace Yomiage.GUI.ViewModels
             this.phraseDictionaryService = phraseDictionaryService;
             this.SettingService = settingService;
             this.wordDictionaryService = wordDictionaryService;
+            this.pauseDictionaryService = pauseDictionaryService;
 
             Title = new ReactivePropertySlim<string>("新規台本").AddTo(Disposables);
             TitleWithDirty = new ReactivePropertySlim<string>().AddTo(Disposables);
@@ -201,7 +205,12 @@ namespace Yomiage.GUI.ViewModels
         {
             Content.Value = GetContent();
             var text = "";
-            if(GetSelectedText != null)
+            if (Keyboard.Modifiers == ModifierKeys.Shift &&
+                GetCursorText != null)
+            {
+                text = GetCursorText();
+            }
+            else if(GetSelectedText != null)
             {
                 text = GetSelectedText();
             }
@@ -209,7 +218,7 @@ namespace Yomiage.GUI.ViewModels
             {
                 text = Content.Value;
             }
-            var scripts = this.textService.Parse(text, SettingService.SplitByEnter, phraseDictionaryService.SearchDictionary);
+            var scripts = this.textService.Parse(text, SettingService.SplitByEnter, phraseDictionaryService.SearchDictionary, this.wordDictionaryService.WordDictionarys, this.pauseDictionaryService.PauseDictionary.ToList());
 
             Action<int> SubmitPlayIndex = async (int index) =>
             {

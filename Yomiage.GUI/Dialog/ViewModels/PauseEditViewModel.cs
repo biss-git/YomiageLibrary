@@ -49,7 +49,7 @@ namespace Yomiage.GUI.Dialog.ViewModels
                 this.pause = pause;
                 this.Span_ms.Value = pause.Span_ms;
             }
-            if (parameters.TryGetValue("config", out EngineConfig config))
+            if (parameters.TryGetValue("config", out EngineConfig config) && config != null)
             {
                 try
                 {

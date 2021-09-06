@@ -199,7 +199,7 @@ namespace Yomiage.GUI.Dialog.ViewModels
             }
             else
             {
-                StartIndex.Value = start * ListSize.Value + 1;
+                StartIndex.Value = start + 1;
                 EndIndex.Value = StartIndex.Value + visibleCount - 1;
             }
             if (!PhraseListOrigin.Any(w => w.Visible.Value && Selected.Value == w))

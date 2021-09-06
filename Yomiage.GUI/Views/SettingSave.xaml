@@ -171,12 +171,14 @@
                 <StackPanel Visibility="{Binding IsChecked, ElementName=ruleRadioButton, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="20,5,0,0">
                     <DockPanel>
                         <Label DockPanel.Dock="Left" Width="70">フォルダー</Label>
-                        <Button DockPanel.Dock="Right" MinWidth="60" Command="{Binding SelectFolder}">参照...</Button>
+                        <Button DockPanel.Dock="Right" MinWidth="60" Command="{Binding SelectFolderCommand}">参照...</Button>
                         <TextBox Text="{Binding RuleFolderPath.Value, UpdateSourceTrigger=PropertyChanged}"/>
                     </DockPanel>
                     <DockPanel>
                         <Label DockPanel.Dock="Left" Width="70">命名規則</Label>
-                        <Label DockPanel.Dock="Right" Width="60">.wav</Label>
+                        <Label DockPanel.Dock="Right" Width="60" Visibility="{Binding SettingService.OutputModeWav, Converter={StaticResource BooleanToVisibilityConverter}}">.wav</Label>
+                        <Label DockPanel.Dock="Right" Width="60" Visibility="{Binding SettingService.OutputModeMp3, Converter={StaticResource BooleanToVisibilityConverter}}">.mp3</Label>
+                        <Label DockPanel.Dock="Right" Width="60" Visibility="{Binding SettingService.OutputModeWma, Converter={StaticResource BooleanToVisibilityConverter}}">.wma</Label>
                         <TextBox Text="{Binding Rule.Value, UpdateSourceTrigger=PropertyChanged}"/>
                     </DockPanel>
                     <StackPanel Margin="70,5,60,0">

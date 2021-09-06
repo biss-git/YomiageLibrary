@@ -40,7 +40,7 @@ namespace Yomiage.SDK.Common
         /// <summary>
         /// json ファイルに保存する。
         /// </summary>
-        public static void Serialize<T>(T obj, string fileName, bool IgnoreReadOnlyProperties = true, JsonIgnoreCondition DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault)
+        public static void Serialize<T>(T obj, string fileName, bool IgnoreReadOnlyProperties = true, JsonIgnoreCondition DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)
         {
             var options = new JsonSerializerOptions
             {
@@ -53,7 +53,7 @@ namespace Yomiage.SDK.Common
             File.WriteAllText(fileName, jsonstr);
         }
 
-        public static string SerializeToString<T>(T obj, bool WriteIndented = false, bool IgnoreReadOnlyProperties = true, JsonIgnoreCondition DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault)
+        public static string SerializeToString<T>(T obj, bool WriteIndented = false, bool IgnoreReadOnlyProperties = true, JsonIgnoreCondition DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)
         {
             var options = new JsonSerializerOptions
             {

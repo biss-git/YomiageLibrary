@@ -17,7 +17,7 @@ namespace Yomiage.GUI.ViewModels
 {
     class WordEditorViewModel : ViewModelBase
     {
-        public ReactivePropertySlim<string> OriginalText { get; } = new("あいう");
+        public ReactivePropertySlim<string> OriginalText { get; } = new("");
         public ReactivePropertySlim<TalkScript> Phrase { get; } = new();
         public ReactivePropertySlim<string> Priority { get; } = new("3.標準");
         public ReactiveProperty<bool> CanRegister { get; } = new ReactiveProperty<bool>(false);
@@ -33,11 +33,13 @@ namespace Yomiage.GUI.ViewModels
         VoicePlayerService voicePlayerService;
         WordDictionaryService wordDictionaryService;
         VoicePresetService voicePresetService;
+        TextService textService;
 
         public WordEditorViewModel(
             VoicePlayerService voicePlayerService,
             WordDictionaryService wordDictionaryService,
             VoicePresetService voicePresetService,
+            TextService textService,
             IMessageBroker messageBroker,
             IDialogService _dialogService
             ) : base(_dialogService)
@@ -45,6 +47,7 @@ namespace Yomiage.GUI.ViewModels
             this.voicePlayerService = voicePlayerService;
             this.wordDictionaryService = wordDictionaryService;
             this.voicePresetService = voicePresetService;
+            this.textService = textService;
 
             UpdateCommand = new ReactiveCommand<string>().WithSubscribe(UpdateAction).AddTo(Disposables);
             PlayCommand = this.voicePlayerService.CanPlay.ToAsyncReactiveCommand().WithSubscribe(PlayAction).AddTo(Disposables);
@@ -52,70 +55,9 @@ namespace Yomiage.GUI.ViewModels
             RegisterCommand = this.CanRegister.ToReactiveCommand().WithSubscribe(RegisterAction).AddTo(Disposables);
             UnRegisterCommand = this.CanUnRegister.ToReactiveCommand().WithSubscribe(UnRegisterAction).AddTo(Disposables);
             ClearCommand = new ReactiveCommand().WithSubscribe(ClearAction).AddTo(Disposables);
-            OriginalText.Subscribe(_ => UpdateState()).AddTo(Disposables);
+            OriginalText.Subscribe(t => { MakeScript(t); UpdateState(); }).AddTo(Disposables);
             Priority.Subscribe(_ => UpdateState()).AddTo(Disposables);
 
-            TalkScript phrase = new TalkScript();
-            phrase.Sections = new List<Section>();
-            {
-                Section section = new Section();
-                section.Pause = new Pause() { Span_ms = 200, Type = PauseType.Short };
-                section.Moras.Add(new Mora()
-                {
-                    Accent = false,
-                    Character = "ア",
-                    Voiceless = null,
-                });
-                section.Moras.Add(new Mora()
-                {
-                    Accent = true,
-                    Character = "イ",
-                    Voiceless = true,
-                });
-                section.Moras.Add(new Mora()
-                {
-                    Accent = false,
-                    Character = "ウ",
-                    Voiceless = false,
-                });
-                phrase.Sections.Add(section);
-            }
-            {
-                Section section = new Section();
-                section.Pause = new Pause() { Span_ms = 250, Type = PauseType.Long };
-                section.Moras.Add(new Mora()
-                {
-                    Accent = false,
-                    Character = "ア",
-                    Voiceless = null,
-                });
-                section.Moras.Add(new Mora()
-                {
-                    Accent = true,
-                    Character = "イ",
-                    Voiceless = true,
-                });
-                phrase.Sections.Add(section);
-            }
-            {
-                Section section = new Section();
-                section.Moras.Add(new Mora()
-                {
-                    Character = "ア",
-                });
-                section.Moras.Add(new Mora()
-                {
-                    Character = "イ",
-                });
-                phrase.Sections.Add(section);
-            }
-            phrase.EndSection = new EndSection()
-            {
-                EndSymbol = "。",
-                Pause = new Pause() { Type = PauseType.None },
-            };
-
-            this.Phrase.Value = phrase;
             messageBroker.Subscribe<EditWord>(word =>
             {
                 OriginalText.Value = word.OriginalText;
@@ -125,6 +67,19 @@ namespace Yomiage.GUI.ViewModels
                 }
                 Priority.Value = word.Priority;
             });
+        }
+
+        private void MakeScript(string text)
+        {
+            var scripts = this.textService.Parse(text, WordDictionarys:this.wordDictionaryService.WordDictionarys);
+            if(scripts.Length > 0)
+            {
+                this.Phrase.Value = scripts.First();
+            }
+            else
+            {
+                this.Phrase.Value = new TalkScript();
+            }
         }
 
         private async Task PlayAction()

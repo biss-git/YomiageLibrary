@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="Theme" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Light.Aoi</Value>
+      <Value Profile="(Default)">System</Value>
     </Setting>
     <Setting Name="PresetFilePath" Type="System.String" Scope="User">
       <Value Profile="(Default)">未登録</Value>

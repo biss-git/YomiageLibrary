@@ -12,14 +12,14 @@
         ResizeMode="NoResize"
         Topmost="True"
         WindowStartupLocation="CenterScreen"
-        Height="450" Width="800">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Image Grid.Row="1" x:Name="image2" Source="./スプラッシュ.png"/>
-        <TextBlock x:Name="text" Text="起動中" Height="51" Margin="91,61,108,0" VerticalAlignment="Top" Background="White"/>
-        <ProgressBar x:Name="progBar" Margin="20,160,18,39" Minimum="0" Maximum="1" Value="0.0"/>
-    </Grid>
+        Height="360" Width="800">
+    <DockPanel>
+        <ProgressBar x:Name="progBar" Minimum="0" Maximum="1" Value="0.0"
+                     DockPanel.Dock="Bottom"/>
+        <Grid>
+            <Image Grid.Row="1" x:Name="image2" Source="./スプラッシュ.png"/>
+            <TextBlock x:Name="text" Text="起動中" VerticalAlignment="Bottom"
+                       Foreground="White"/>
+        </Grid>
+    </DockPanel>
 </Window>

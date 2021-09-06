@@ -7,9 +7,12 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <PublishSingleFile>true</PublishSingleFile>
     <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
+    <AssemblyName>Yomiage.GUI</AssemblyName>
+    <RootNamespace>Yomiage.GUI</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="icon.png" />
     <None Remove="original.gif" />
     <None Remove="picture\Base.png" />
     <None Remove="picture\EyeClose.png" />
@@ -36,6 +39,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="icon.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
     <None Update="Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -47,6 +53,9 @@
     <None Update="Themes\Light.Zunda">
       <Generator>MSBuild:Compile</Generator>
     </None>
+    <None Update="UniCoe.exe.config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Yomiage.GUI.exe.config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -56,6 +65,7 @@
     <EmbeddedResource Include="Resources\original.gif">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
+    <Resource Include="icon.png" />
     <Resource Include="picture\Base.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

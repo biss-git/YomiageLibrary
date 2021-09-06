@@ -211,7 +211,23 @@ namespace Yomiage.GUI.Views
             if(this.DataContext is MainTextViewModel vm)
             {
                 vm.GetSelectedText = () => this.rich.Selection.Text;
+                vm.GetCursorText = GetCursorText;
             }
+        }
+
+        private string GetCursorText()
+        {
+            var pos = this.rich.CaretPosition;
+            var text = GetContent();
+            string subText = new TextRange(pos.DocumentStart, pos).Text;
+            if (!subText.Contains("\n"))
+            {
+                return text;
+            }
+            var index = subText.LastIndexOf('\n');
+            var cursotText = text.Substring(index + 1);
+
+            return cursotText;
         }
 
     }

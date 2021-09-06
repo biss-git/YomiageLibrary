@@ -12,6 +12,7 @@
         <DockPanel DockPanel.Dock="Bottom" Margin="3">
             <Button DockPanel.Dock="Right" Command="{Binding OkCommand}" Margin="0,0,3,0">OK</Button>
             <Button DockPanel.Dock="Left" Command="{Binding AddCommand}" Margin="0,0,3,0">追加</Button>
+            <Button DockPanel.Dock="Left" Margin="0,0,3,0">削除方法</Button>
             <Label/>
         </DockPanel>
 

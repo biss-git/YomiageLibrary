@@ -20,12 +20,6 @@ namespace Yomiage.SDK.Talk
         /// </summary>
         public string OriginalText { get; set; }
         /// <summary>
-        /// 読めるように変換された文字列。
-        /// 日本語の場合は全角カタカナと全角スペースのみに変換される（予定）。
-        /// </summary>
-        [JsonIgnore]
-        public string SpeachText { get; set; }
-        /// <summary>
         /// 複数のmoraとポーズからなるアクセント句のリスト。
         /// </summary>
         public List<Section> Sections { get; set; } = new List<Section>();
@@ -46,7 +40,7 @@ namespace Yomiage.SDK.Talk
         /// <summary>
         /// 読み（全部カタカナ）を取得する。
         /// </summary>
-        public string GetYomi()
+        public string GetYomi(bool withSpace = true)
         {
             string yomi = "";
             this.Sections.ForEach(s =>
@@ -55,7 +49,12 @@ namespace Yomiage.SDK.Talk
                 {
                     yomi += m.Character;
                 });
+                if (withSpace)
+                {
+                    yomi += "　";
+                }
             });
+            yomi += EndSection.EndSymbol;
             return yomi;
         }
 

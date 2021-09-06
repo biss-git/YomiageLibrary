@@ -29,9 +29,9 @@ namespace Yomiage.GUI
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        private double PresetWidth = Settings.Default.PresetWidth;
-        private double CharacterWidth = Settings.Default.CharacterWidth;
-        private double TuningHeight = Settings.Default.TuningHeight;
+        private double PresetWidth;
+        private double CharacterWidth;
+        private double TuningHeight;
 
         private SettingService SettingService;
         private ScriptService ScriptService;
@@ -69,6 +69,10 @@ namespace Yomiage.GUI
             this.messageBroker = messageBroker;
             InitializeComponent();
             RecoverWindowBounds();
+
+            PresetWidth = settingService.settings.Default.PresetWidth;
+            CharacterWidth = settingService.settings.Default.CharacterWidth;
+            TuningHeight = settingService.settings.Default.TuningHeight;
 
             layoutService.PresetVisible.Subscribe(visible =>
             {
@@ -183,10 +187,10 @@ namespace Yomiage.GUI
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Settings.Default.PresetWidth = this.Column1.Width.Value;
-            Settings.Default.CharacterWidth = this.Column5.Width.Value;
-            Settings.Default.TuningHeight = this.Row3.Height.Value;
-            Settings.Default.Save();
+            this.SettingService.settings.Default.PresetWidth = this.Column1.Width.Value;
+            this.SettingService.settings.Default.CharacterWidth = this.Column5.Width.Value;
+            this.SettingService.settings.Default.TuningHeight = this.Row3.Height.Value;
+            this.SettingService.Save();
             SaveWindowBounds();
             SettingService.SaveMaster();
         }
@@ -194,13 +198,13 @@ namespace Yomiage.GUI
 
         void SaveWindowBounds()
         {
-            var settings = Settings.Default;
+            var settings = this.SettingService.settings.Default;
             settings.WindowMaximized = WindowState == WindowState.Maximized;
             settings.WindowLeft = Left;
             settings.WindowTop = Top;
             settings.WindowWidth = Width;
             settings.WindowHeight = Height;
-            settings.Save();
+            this.SettingService.Save();
         }
 
         /// <summary>
@@ -208,7 +212,7 @@ namespace Yomiage.GUI
         /// </summary>
         void RecoverWindowBounds()
         {
-            var settings = Settings.Default;
+            var settings = this.SettingService.settings.Default;
             // 左
             if (settings.WindowLeft >= 0 &&
                 (settings.WindowLeft + settings.WindowWidth) < SystemParameters.VirtualScreenWidth)
@@ -288,6 +292,18 @@ namespace Yomiage.GUI
         private void MetroWindow_MouseDown(object sender, MouseButtonEventArgs e)
         {
             this.messageBroker.Publish(new Wakeup());
+        }
+
+        private void CanExecuteCloseCommand(object sender,
+            CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void ExecutedCloseCommand(object sender,
+            ExecutedRoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

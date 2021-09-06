@@ -371,6 +371,25 @@ namespace Yomiage.GUI.Graph
             if (d is PhraseGraph p) { p.Draw_PlayPosition(); }
         }
 
+        public static readonly DependencyProperty PlayPositionEnableProperty =
+            DependencyProperty.Register(
+            "PlayPositionEnable",
+            typeof(bool),
+            typeof(PhraseGraph),
+            new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, PlayPositionEnablePropertyChanged));
+        public bool PlayPositionEnable
+        {
+            get { return (bool)GetValue(PlayPositionEnableProperty); }
+            set { SetValue(PlayPositionEnableProperty, value); }
+        }
+        private static void PlayPositionEnablePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is PhraseGraph p && e.NewValue is bool visible)
+            {
+                p.positionBar.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
         #endregion
 
 

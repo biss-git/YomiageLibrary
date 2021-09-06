@@ -131,6 +131,7 @@
                     <graph:PhraseGraph AccentSelected="true"
                                    Phrase="{Binding Phrase.Value}"
                                    UpdateCommand="{Binding UpdateCommand}"
+                                       PlayPositionEnable="False"
                                    />
                 </Grid>
             </ScrollViewer>

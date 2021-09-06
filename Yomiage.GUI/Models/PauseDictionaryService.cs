@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Yomiage.Core.Types;
 using Yomiage.GUI.EventMessages;
 using Yomiage.SDK.Common;
 
@@ -17,7 +18,7 @@ namespace Yomiage.GUI.Models
     {
         private string dictionaryPath = "user.ysdic";
 
-        public ReactiveCollection<PauseSet> PauseDictionary { get; set; } = new ();
+        public ReactiveCollection<PauseSet> PauseDictionary { get; set; } = new (); // Dictionary なのに Dictionary じゃないけど、まあいいか。
         SettingService settingService;
         ConfigService configService;
         IDialogService dialogService;
@@ -150,26 +151,6 @@ namespace Yomiage.GUI.Models
             this.settingService.PauseDictionaryPath = filePath;
         }
 
-    }
-
-    public class PauseSet : BindableBase
-    {
-        private string _key;
-        public string key {
-            get => _key;
-            set => SetProperty(ref _key, value);
-        }
-        private int _span_ms;
-        public int span_ms {
-            get => _span_ms;
-            set => SetProperty(ref _span_ms, value);
-        }
-
-        public PauseSet(string key, int span_ms)
-        {
-            this.key = key;
-            this.span_ms = span_ms;
-        }
     }
 
 }

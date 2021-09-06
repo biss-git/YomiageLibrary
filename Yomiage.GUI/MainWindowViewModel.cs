@@ -66,6 +66,8 @@ namespace Yomiage.GUI
         private VoicePresetService VoicePresetService;
         private VoicePlayerService VoicePlayerService;
         private ConfigService ConfigService;
+        IMessageBroker messageBroker;
+        PauseDictionaryService pauseDictionaryService;
 
 
         public MainWindowViewModel(
@@ -76,6 +78,8 @@ namespace Yomiage.GUI
             ConfigService configService,
             VoicePresetService voicePresetService,
             VoicePlayerService voicePlayerService,
+            PauseDictionaryService pauseDictionaryService,
+            IMessageBroker messageBroker,
             IDialogService dialogService): base(dialogService)
         {
             this.SettingService = settingService;
@@ -85,6 +89,8 @@ namespace Yomiage.GUI
             this.VoicePresetService = voicePresetService;
             this.VoicePlayerService = voicePlayerService;
             this.ConfigService = configService;
+            this.pauseDictionaryService = pauseDictionaryService;
+            this.messageBroker = messageBroker;
             PhraseGraph.DialogService = dialogService;
 
             TunerSpan = new ReactivePropertySlim<int>(5).AddTo(Disposables);
@@ -132,6 +138,9 @@ namespace Yomiage.GUI
                 case "Initialize":
                     this.SettingService.ResetMaster();
                     break;
+                case "CreatePause":
+                    this.pauseDictionaryService.Create();
+                    break;
             }
         }
 
@@ -166,6 +175,9 @@ namespace Yomiage.GUI
         {
             switch (param)
             {
+                case "SelectPresetTab":
+                    messageBroker.Publish(new ChangeTuningTab() { TabIndex = 2 });
+                    break;
                 case "Copy":
                     if( this.VoicePresetService.SelectedPreset.Value != null &&
                         this.VoicePresetService.SelectedPreset.Value.Type != PresetType.External)

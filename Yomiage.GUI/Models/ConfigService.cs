@@ -141,7 +141,7 @@ namespace Yomiage.GUI.Models
         {
             if (string.IsNullOrWhiteSpace(EngineDirectory)) { return; }
             var files = new List<string>();
-            Utility.SearchFile(EngineDirectory, "engine.config.json", 5, files);
+            Utility.SearchFile(EngineDirectory, "engine.config.json", 6, files);
             var count = 0;
             foreach (var f in files)
             {
@@ -203,7 +203,7 @@ namespace Yomiage.GUI.Models
         {
             if (string.IsNullOrWhiteSpace(LibraryDirectory)) { return; }
             var files = new List<string>();
-            Utility.SearchFile(LibraryDirectory, "library.config.json", 4, files);
+            Utility.SearchFile(LibraryDirectory, "library.config.json", 6, files);
             var count = 0;
             foreach (var f in files)
             {

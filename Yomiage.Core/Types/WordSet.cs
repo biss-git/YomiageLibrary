@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Yomiage.GUI.Classes
+namespace Yomiage.Core.Types
 {
     public class WordSet
     {

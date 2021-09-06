@@ -1,6 +1,6 @@
 {
-  "EngineDirectory": "C:\\Users\\kikuchi\\source\\repos\\YomiageLibrary\\UtaYomiEngin\\bin\\Debug\\netstandard2.1",
-  "LibraryDirectory": "bbb",
+  "EngineDirectory": "C:\\Users\\kikuchi\\source\\repos\\UtaTalk",
+  "LibraryDirectory": "C:\\Users\\kikuchi\\source\\repos\\UtaTalk",
   "AllowMultiProcess": true,
   "DocumentDirectoryMode": false
 }

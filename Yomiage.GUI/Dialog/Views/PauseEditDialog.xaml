@@ -42,7 +42,7 @@
         <Separator/>
         <DockPanel>
             <Button DockPanel.Dock="Right" Command="{Binding CancelCommand}" Width="80" Margin="3">キャンセル</Button>
-            <Button DockPanel.Dock="Right" Command="{Binding OkCommand}" Width="80" Margin="3">OK</Button>
+            <Button DockPanel.Dock="Right" Command="{Binding OkCommand}" Width="80" Margin="3" IsDefault="True">OK</Button>
             <Label/>
         </DockPanel>
     </StackPanel>

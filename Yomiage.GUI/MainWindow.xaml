@@ -23,6 +23,11 @@
         <conv:ActiveScriptConverter x:Key="ActiveScriptConverter"/>
         <conv:ActivePhraseEditorConverter x:Key="ActivePhraseEditorConverter"/>
     </mah:MetroWindow.Resources>
+    <mah:MetroWindow.CommandBindings>
+        <CommandBinding Command="{x:Static ApplicationCommands.Close}"
+                    Executed="ExecutedCloseCommand"
+                    CanExecute="CanExecuteCloseCommand" />
+    </mah:MetroWindow.CommandBindings>
     <mah:MetroWindow.TitleTemplate>
         <DataTemplate>
             <TextBlock Text="{TemplateBinding Content}"
@@ -50,6 +55,7 @@
                    FontSize="12"/>-->
                 
                 <!-- メニューバー -->
+                <Image Source="./icon.png" Margin="8,2"/>
                 <Menu DockPanel.Dock="Top" Background="Transparent" Foreground="White">
                     <Menu.Resources>
                         <Style TargetType="MenuItem" BasedOn="{StaticResource MyMenuItem}">
@@ -66,20 +72,20 @@
                         <MenuItem Header="テキストを上書き保存" Command="{Binding ScriptCommand}" CommandParameter="Save"/>
                         <MenuItem Header="名前をつけてテキストを保存" Command="{Binding ScriptCommand}" CommandParameter="SaveAs"/>
                         <Separator/>
-                        <MenuItem Header="音声ファイルを保存"/>
-                        <Separator/>
-                        <MenuItem Header="プロジェクトをインポート"/>
+                        <!--<MenuItem Header="音声ファイルを保存"/>
+                        <Separator/>-->
+                        <!--<MenuItem Header="プロジェクトをインポート"/>
                         <MenuItem Header="プロジェクトをエクスポート"/>
-                        <Separator/>
+                        <Separator/>-->
                         <MenuItem Header="設定のインポート" IsEnabled="False"/>
                         <MenuItem Header="設定のエクスポート" IsEnabled="False"/>
                         <Separator/>
-                        <MenuItem Header="終了" Margin="0,0,0,6"/>
+                        <MenuItem Header="終了" Command="ApplicationCommands.Close" Margin="0,0,0,6"/>
                     </MenuItem>
                     <MenuItem Header=" 台本 ">
                         <MenuItem Header="再生" Command="{Binding ScriptCommand}" CommandParameter="Play" Margin="0,6,0,0"/>
                         <MenuItem Header="音声保存" Command="{Binding ScriptCommand}" CommandParameter="SaveVoice"/>
-                        <MenuItem Header="保存設定" Command="{Binding OpenDialogCommand}" CommandParameter="SaveVoiceDialog"/>
+                        <MenuItem Header="保存設定" Command="{Binding OpenDialogCommand}" CommandParameter="SaveVoiceDialog" Margin="0,0,0,6"/>
                         <!--<MenuItem Header="再生時間" Margin="0,0,0,6"/>-->
                         <!--<Separator/>
                         <MenuItem Header="ボイスプリセットを割り当てる"/>
@@ -90,14 +96,14 @@
                     <MenuItem Header=" マスター ">
                         <MenuItem Header="設定値を全て初期化" Command="{Binding MasterCommand}" CommandParameter="Initialize" Margin="0,6,0,0"/>
                         <Separator/>
-                        <MenuItem Header="記号ポーズを新規登録" Command="{Binding OpenDialogCommand}" CommandParameter="PauseCharacterDialog" Margin="0,0,0,6"/>
+                        <MenuItem Header="記号ポーズを新規登録" Command="{Binding MasterCommand}" CommandParameter="CreatePause" Margin="0,0,0,6"/>
                     </MenuItem>
                     <MenuItem Header=" ボイス ">
-                        <MenuItem Header="新規作成" Command="{Binding OpenDialogCommand}" CommandParameter="PresetNewDialog" Margin="0,6,0,0"/>
+                        <MenuItem Header="ユーザーボイスの新規作成" Command="{Binding OpenDialogCommand}" CommandParameter="PresetNewDialog" Margin="0,6,0,0"/>
                         <Separator/>
-                        <MenuItem Header="ボイスプリセットの編集"/>
-                        <Separator/>
-                        <MenuItem Header="標準プリセットを全て初期化" Margin="0,0,0,6"/>
+                        <MenuItem Header="ボイスプリセットの編集" Command="{Binding VoiceCommand}" CommandParameter="SelectPresetTab" Margin="0,0,0,6"/>
+                        <!--<Separator/>
+                        <MenuItem Header="標準プリセットを全て初期化" Margin="0,0,0,6"/>-->
                     </MenuItem>
                     <MenuItem Header=" フレーズ ">
                         <MenuItem Header="一覧" Command="{Binding OpenDialogCommand}" CommandParameter="PhraseListDialog" Margin="0,6,0,6"/>
@@ -130,10 +136,10 @@
                     <MenuItem Header=" ヘルプ ">
                         <MenuItem Header="ヘルプの表示" Margin="0,6,0,0"/>
                         <Separator/>
-                        <MenuItem Header="お知らせ"/>
+                        <MenuItem Header="お知らせ・最新情報"/>
                         <Separator/>
-                        <MenuItem Header="更新確認" IsEnabled="False"/>
-                        <Separator/>
+                        <!--<MenuItem Header="更新確認" IsEnabled="False"/>
+                        <Separator/>-->
                         <MenuItem Header="バージョン情報" Command="{Binding OpenDialogCommand}" CommandParameter="VersionInfoDialog" Margin="0,0,0,6"/>
                     </MenuItem>
                 </Menu>
@@ -182,10 +188,10 @@
                 <TextBlock Text="{Binding Col.Value}"/>
                 <TextBlock>列</TextBlock>
             </StackPanel>
-            <Button DockPanel.Dock="Right">記号ポーズ辞書</Button>
+            <!--<Button DockPanel.Dock="Right">記号ポーズ辞書</Button>
             <Button DockPanel.Dock="Right">単語辞書</Button>
-            <Button DockPanel.Dock="Right">フレーズ辞書</Button>
-            <Label>
+            <Button DockPanel.Dock="Right">フレーズ辞書</Button>-->
+            <Label BorderThickness="0">
                 正常起動
             </Label>
         </DockPanel>
@@ -215,10 +221,10 @@
                 <LayoutRoot>
                     <LayoutPanel>
                         <LayoutDocumentPane DockHeight="*" DockWidth="*">
-                            <LayoutDocument x:Name="StandartTab" Title=" 標準ボイス " CanClose="False" CanFloat="False" CanMove="False">
+                            <LayoutDocument x:Name="StandartTab" Title="　標準ボイス　" CanClose="False" CanFloat="False" CanMove="False">
                                 <view:PresetStandard/>
                             </LayoutDocument>
-                            <LayoutDocument x:Name="UserTab" Title=" ユーザーボイス " CanClose="False" CanFloat="False" CanMove="False">
+                            <LayoutDocument x:Name="UserTab" Title="　ユーザーボイス　" CanClose="False" CanFloat="False" CanMove="False">
                                 <view:PresetUser/>
                             </LayoutDocument>
                             <!--<LayoutDocument x:Name="ExternalTab" Title=" 外部ボイス " CanClose="False" CanFloat="False" CanMove="False">

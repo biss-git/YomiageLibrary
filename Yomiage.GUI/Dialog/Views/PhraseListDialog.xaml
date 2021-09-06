@@ -95,8 +95,8 @@
 
         <!-- リスト -->
         <DockPanel>
-            <!-- ページング -->
-            <DockPanel DockPanel.Dock="Top">
+            <!-- ページング これは使わない。 -->
+            <DockPanel DockPanel.Dock="Top" Visibility="Collapsed">
                 <DockPanel.Resources>
                     <Style TargetType="RadioButton" BasedOn="{StaticResource MahApps.Styles.ToggleButton}">
                         <Setter Property="FontWeight" Value="Normal"/>
@@ -141,6 +141,12 @@
 
             <!-- 件数表示 -->
             <DockPanel DockPanel.Dock="Bottom">
+                <mah:NumericUpDown DockPanel.Dock="Left" ButtonsAlignment="Opposite" SwitchUpDownButtons="True" Width="130"
+                                   Value="{Binding PageIndex.Value}" Minimum="1" Maximum="{Binding PageSize.Value}" TextAlignment="Center"
+                                   Margin="3,0,0,0"/>
+                <Label DockPanel.Dock="Left" Content=" / " VerticalAlignment="Center"/>
+                <Label DockPanel.Dock="Left" Width="100" Content="{Binding PageSize.Value}" VerticalAlignment="Center"/>
+                
                 <Label DockPanel.Dock="Right">件目を表示</Label>
                 <Label DockPanel.Dock="Right" Content="{Binding EndIndex.Value}"/>
                 <Label DockPanel.Dock="Right">-</Label>

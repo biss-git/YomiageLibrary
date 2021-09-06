@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Yomiage.Core.Types;
 using Yomiage.GUI.Classes;
 using Yomiage.GUI.EventMessages;
 using Yomiage.SDK.Common;
@@ -15,7 +16,7 @@ namespace Yomiage.GUI.Models
     public class WordDictionaryService
     {
         private string lastFileNeme = "user.ywdic";
-        public Dictionary<string, WordSet> WordDictionarys { get; set; } = new();
+        public Dictionary<string, WordSet> WordDictionarys { get; set; } = new(); // なんでこれ最後に s がついているんでしょうね。
         SettingService settingService;
         ConfigService configService;
         IMessageBroker messageBroker;

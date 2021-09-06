@@ -28,6 +28,6 @@ namespace Yomiage.GUI.Data
             Num1000 = temp;
         }
 
-        public static string AppName { get; } = "アプリ名";
+        public static string AppName { get; } = "ユニコエ";
     }
 }

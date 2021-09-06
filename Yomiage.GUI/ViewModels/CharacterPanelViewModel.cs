@@ -26,6 +26,7 @@ namespace Yomiage.GUI.ViewModels
         public ReactivePropertySlim<bool> EyeEnable { get; }
         public ReactivePropertySlim<bool> MouthEnable { get; }
         public ReactivePropertySlim<bool> IsCharacterMaximized { get; }
+        public ReactivePropertySlim<string> PresetName { get; } = new();
 
         public ReactivePropertySlim<Brush> Background { get; } = new ReactivePropertySlim<Brush>();
 
@@ -72,11 +73,12 @@ namespace Yomiage.GUI.ViewModels
                 this.EyeEnable.Value = settingService.CharacterEye;
                 this.MouthEnable.Value = settingService.CharacterMouth;
             }).AddTo(Disposables);
-            voicePresetService.SelectedPreset.Subscribe(value =>
+            voicePresetService.SelectedPreset.Subscribe(preset =>
             {
-                if(value == null) { return; }
-                var directory = value.Library.ConfigDirectory;
-                var config = value.Library.CharacterConfig;
+                if(preset == null) { return; }
+                this.PresetName.Value = preset.Name;
+                var directory = preset.Library.ConfigDirectory;
+                var config = preset.Library.CharacterConfig;
                 if(config == null) { return; }
                 this.Base = loadBitmapImage(Path.Combine(directory, config.BasicFormat.Base));
                 this.MouthOpen = loadBitmapImage(Path.Combine(directory, config.BasicFormat.MouthOpen));
@@ -103,7 +105,7 @@ namespace Yomiage.GUI.ViewModels
                 {
                 }
                 SetBackground(settingService.Theme.Value);
-            });
+            }).AddTo(Disposables);
             settingService.Theme.Subscribe(theme => SetBackground(theme));
             timer_Eye.Subscribe(async _ => await TimerAction());
             timer_Eye.Start();

@@ -14,6 +14,7 @@ using Yomiage.GUI.Util;
 using Yomiage.SDK.Talk;
 using Yomiage.SDK.VoiceEffects;
 using System.Windows.Media;
+using Yomiage.SDK.Settings;
 
 namespace Yomiage.GUI.ViewModels
 {
@@ -33,6 +34,9 @@ namespace Yomiage.GUI.ViewModels
         public ReactivePropertySlim<bool> NameReadOnly { get; } = new(true);
         public ReactivePropertySlim<bool> SinglePresetMode { get; } = new();
         public ReadOnlyReactivePropertySlim<bool> SubPresetMode { get; }
+
+        public ReactivePropertySlim<IntSetting> ShortPauseSetting { get; } = new();
+        public ReactivePropertySlim<IntSetting> LongPauseSetting { get; } = new();
 
         public ReactiveProperty<bool> IsDirty { get; }
 
@@ -114,6 +118,9 @@ namespace Yomiage.GUI.ViewModels
             this.PauseOverride.Value = preset.VoiceEffect.PauseOverride;
             this.ShortPause.Value = preset.VoiceEffect.ShortPause;
             this.LongPause.Value = preset.VoiceEffect.LongPause;
+
+            this.ShortPauseSetting.Value = preset.Engine.EngineConfig.ShortPauseSetting;
+            this.LongPauseSetting.Value = preset.Engine.EngineConfig.LongPauseSetting;
 
             this.VolumeConfig.Value.Value.Subscribe(v => { SetDirty(); this.SelectedPreset.Value.VoiceEffect.Volume = v; }).AddTo(Disposables);
             this.SpeedConfig.Value.Value.Subscribe(v => { SetDirty(); this.SelectedPreset.Value.VoiceEffect.Speed = v; }).AddTo(Disposables);
