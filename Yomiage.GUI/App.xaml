@@ -46,6 +46,7 @@
                 <Setter Property="FontWeight" Value="Normal"/>
                 <Setter Property="MinWidth" Value="80"/>
                 <!--<Setter Property="Focusable" Value="False"/>-->
+                <Setter Property="Padding" Value="10,5"/>
                 <Style.Triggers>
                     <Trigger Property="IsEnabled" Value="False">
                         <Setter Property="Opacity" Value="0.5" />

@@ -80,6 +80,7 @@ namespace Yomiage.GUI.Models
             var newEditor = container.Resolve<PhraseEditorViewModel>();
             newEditor.Title.Value = editor.Title.Value;
             newEditor.Phrase.Value = JsonUtil.DeepClone(editor.Phrase.Value);
+            newEditor.OriginalText.Value = editor.OriginalText.Value;
             Add(newEditor);
             ActiveEditor.Value = newEditor;
         }

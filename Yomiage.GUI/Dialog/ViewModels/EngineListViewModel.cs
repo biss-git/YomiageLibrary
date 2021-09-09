@@ -13,6 +13,7 @@ using Yomiage.Core.Models;
 using Yomiage.GUI.Models;
 using Prism.Services.Dialogs;
 using System.Windows;
+using System.Diagnostics;
 
 namespace Yomiage.GUI.Dialog.ViewModels
 {
@@ -20,6 +21,8 @@ namespace Yomiage.GUI.Dialog.ViewModels
     {
         public override string Title => "エンジン一覧";
         public ReactiveCommand AddCommand { get; }
+        public ReactiveCommand RemoveCommand { get; }
+        public ReactiveCommand OpenFolderCommand { get; }
         public ReactiveCommand<Engine> SettingCommand { get; }
 
         public ReadOnlyReactiveCollection<Engine> Engines { get; }
@@ -36,6 +39,8 @@ namespace Yomiage.GUI.Dialog.ViewModels
             this.ConfigService = configService;
             this.dialogService = dialogService;
             AddCommand = new ReactiveCommand().WithSubscribe(AddAction).AddTo(Disposables);
+            RemoveCommand = new ReactiveCommand().WithSubscribe(RemoveAction).AddTo(Disposables);
+            OpenFolderCommand = new ReactiveCommand().WithSubscribe(OpenFolderAction).AddTo(Disposables);
             SettingCommand = new ReactiveCommand<Engine>().WithSubscribe(SettingAction).AddTo(Disposables);
             Engines = voiceEngineService.AllEngines.ToReadOnlyReactiveCollection().AddTo(Disposables);
             SelectedEngine = new ReactivePropertySlim<Engine>().AddTo(Disposables);
@@ -43,7 +48,7 @@ namespace Yomiage.GUI.Dialog.ViewModels
 
         private void AddAction()
         {
-            var ofd = new OpenFileDialog() { Filter = "音声合成エンジン(.vengj)|*.vengj" };
+            var ofd = new OpenFileDialog() { Filter = "音声合成エンジン(.veng)|*.veng" };
             if(ofd.ShowDialog() != true) { return; }
 
             var directorys = Directory.GetDirectories(ConfigService.EngineDirectory);
@@ -63,6 +68,21 @@ namespace Yomiage.GUI.Dialog.ViewModels
                                             ($"音声合成エンジンが {configs.Count} 件みつかりました。\nアプリケーションを再起動してください。");
 
             MessageBox.Show(Text, "音声合成エンジンのインストール", MessageBoxButton.OK);
+        }
+
+        private void RemoveAction()
+        {
+            ProcessStartInfo pi = new ProcessStartInfo()
+            {
+                FileName = "https://sites.google.com/view/unicoe/%E3%83%9B%E3%83%BC%E3%83%A0",
+                UseShellExecute = true,
+            };
+            Process.Start(pi);
+        }
+
+        private void OpenFolderAction()
+        {
+            Process.Start("EXPLORER.EXE", this.ConfigService.EngineDirectory);
         }
 
         private void SettingAction(Engine engine)

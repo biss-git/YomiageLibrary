@@ -9,6 +9,7 @@
                  xmlns:const="clr-namespace:Yomiage.GUI.Data"
                  xmlns:avalon="https://github.com/Dirkster99/AvalonDock"
                  xmlns:view="clr-namespace:Yomiage.GUI.Views"
+                 xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
                  xmlns:prism="http://prismlibrary.com/"
                  prism:ViewModelLocator.AutoWireViewModel="True"
                  Loaded="MetroWindow_Loaded"
@@ -82,7 +83,7 @@
                         <Separator/>
                         <MenuItem Header="終了" Command="ApplicationCommands.Close" Margin="0,0,0,6"/>
                     </MenuItem>
-                    <MenuItem Header=" 台本 ">
+                    <MenuItem Header=" テキスト ">
                         <MenuItem Header="再生" Command="{Binding ScriptCommand}" CommandParameter="Play" Margin="0,6,0,0"/>
                         <MenuItem Header="音声保存" Command="{Binding ScriptCommand}" CommandParameter="SaveVoice"/>
                         <MenuItem Header="保存設定" Command="{Binding OpenDialogCommand}" CommandParameter="SaveVoiceDialog" Margin="0,0,0,6"/>
@@ -118,7 +119,7 @@
                         <Separator/>
                         <MenuItem Header="キャラクターを大きく表示" IsChecked="{Binding IsCharacterMaximized.Value}" IsCheckable="True"/>
                         <Separator/>
-                        <MenuItem Header="台本に行数を表示" IsChecked="{Binding IsLineNumberVisible.Value}" IsCheckable="True"/>
+                        <MenuItem Header="テキストに行数を表示" IsChecked="{Binding IsLineNumberVisible.Value}" IsCheckable="True"/>
                         <Separator/>
                         <MenuItem Header="ウィンドウの配置とレイアウトを初期化" Margin="0,0,0,6"
                           Command="{Binding InitializeLayoutCommand}"/>
@@ -259,6 +260,13 @@
                     </LayoutPanel>
                 </LayoutRoot>
             </DockingManager>
+            <Button Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Top" MinWidth="20" MinHeight="20" Padding="5,0"
+                    BorderThickness="0"
+                    Background="Transparent"
+                    Margin="0,3,30,0"
+                    Command="{Binding ScriptCommand}" CommandParameter="New">
+                <icon:PackIconBoxIcons Kind="RegularPlus" Width="14"/>
+            </Button>
 
 
             <!-- キャラクター -->
@@ -288,7 +296,7 @@
                                     </DockingManager.LayoutItemTemplate>
                                     <DockingManager.DocumentContextMenu>
                                         <ContextMenu>
-                                            <MenuItem Header="画面を複製する" Command="{Binding Model.CopyEditorCommand}"/>
+                                            <MenuItem Header="フレーズ編集を複製する" Command="{Binding Model.CopyEditorCommand}"/>
                                         </ContextMenu>
                                     </DockingManager.DocumentContextMenu>
                                     <DockingManager.LayoutItemContainerStyle>

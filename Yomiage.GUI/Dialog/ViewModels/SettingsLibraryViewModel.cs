@@ -3,6 +3,7 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
@@ -39,6 +40,7 @@ namespace Yomiage.GUI.Dialog.ViewModels
         public AsyncReactiveCommand<string> ActivationCommand { get; }
         public ReactiveCommand DefaultCommand { get; }
         public ReactiveCommand ApplyCommand { get; }
+        public ReactiveCommand OpenFolderCommand { get; }
 
         private ReactiveTimer timer = new(new TimeSpan(0, 0, 1));
 
@@ -51,6 +53,7 @@ namespace Yomiage.GUI.Dialog.ViewModels
             ActivationCommand = new AsyncReactiveCommand<string>().WithSubscribe(ActivationAction).AddTo(Disposables);
             DefaultCommand = new ReactiveCommand().WithSubscribe(DefaultAction).AddTo(Disposables);
             ApplyCommand = new ReactiveCommand().WithSubscribe(ApplyAction).AddTo(Disposables);
+            OpenFolderCommand = new ReactiveCommand().WithSubscribe(OpenFolderAction).AddTo(Disposables);
             NotActivated = Activated.Select(x => !x).ToReadOnlyReactivePropertySlim();
         }
 
@@ -66,6 +69,11 @@ namespace Yomiage.GUI.Dialog.ViewModels
                 return;
             }
             Initialize();
+        }
+
+        private void OpenFolderAction()
+        {
+            Process.Start("EXPLORER.EXE", this.Library.ConfigDirectory);
         }
 
         private void Initialize()

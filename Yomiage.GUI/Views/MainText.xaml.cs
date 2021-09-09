@@ -58,7 +58,7 @@ namespace Yomiage.GUI.Views
 
         private void rich_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (MainTextViewModel != null)
+            if (MainTextViewModel != null && e.Changes.Count > 0)
             {
                 MainTextViewModel.IsDirty.Value = true;
             }

@@ -85,7 +85,7 @@ namespace Yomiage.GUI.ViewModels
             this.wordDictionaryService = wordDictionaryService;
             this.pauseDictionaryService = pauseDictionaryService;
 
-            Title = new ReactivePropertySlim<string>("新規台本").AddTo(Disposables);
+            Title = new ReactivePropertySlim<string>("新規").AddTo(Disposables);
             TitleWithDirty = new ReactivePropertySlim<string>().AddTo(Disposables);
             FilePath = new ReactivePropertySlim<string>(null).AddTo(Disposables);
             Visibility = new ReactivePropertySlim<Visibility>(System.Windows.Visibility.Visible).AddTo(Disposables);
@@ -168,7 +168,7 @@ namespace Yomiage.GUI.ViewModels
             else
             {
                 // 変更がある場合は保存するかきく
-                var result = MessageBox.Show("台本が保存されていません。\n保存しますか？", "台本を閉じる", MessageBoxButton.YesNoCancel);
+                var result = MessageBox.Show("テキストが保存されていません。\n保存しますか？", "テキストを閉じる", MessageBoxButton.YesNoCancel);
                 switch (result)
                 {
                     case MessageBoxResult.Yes:

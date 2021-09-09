@@ -26,7 +26,7 @@ namespace Yomiage.GUI.Models
         /// </summary>
         public ReactivePropertySlim<bool> IsCharacterMaximized { get; } = new();
         /// <summary>
-        /// 台本に行数を表示
+        /// テキストに行数を表示
         /// </summary>
         public ReactivePropertySlim<bool> IsLineNumberVisible { get; } = new();
         

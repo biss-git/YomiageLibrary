@@ -16,6 +16,7 @@
             <Button DockPanel.Dock="Right" Command="{Binding CancelCommand}" Margin="0,0,8,0">キャンセル</Button>
             <Button DockPanel.Dock="Right" Command="{Binding OkCommand}" Margin="0,0,8,0">OK</Button>
             <Button DockPanel.Dock="Left" Command="{Binding DefaultCommand}" Margin="0,0,3,0">デフォルト値に戻す</Button>
+            <Button DockPanel.Dock="Left" Command="{Binding OpenFolderCommand}" Margin="0,0,3,0">インストールフォルダを開く</Button>
             <Label/>
         </DockPanel>
 

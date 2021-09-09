@@ -12,7 +12,8 @@
         <DockPanel DockPanel.Dock="Bottom" Margin="3">
             <Button DockPanel.Dock="Right" Command="{Binding OkCommand}" Margin="0,0,3,0">OK</Button>
             <Button DockPanel.Dock="Left" Command="{Binding AddCommand}" Margin="0,0,3,0">追加</Button>
-            <Button DockPanel.Dock="Left" Margin="0,0,3,0">削除方法</Button>
+            <Button DockPanel.Dock="Left" Command="{Binding RemoveCommand}" Margin="0,0,3,0">削除方法</Button>
+            <Button DockPanel.Dock="Left" Command="{Binding OpenFolderCommand}" Margin="0,0,3,0">インストールフォルダを開く</Button>
             <Label/>
         </DockPanel>
 
@@ -22,6 +23,11 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <DockPanel Margin="1,3,1,3">
+                        <DockPanel.InputBindings>
+                            <MouseBinding Gesture="LeftDoubleClick"
+                                          Command="{Binding DataContext.SettingCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+                                          CommandParameter="{Binding}"/>
+                        </DockPanel.InputBindings>
                         <Image Source="{Binding IconPath}" Stretch="Uniform" Width="50"/>
                         <Button Style="{StaticResource IconButton}"
                                 DockPanel.Dock="Right" Width="50"
