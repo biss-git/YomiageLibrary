@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:local="clr-namespace:Yomiage.GUI.Dialog.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -29,8 +30,24 @@
                   ItemsSource="{Binding Presets}" SelectedItem="{Binding SelectedPreset.Value}">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Label Content="{Binding Name}"/>
+                    <Grid>
+                        <DockPanel Margin="1,2,1,2">
+                            <Image Source="{Binding Library.IconPath}" Stretch="Uniform"
+                               Width="50"
+                               Height="50"
+                               />
+                            <icon:PackIconBoxIcons Kind="SolidStar" VerticalAlignment="Top" Width="15"
+                                               Visibility="{Binding IsDirty, Converter={BoolToVisibilityConverter}}"/>
+                            <Label Content="{Binding Name}" VerticalAlignment="Center" Margin="15,-2,0,2"/>
+                        </DockPanel>
+                        <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Right" Text="{Binding Engine.Name}"
+                                   Foreground="{StaticResource MahApps.Brushes.Gray}"
+                                   FontSize="10" Margin="3,-1"/>
+                    </Grid>
                 </DataTemplate>
+                <!--<DataTemplate>
+                    <Label Content="{Binding Name}"/>
+                </DataTemplate>-->
             </ListView.ItemTemplate>
         </ListView>
     </DockPanel>

@@ -34,6 +34,7 @@
             <TextBlock Text="{TemplateBinding Content}"
                    TextTrimming="CharacterEllipsis"
                    VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
                    Margin="20 0 8 0"
                    FontWeight="DemiBold"
                    FontSize="12"/>
@@ -67,7 +68,7 @@
                             </Style.Triggers>
                         </Style>
                     </Menu.Resources>
-                    <MenuItem Header=" ファイル ">
+                    <MenuItem Header=" ファイル">
                         <MenuItem Header="新規テキスト" Command="{Binding ScriptCommand}" CommandParameter="New" Margin="0,6,0,0"/>
                         <MenuItem Header="テキストを開く" Command="{Binding ScriptCommand}" CommandParameter="Open"/>
                         <MenuItem Header="テキストを上書き保存" Command="{Binding ScriptCommand}" CommandParameter="Save"/>
@@ -78,12 +79,12 @@
                         <!--<MenuItem Header="プロジェクトをインポート"/>
                         <MenuItem Header="プロジェクトをエクスポート"/>
                         <Separator/>-->
-                        <MenuItem Header="設定のインポート" IsEnabled="False"/>
-                        <MenuItem Header="設定のエクスポート" IsEnabled="False"/>
+                        <MenuItem Header="設定のインポート" Command="{Binding MenuCommand}" CommandParameter="LoadSettings"/>
+                        <MenuItem Header="設定のエクスポート" Command="{Binding MenuCommand}" CommandParameter="SaveSettings"/>
                         <Separator/>
                         <MenuItem Header="終了" Command="ApplicationCommands.Close" Margin="0,0,0,6"/>
                     </MenuItem>
-                    <MenuItem Header=" テキスト ">
+                    <MenuItem Header=" テキスト">
                         <MenuItem Header="再生" Command="{Binding ScriptCommand}" CommandParameter="Play" Margin="0,6,0,0"/>
                         <MenuItem Header="音声保存" Command="{Binding ScriptCommand}" CommandParameter="SaveVoice"/>
                         <MenuItem Header="保存設定" Command="{Binding OpenDialogCommand}" CommandParameter="SaveVoiceDialog" Margin="0,0,0,6"/>
@@ -94,25 +95,25 @@
                         <Separator/>
                         <MenuItem Header="単語の編集" Margin="0,0,0,6"/>-->
                     </MenuItem>
-                    <MenuItem Header=" マスター ">
+                    <MenuItem Header=" マスター">
                         <MenuItem Header="設定値を全て初期化" Command="{Binding MasterCommand}" CommandParameter="Initialize" Margin="0,6,0,0"/>
                         <Separator/>
                         <MenuItem Header="記号ポーズを新規登録" Command="{Binding MasterCommand}" CommandParameter="CreatePause" Margin="0,0,0,6"/>
                     </MenuItem>
-                    <MenuItem Header=" ボイス ">
+                    <MenuItem Header=" ボイス">
                         <MenuItem Header="ユーザーボイスの新規作成" Command="{Binding OpenDialogCommand}" CommandParameter="PresetNewDialog" Margin="0,6,0,0"/>
                         <Separator/>
                         <MenuItem Header="ボイスプリセットの編集" Command="{Binding VoiceCommand}" CommandParameter="SelectPresetTab" Margin="0,0,0,6"/>
                         <!--<Separator/>
                         <MenuItem Header="標準プリセットを全て初期化" Margin="0,0,0,6"/>-->
                     </MenuItem>
-                    <MenuItem Header=" フレーズ ">
-                        <MenuItem Header="一覧" Command="{Binding OpenDialogCommand}" CommandParameter="PhraseListDialog" Margin="0,6,0,6"/>
+                    <MenuItem Header=" フレーズ">
+                        <MenuItem Header="フレーズ辞書一覧" Command="{Binding OpenDialogCommand}" CommandParameter="PhraseListDialog" Margin="0,6,0,6"/>
                     </MenuItem>
-                    <MenuItem Header=" 単語 ">
-                        <MenuItem Header="一覧" Command="{Binding OpenDialogCommand}" CommandParameter="WordListDialog" Margin="0,6,0,6"/>
+                    <MenuItem Header=" 単語">
+                        <MenuItem Header="単語辞書一覧" Command="{Binding OpenDialogCommand}" CommandParameter="WordListDialog" Margin="0,6,0,6"/>
                     </MenuItem>
-                    <MenuItem Header=" 表示 ">
+                    <MenuItem Header=" 表示">
                         <MenuItem Header="ボイスプリセット" IsChecked="{Binding PresetVisible.Value}" IsCheckable="True" Margin="0,6,0,0"/>
                         <MenuItem Header="チューニング" IsChecked="{Binding TuningVisible.Value}" IsCheckable="True"/>
                         <MenuItem Header="キャラクター" IsChecked="{Binding CharacterVisible.Value}" IsCheckable="True"/>
@@ -124,14 +125,20 @@
                         <MenuItem Header="ウィンドウの配置とレイアウトを初期化" Margin="0,0,0,6"
                           Command="{Binding InitializeLayoutCommand}"/>
                     </MenuItem>
-                    <MenuItem Header=" 設定 ">
+                    <MenuItem Header=" エンジン">
+                        <MenuItem Header="音声合成エンジン一覧" Command="{Binding OpenDialogCommand}" CommandParameter="EngineListDialog" Margin="0,6,0,6"/>
+                    </MenuItem>
+                    <MenuItem Header=" ライブラリ">
+                        <MenuItem Header="音声ライブラリ一覧" Command="{Binding OpenDialogCommand}" CommandParameter="LibraryListDialog" Margin="0,6,0,6"/>
+                    </MenuItem>
+                    <MenuItem Header=" 設定">
                         <MenuItem Header="プロジェクト設定" Command="{Binding OpenDialogCommand}" CommandParameter="SettingProjectDialog" Margin="0,6,0,0"/>
                         <MenuItem Header="環境設定" Command="{Binding OpenDialogCommand}" CommandParameter="SettingEnvironmentDialog"/>
                         <!--<MenuItem Header="ショートカット設定" Command="{Binding OpenDialogCommand}" CommandParameter="SettingShortcutDialog"/>-->
                         <Separator/>
-                        <MenuItem Header="音声合成エンジン設定" Command="{Binding OpenDialogCommand}" CommandParameter="EngineListDialog"/>
+                        <!--<MenuItem Header="音声合成エンジン設定" Command="{Binding OpenDialogCommand}" CommandParameter="EngineListDialog"/>
                         <MenuItem Header="音声ライブラリ設定" Command="{Binding OpenDialogCommand}" CommandParameter="LibraryListDialog"/>
-                        <Separator/>
+                        <Separator/>-->
                         <MenuItem Header="設定の初期化" Command="{Binding InitializeSettingCommand}" Margin="0,0,0,6"/>
                     </MenuItem>
                     <MenuItem Header=" ヘルプ ">
@@ -228,9 +235,6 @@
                             <LayoutDocument x:Name="UserTab" Title="　ユーザーボイス　" CanClose="False" CanFloat="False" CanMove="False">
                                 <view:PresetUser/>
                             </LayoutDocument>
-                            <!--<LayoutDocument x:Name="ExternalTab" Title=" 外部ボイス " CanClose="False" CanFloat="False" CanMove="False">
-                                <view:PresetExternal/>
-                            </LayoutDocument>-->
                         </LayoutDocumentPane>
                     </LayoutPanel>
                 </LayoutRoot>

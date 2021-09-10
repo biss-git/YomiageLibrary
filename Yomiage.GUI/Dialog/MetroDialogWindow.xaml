@@ -16,5 +16,16 @@
     <i:Interaction.Behaviors>
         <beh:DisposeViewModelWhenClosedBehavior/>
     </i:Interaction.Behaviors>
+    <mah:MetroWindow.TitleTemplate>
+        <DataTemplate>
+            <TextBlock Text="{TemplateBinding Content}"
+                   TextTrimming="CharacterEllipsis"
+                   VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                   Margin="20 0 8 0"
+                   FontWeight="DemiBold"
+                   FontSize="14"/>
+        </DataTemplate>
+    </mah:MetroWindow.TitleTemplate>
     <!-- DialogService.Show で表示される Window のスタイルをここで定義している。 -->
 </mah:MetroWindow>

@@ -28,17 +28,22 @@
                   PreviewMouseMove="ListView_PreviewMouseMove">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <DockPanel Margin="1,3,1,3"
+                    <Grid>
+                        <DockPanel Margin="1,3,1,3"
                                MouseLeftButtonDown="ListView_MouseLeftButtonDown"
                                MouseUp="ListView_MouseUp">
-                        <Image Source="{Binding Library.IconPath}" Stretch="Uniform"
+                            <Image Source="{Binding Library.IconPath}" Stretch="Uniform"
                                Width="{Binding Path=DataContext.SettingService.IconSizeNum.Value, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
                                Height="{Binding Path=DataContext.SettingService.IconSizeNum.Value, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
                                />
-                        <icon:PackIconBoxIcons Kind="SolidStar" VerticalAlignment="Top" Width="15"
+                            <icon:PackIconBoxIcons Kind="SolidStar" VerticalAlignment="Top" Width="15"
                                                Visibility="{Binding IsDirty, Converter={BoolToVisibilityConverter}}"/>
-                        <Label Content="{Binding Name}" VerticalAlignment="Center" Margin="15,0,0,0"/>
-                    </DockPanel>
+                            <Label Content="{Binding Name}" VerticalAlignment="Center" Margin="15,-2,0,2"/>
+                        </DockPanel>
+                        <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Right" Text="{Binding Engine.Name}"
+                                   Foreground="{StaticResource MahApps.Brushes.Gray}"
+                                   FontSize="10" Margin="3,-1"/>
+                    </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

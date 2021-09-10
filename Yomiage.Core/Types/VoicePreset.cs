@@ -34,13 +34,21 @@ namespace Yomiage.Core.Types
         public string EngineKey { get => Engine.EngineConfig.Key; }
         public string LibraryKey { get => Library.LibraryConfig.Key; }
 
-        private bool isDirty;
         [JsonIgnore]
         public bool IsDirty
         {
             get => isDirty;
             set => SetProperty(ref isDirty, value);
         }
+        private bool isDirty;
+        [JsonIgnore]
+        public bool IsVisible
+        {
+            get => isVisible;
+            set => SetProperty(ref isVisible, value);
+        }
+        private bool isVisible = true;
+
 
         public VoicePreset(Engine Engine, Library Library)
         {
@@ -53,6 +61,8 @@ namespace Yomiage.Core.Types
             {
                 this.VoiceEffect.AdditionalEffect.Add(s.Key, s.Value);
             });
+            VoiceEffect.LongPause = Engine.EngineConfig.LongPauseSetting.DefaultValue;
+            VoiceEffect.ShortPause = Engine.EngineConfig.ShortPauseSetting.DefaultValue;
         }
 
         public async Task<double[]> Play(TalkScript talkScript, MasterEffectValue masterEffectValue, Action<int> SetSamplingRate_Hz)

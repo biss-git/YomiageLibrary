@@ -153,15 +153,10 @@ namespace Yomiage.GUI
             });
 
 
-            if (voicePresetService.UserPreset.Contains(voicePresetService.SelectedPreset.Value))
-            {
-                PresetDocking.ActiveContent = this.UserTab;
-            }
-            if (voicePresetService.ExternalPreset.Contains(voicePresetService.SelectedPreset.Value))
-            {
-                // 最後に選択されていたのが、外部トークソフトの場合は外部ソフトのタブを初期表示にする。
-                // PresetDocking.ActiveContent = this.ExternalTab;
-            }
+            //if (voicePresetService.UserPreset.Contains(voicePresetService.SelectedPreset.Value))
+            //{
+            //    PresetDocking.ActiveContent = this.UserTab;
+            //}
 
             this.TuningDocking.ActiveContent =
             settingService.TuneTabIndex switch
@@ -262,6 +257,10 @@ namespace Yomiage.GUI
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         window.Close();
+                        if (voicePresetService.UserPreset.Contains(voicePresetService.SelectedPreset.Value))
+                        {
+                            PresetDocking.ActiveContent = this.UserTab;
+                        }
                     });
                 });
             }

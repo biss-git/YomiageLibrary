@@ -58,6 +58,7 @@ namespace Yomiage.GUI
         public ReactiveCommand<string> ScriptCommand { get; }
         public ReactiveCommand<string> MasterCommand { get; }
         public ReactiveCommand<string> VoiceCommand { get; }
+        public ReactiveCommand<string> MenuCommand { get; }
 
         public ScriptService ScriptService { get; }
         public PhraseService PhraseService { get; }
@@ -120,6 +121,7 @@ namespace Yomiage.GUI
             MasterCommand = new ReactiveCommand<string>().WithSubscribe(MasterAction).AddTo(Disposables);
             ScriptCommand = new ReactiveCommand<string>().WithSubscribe(ScriptAction).AddTo(Disposables);
             VoiceCommand = new ReactiveCommand<string>().WithSubscribe(VoiceAction).AddTo(Disposables);
+            MenuCommand = new ReactiveCommand<string>().WithSubscribe(MenuAction).AddTo(Disposables);
             InitializeSettingCommand = new ReactiveCommand().WithSubscribe(InitializeSettingAction).AddTo(Disposables);
 
             MessageBroker.Default.Subscribe<TextCursorPosition>(value =>
@@ -198,6 +200,38 @@ namespace Yomiage.GUI
                         if (result == MessageBoxResult.Yes)
                         {
                             this.VoicePresetService.Remove(this.VoicePresetService.SelectedPreset.Value);
+                        }
+                    }
+                    break;
+            }
+        }
+
+        private void MenuAction(string param)
+        {
+            switch (param)
+            {
+                case "SaveSettings":
+                    {
+                        var sfd = new SaveFileDialog()
+                        {
+                            Filter = "設定ファイル(*.ysettings)|*.ysettings",
+                        };
+                        if(sfd.ShowDialog() == true)
+                        {
+                            this.SettingService.Save(sfd.FileName);
+                        }
+                    }
+                    break;
+                case "LoadSettings":
+                    {
+                        var ofd = new OpenFileDialog()
+                        {
+                            Filter = "設定ファイル(*.ysettings)|*.ysettings",
+                        };
+                        if (ofd.ShowDialog() == true)
+                        {
+                            this.SettingService.Load(ofd.FileName);
+                            LayoutService.InitializeCommand.Execute();
                         }
                     }
                     break;

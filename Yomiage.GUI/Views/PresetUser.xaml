@@ -38,12 +38,13 @@
             <Button DockPanel.Dock="Right" Margin="3,0,0,0" MinWidth="28" Padding="0">
                 <icon:PackIconBoxIcons Kind="RegularX" Width="9"/>
             </Button>
-            <Button DockPanel.Dock="Right" Margin="3,0,0,0" MinWidth="28" Padding="0"
+            <!--<Button DockPanel.Dock="Right" Margin="3,0,0,0" MinWidth="28" Padding="0"
                     Command="{Binding OpenDialogCommand}" CommandParameter="PresetFilterDialog">
                 <icon:PackIconBoxIcons Kind="RegularFilterAlt" Width="14"/>
-            </Button>
+            </Button>-->
             <TextBox mah:TextBoxHelper.ClearTextButton="True"
-                     mah:TextBoxHelper.Watermark="検索...">
+                     mah:TextBoxHelper.Watermark="検索..."
+                     Text="{Binding SearchText.Value, UpdateSourceTrigger=PropertyChanged}">
                 <TextBox.InputBindings>
                     <KeyBinding Key="Return"/>
                 </TextBox.InputBindings>
@@ -61,22 +62,27 @@
         </DockPanel>
         
         <!-- キャラクターリスト -->
-        <ListView ItemsSource="{Binding Presets}" SelectedItem="{Binding SelectedPreset.Value, Mode=TwoWay}"
+        <ListView ItemsSource="{Binding FilterdPresets}" SelectedItem="{Binding SelectedPreset.Value, Mode=TwoWay}"
                   SelectionMode="Single"
                   PreviewMouseMove="ListView_PreviewMouseMove">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <DockPanel Margin="1,2,1,2"
+                    <Grid>
+                        <DockPanel Margin="1,2,1,2"
                                MouseLeftButtonDown="ListView_MouseLeftButtonDown"
                                MouseUp="ListView_MouseUp">
-                        <Image Source="{Binding Library.IconPath}" Stretch="Uniform"
+                            <Image Source="{Binding Library.IconPath}" Stretch="Uniform"
                                Width="{Binding Path=DataContext.SettingService.IconSizeNum.Value, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
                                Height="{Binding Path=DataContext.SettingService.IconSizeNum.Value, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
                                />
-                        <icon:PackIconBoxIcons Kind="SolidStar" VerticalAlignment="Top" Width="15"
+                            <icon:PackIconBoxIcons Kind="SolidStar" VerticalAlignment="Top" Width="15"
                                                Visibility="{Binding IsDirty, Converter={BoolToVisibilityConverter}}"/>
-                        <Label Content="{Binding Name}" VerticalAlignment="Center" Margin="15,0,0,0"/>
-                    </DockPanel>
+                            <Label Content="{Binding Name}" VerticalAlignment="Center" Margin="15,-2,0,2"/>
+                        </DockPanel>
+                        <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Right" Text="{Binding Engine.Name}"
+                                   Foreground="{StaticResource MahApps.Brushes.Gray}"
+                                   FontSize="10" Margin="3,-1"/>
+                    </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

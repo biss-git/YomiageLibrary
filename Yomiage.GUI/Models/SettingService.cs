@@ -133,9 +133,9 @@ namespace Yomiage.GUI.Models
             settings.Default.ExpandEffectRange = ExpandEffectRange.Value;
             Save();
         }
-        public void Save()
+        public void Save(string fileName = null)
         {
-            settings.Save();
+            settings.Save(fileName);
         }
 
         public void Reset()
@@ -160,6 +160,25 @@ namespace Yomiage.GUI.Models
         {
             settings.Reload();
             SetReactiveProperty();
+            ResetNotification.Execute();
+        }
+
+        public void Load(string filePath)
+        {
+            var path1 = settings.Default.PauseDictionaryPath;
+            var path2 = settings.Default.PhraseDictionaryPath;
+            var path3 = settings.Default.PresetFilePath;
+            var path4 = settings.Default.WordDictionaryPath;
+            if (settings.Load(filePath))
+            {
+                settings.Default.PauseDictionaryPath = path1;
+                settings.Default.PhraseDictionaryPath = path2;
+                settings.Default.PresetFilePath = path3;
+                settings.Default.WordDictionaryPath = path4;
+                SetReactiveProperty();
+                Save();
+                ResetNotification.Execute();
+            }
         }
 
         /// <summary>
@@ -241,9 +260,9 @@ namespace Yomiage.GUI.Models
         /// <summary>
         /// 設定を保存する。
         /// </summary>
-        public void Save()
+        public void Save(string filePath = null)
         {
-            JsonUtil.Serialize(Default, SettingsFilePath);
+            JsonUtil.Serialize(Default, filePath == null ? SettingsFilePath : filePath);
         }
         /// <summary>
         /// 最後に Save した値に戻す。
@@ -264,6 +283,16 @@ namespace Yomiage.GUI.Models
         public void Reset()
         {
             Default = new();
+        }
+        public bool Load(string filePath)
+        {
+            var settings = JsonUtil.Deserialize<SettingValues>(filePath);
+            if (settings != null)
+            {
+                Default = settings;
+                return true;
+            }
+            return false;
         }
     }
 

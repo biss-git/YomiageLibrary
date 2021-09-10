@@ -132,9 +132,6 @@
     <Compile Update="Views\PresetEditor.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\PresetExternal.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Views\PresetStandard.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -318,9 +315,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\PresetEditor.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\PresetExternal.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\PresetStandard.xaml">

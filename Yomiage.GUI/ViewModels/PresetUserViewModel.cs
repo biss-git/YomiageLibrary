@@ -18,12 +18,14 @@ namespace Yomiage.GUI.ViewModels
     class PresetUserViewModel : ViewModelBase
     {
         public ReadOnlyReactiveCollection<VoicePreset> Presets { get; }
-        public ReactivePropertySlim<VoicePreset> SelectedPreset { get; } = new ReactivePropertySlim<VoicePreset>();
+        public IFilteredReadOnlyObservableCollection<VoicePreset> FilterdPresets { get; }
+        public ReactivePropertySlim<VoicePreset> SelectedPreset { get; } = new();
 
         public ReactiveCommand CreateCommand { get; }
-        public ReactiveCommand CopyCommand { get; } = new ReactiveCommand();
-        public ReactiveCommand DeleteCommand { get; } = new ReactiveCommand();
-        private ReactivePropertySlim<bool> isSelected= new ReactivePropertySlim<bool>(false);
+        public ReactiveCommand CopyCommand { get; } = new();
+        public ReactiveCommand DeleteCommand { get; } = new();
+        private ReactivePropertySlim<bool> isSelected = new(false);
+        public ReactivePropertySlim<string> SearchText { get; } = new();
 
         public VoicePresetService VoicePresetService { get; }
         public SettingService SettingService { get; }
@@ -37,6 +39,9 @@ namespace Yomiage.GUI.ViewModels
             this.VoicePresetService = voicePresetService;
 
             Presets = voicePresetService.UserPreset.ToReadOnlyReactiveCollection();
+            FilterdPresets = Presets.ToFilteredReadOnlyObservableCollection(x => x.IsVisible).AddTo(Disposables);
+
+
             CreateCommand = new ReactiveCommand().WithSubscribe(CreateAction).AddTo(Disposables);
             CopyCommand = isSelected.ToReactiveCommand().WithSubscribe(CopyAction).AddTo(Disposables);
             DeleteCommand = isSelected.ToReactiveCommand().WithSubscribe(DeleteAction).AddTo(Disposables);
@@ -54,6 +59,16 @@ namespace Yomiage.GUI.ViewModels
                 isSelected.Value = (preset != null && preset.Type == PresetType.User);
                 SelectedPreset.Value = isSelected.Value ? preset : null;
             }).AddTo(Disposables);
+
+            SearchText.Subscribe(text =>
+            {
+                foreach(var p in Presets)
+                {
+                    p.IsVisible = string.IsNullOrWhiteSpace(text) ||
+                                  p.Name.Contains(text, StringComparison.OrdinalIgnoreCase) ||
+                                  p.Engine.Name.Contains(text, StringComparison.OrdinalIgnoreCase);
+                }
+            });
         }
 
         private void CreateAction()
