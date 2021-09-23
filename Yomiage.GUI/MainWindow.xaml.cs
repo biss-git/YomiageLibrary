@@ -261,6 +261,8 @@ namespace Yomiage.GUI
                         {
                             PresetDocking.ActiveContent = this.UserTab;
                         }
+                        this.IsEnabled = true;
+                        Data.Status.StatusText.Value = "正常起動";
                     });
                 });
             }

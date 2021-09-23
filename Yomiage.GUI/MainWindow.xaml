@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:Yomiage.GUI"
         xmlns:conv="clr-namespace:Yomiage.GUI.Converters"
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:data="clr-namespace:Yomiage.GUI.Data"
                  xmlns:const="clr-namespace:Yomiage.GUI.Data"
                  xmlns:avalon="https://github.com/Dirkster99/AvalonDock"
                  xmlns:view="clr-namespace:Yomiage.GUI.Views"
@@ -19,7 +20,8 @@
                  Height="700" Width="1010"
                  TitleBarHeight="24"
                  Closing="MetroWindow_Closing"
-                 MouseDown="MetroWindow_MouseDown">
+                 MouseDown="MetroWindow_MouseDown"
+                 IsEnabled="False">
     <mah:MetroWindow.Resources>
         <conv:ActiveScriptConverter x:Key="ActiveScriptConverter"/>
         <conv:ActivePhraseEditorConverter x:Key="ActivePhraseEditorConverter"/>
@@ -199,9 +201,7 @@
             <!--<Button DockPanel.Dock="Right">記号ポーズ辞書</Button>
             <Button DockPanel.Dock="Right">単語辞書</Button>
             <Button DockPanel.Dock="Right">フレーズ辞書</Button>-->
-            <Label BorderThickness="0">
-                正常起動
-            </Label>
+            <Label BorderThickness="0" Content="{Binding StatusText.Value}"/>
         </DockPanel>
         
         <!-- メインコンテンツ -->

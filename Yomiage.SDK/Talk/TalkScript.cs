@@ -20,6 +20,11 @@ namespace Yomiage.SDK.Talk
         /// </summary>
         public string OriginalText { get; set; }
         /// <summary>
+        /// ボイスプリセットタグで指定がある場合に一時的に使用される。
+        /// </summary>
+        [JsonIgnore]
+        public string PresetName { get; set; }
+        /// <summary>
         /// 複数のmoraとポーズからなるアクセント句のリスト。
         /// </summary>
         public List<Section> Sections { get; set; } = new List<Section>();
@@ -73,6 +78,15 @@ namespace Yomiage.SDK.Talk
             {
                 Sections[i].FillCurve(curve, config);
             }
+        }
+
+        public string GetOriginalTextWithPresetName(string PromptString = "＞")
+        {
+            if (!string.IsNullOrWhiteSpace(PresetName))
+            {
+                return PresetName + PromptString + OriginalText;
+            }
+            return OriginalText;
         }
 
         /// <summary>

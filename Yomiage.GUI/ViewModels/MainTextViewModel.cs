@@ -218,7 +218,7 @@ namespace Yomiage.GUI.ViewModels
             {
                 text = Content.Value;
             }
-            var scripts = this.textService.Parse(text, SettingService.SplitByEnter, phraseDictionaryService.SearchDictionary, this.wordDictionaryService.WordDictionarys, this.pauseDictionaryService.PauseDictionary.ToList());
+            var scripts = this.textService.Parse(text, SettingService.SplitByEnter, SettingService.PromptStringEnable, SettingService.PromptString, phraseDictionaryService.SearchDictionary, this.wordDictionaryService.WordDictionarys, this.pauseDictionaryService.PauseDictionary.ToList());
 
             Action<int> SubmitPlayIndex = async (int index) =>
             {
@@ -236,11 +236,11 @@ namespace Yomiage.GUI.ViewModels
                     }
                     if (beforeScript)
                     {
-                        text1 += s.OriginalText;
+                        text1 += s.GetOriginalTextWithPresetName(SettingService.PromptString);
                     }
                     else
                     {
-                        text3 += s.OriginalText;
+                        text3 += s.GetOriginalTextWithPresetName(SettingService.PromptString);
                     }
                 }
 
@@ -251,13 +251,14 @@ namespace Yomiage.GUI.ViewModels
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     if (!this.voicePlayerService.IsPlaying.Value) { return; }
-                    Document.Value = CreateFlowDoc_Select(text1, script.OriginalText, text3);
+                    Document.Value = CreateFlowDoc_Select(text1, script.GetOriginalTextWithPresetName(SettingService.PromptString), text3);
                     this.phraseService.Send(script);
                 });
             };
 
             await this.voicePlayerService.Play(scripts, SubmitPlayIndex);
             Document.Value = CreateFlowDoc(Content.Value);
+            this.ScriptService.SaveScripts();
         }
         private async Task SaveAction()
         {
@@ -313,12 +314,15 @@ namespace Yomiage.GUI.ViewModels
             this.IsDirty.Value = false;
         }
 
-        public void AddPresetAction(int line)
+        public void AddPresetAction(int line1, int line2)
         {
             var text = GetContent();
             var lines = text.Replace("\r", "").Split("\n");
-            if(line - 1 >= lines.Length || line <= 0) { return; }
-            lines[line - 1] = AddCharaLine(lines[line - 1]);
+            for(int i = line1; i <= line2; i++)
+            {
+                if (i - 1 >= lines.Length || i <= 0) { continue; }
+                lines[i - 1] = AddCharaLine(lines[i - 1]);
+            }
             text = "";
             for( int i = 0; i<lines.Length; i++)
             {
@@ -330,12 +334,15 @@ namespace Yomiage.GUI.ViewModels
             }
             Content.Value = text;
         }
-        public void RemovePresetAction(int line)
+        public void RemovePresetAction(int line1, int line2)
         {
             var text = GetContent();
             var lines = text.Replace("\r", "").Split("\n");
-            if (line - 1 >= lines.Length || line <= 0) { return; }
-            lines[line - 1] = RemoveCharaLine(lines[line - 1]);
+            for (int i = line1; i <= line2; i++)
+            {
+                if (i - 1 >= lines.Length || i <= 0) { return; }
+                lines[i - 1] = RemoveCharaLine(lines[i - 1]);
+            }
             text = "";
             for (int i = 0; i < lines.Length; i++)
             {

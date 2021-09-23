@@ -101,6 +101,8 @@
                                     <sys:String>あかりダーク</sys:String>
                                     <sys:String>きりたんぽライト</sys:String>
                                     <sys:String>マキライト</sys:String>
+                                    <sys:String>モノクロライト</sys:String>
+                                    <sys:String>モノクロダーク</sys:String>
                                 </ComboBox.Items>
                             </ComboBox>
                         </StackPanel>

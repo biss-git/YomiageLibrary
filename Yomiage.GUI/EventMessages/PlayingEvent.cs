@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Yomiage.Core.Types;
 
 namespace Yomiage.GUI.EventMessages
 {
@@ -10,5 +11,6 @@ namespace Yomiage.GUI.EventMessages
     {
         public double[] part { get; set; }
         public int fs { get; set; }
+        public VoicePreset preset { get; set; }
     }
 }

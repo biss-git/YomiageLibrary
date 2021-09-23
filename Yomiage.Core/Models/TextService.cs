@@ -55,6 +55,8 @@ namespace Yomiage.Core.Models
         public TalkScript[] Parse(
             string text,
             bool SplitByEnter = true,
+            bool PromptStringEnable = true,
+            string PromptString = "＞",
             Func<string, VoicePreset, TalkScript> SearchDictionary = null,
             Dictionary<string, WordSet> WordDictionarys = null,
             List<PauseSet> PauseDictionary = null)
@@ -83,25 +85,48 @@ namespace Yomiage.Core.Models
                     scripts.Add(new TalkScript() { OriginalText = t });
                     continue;
                 }
+
+                // プリセットタグを処理する
+                var character = string.Empty;
+                var tt = t;
+                var preset = voicePresetService.SelectedPreset.Value;
+                if (PromptStringEnable && !string.IsNullOrWhiteSpace(PromptString) && t.Contains(PromptString))
+                {
+                    var index = t.IndexOf(PromptString);
+                    var c = t.Substring(0, index);
+                    if (c.Contains("\n"))
+                    {
+                        var i = c.LastIndexOf("\n");
+                        c = c.Substring(i + 1);
+                    }
+                    if( this.voicePresetService.AllPresets.Any(p => p.Name == c))
+                    {
+                        character = c;
+                        tt = t.Substring(index + PromptString.Length);
+                        preset = voicePresetService.AllPresets.First(p => p.Name == c);
+                    }
+                }
+
                 if (SearchDictionary != null)
                 {
                     // 辞書に登録されていればそれを利用する。
-                    var registerdSctipt = SearchDictionary(t, voicePresetService.SelectedPreset.Value);
+                    var registerdSctipt = SearchDictionary(tt, preset);
                     if (registerdSctipt != null)
                     {
-                        registerdSctipt.OriginalText = t; // 改行の有無が違ったりするので改めてテキストを代入。
+                        registerdSctipt.OriginalText = tt; // 改行の有無が違ったりするので改めてテキストを代入。
                         scripts.Add(registerdSctipt);
                         continue;
                     }
                 }
 
                 List<TextPart> textParts = new List<TextPart>();
-                textParts.Add(new TextPart() { Text = t });
+                textParts.Add(new TextPart() { Text = tt });
                 MakeScriptByWordDictionary(textParts, WordDictionarys);
                 MakeScriptByPauseDictionary(textParts, PauseDictionary);
                 MakeScriptByIPA(textParts);
 
                 var script = MargeScripts(textParts);
+                script.PresetName = character;
                 scripts.Add(script);
             }
 

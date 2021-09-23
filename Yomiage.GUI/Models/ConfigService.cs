@@ -135,13 +135,14 @@ namespace Yomiage.GUI.Models
             InitPreset();
             submitState($"( {loadCount} / {(directoryNum + 1)} )プリセットの初期化・読み込み。", 0.95);
             LoadPresets();
+            this.submitState = null;
         }
 
-        private void LoadEngine(string EngineDirectory, string Title)
+        public void LoadEngine(string EngineDirectory, string Title = "")
         {
             if (string.IsNullOrWhiteSpace(EngineDirectory)) { return; }
             var files = new List<string>();
-            Utility.SearchFile(EngineDirectory, "engine.config.json", 6, files);
+            Utility.SearchFile(EngineDirectory, "engine.config.json", 8, files);
             var count = 0;
             foreach (var f in files)
             {
@@ -199,11 +200,11 @@ namespace Yomiage.GUI.Models
             }
         }
 
-        private void LoadLibrary(string LibraryDirectory, string Title)
+        public void LoadLibrary(string LibraryDirectory, string Title = "")
         {
             if (string.IsNullOrWhiteSpace(LibraryDirectory)) { return; }
             var files = new List<string>();
-            Utility.SearchFile(LibraryDirectory, "library.config.json", 6, files);
+            Utility.SearchFile(LibraryDirectory, "library.config.json", 8, files);
             var count = 0;
             foreach (var f in files)
             {
@@ -265,7 +266,7 @@ namespace Yomiage.GUI.Models
             }
         }
 
-        private void InitPreset()
+        public void InitPreset()
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -275,6 +276,7 @@ namespace Yomiage.GUI.Models
                     {
                         bool match = engine.EngineConfig.LibraryFormat.Any(f => library.LibraryConfig.LibraryFormat.Contains(f));
                         if (!match) { continue; }
+                        if (voicePresetService.StandardPreset.Any(p => p.EngineKey == engine.EngineConfig.Key && p.LibraryKey == library.LibraryConfig.Key)) { continue; }
                         voicePresetService.Add(new VoicePreset(engine, library)
                         {
                             Type = PresetType.Standard,

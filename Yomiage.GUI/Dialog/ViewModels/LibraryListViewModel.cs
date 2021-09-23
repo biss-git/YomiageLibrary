@@ -62,10 +62,13 @@ namespace Yomiage.GUI.Dialog.ViewModels
             ZipFile.ExtractToDirectory(ofd.FileName, directory, Encoding.GetEncoding("sjis"));
 
             var configs = new List<string>();
-            Util.Utility.SearchFile(directory, "library.config.json", 4, configs);
+            Util.Utility.SearchFile(directory, "library.config.json", 6, configs);
+
+            ConfigService.LoadLibrary(ConfigService.LibraryDirectory);
+            ConfigService.InitPreset();
 
             var Text = configs.Count == 0 ? ($"音声ライブラリが見つかりませんでした。\n{directory} を確認してください。") :
-                                            ($"音声ライブラリが {configs.Count} 件みつかりました。\nアプリケーションを再起動してください。");
+                                            ($"音声ライブラリが {configs.Count} 件みつかりました。");
 
             MessageBox.Show(Text, "音声ライブラリのインストール", MessageBoxButton.OK);
 

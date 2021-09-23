@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Yomiage.Core.Models;
+using Yomiage.Core.Types;
 using Yomiage.GUI.Data;
 using Yomiage.GUI.EventMessages;
 using Yomiage.GUI.Models;
@@ -47,6 +48,7 @@ namespace Yomiage.GUI.ViewModels
 
         private Random random = new();
 
+        VoicePresetService voicePresetService;
         SettingService settingService;
 
         public CharacterPanelViewModel(
@@ -56,6 +58,7 @@ namespace Yomiage.GUI.ViewModels
             LayoutService layoutService
             )
         {
+            this.voicePresetService = voicePresetService;
             this.settingService = settingService;
 
             this.Size = new((CharacterSize)settingService.CharacterSize);
@@ -75,36 +78,37 @@ namespace Yomiage.GUI.ViewModels
             }).AddTo(Disposables);
             voicePresetService.SelectedPreset.Subscribe(preset =>
             {
-                if(preset == null) { return; }
-                this.PresetName.Value = preset.Name;
-                var directory = preset.Library.ConfigDirectory;
-                var config = preset.Library.CharacterConfig;
-                if(config == null) { return; }
-                this.Base = loadBitmapImage(Path.Combine(directory, config.BasicFormat.Base));
-                this.MouthOpen = loadBitmapImage(Path.Combine(directory, config.BasicFormat.MouthOpen));
-                this.MouthOpen ??= this.Base;
-                this.EyeClose = loadBitmapImage(Path.Combine(directory, config.BasicFormat.EyeClose));
-                this.EyeClose ??= this.Base;
-                this.Sleep1 = loadBitmapImage(Path.Combine(directory, config.BasicFormat.Sleep1));
-                this.Sleep2 = loadBitmapImage(Path.Combine(directory, config.BasicFormat.Sleep2));
-                this.Sleep2 ??= this.Sleep1;
-                Image.Value = this.Base;
-                this.state = CharacterState.Normal;
-                try
-                {
-                    this.darkBackground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(config.DarkBackGroundColor));
-                }
-                catch
-                {
-                }
-                try
-                {
-                    this.lightBackground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(config.LightBackGroundColor));
-                }
-                catch
-                {
-                }
-                SetBackground(settingService.Theme.Value);
+                ChangePreset(preset);
+                //if(preset == null) { return; }
+                //this.PresetName.Value = preset.Name;
+                //var directory = preset.Library.ConfigDirectory;
+                //var config = preset.Library.CharacterConfig;
+                //if(config == null) { return; }
+                //this.Base = loadBitmapImage(Path.Combine(directory, config.BasicFormat.Base));
+                //this.MouthOpen = loadBitmapImage(Path.Combine(directory, config.BasicFormat.MouthOpen));
+                //this.MouthOpen ??= this.Base;
+                //this.EyeClose = loadBitmapImage(Path.Combine(directory, config.BasicFormat.EyeClose));
+                //this.EyeClose ??= this.Base;
+                //this.Sleep1 = loadBitmapImage(Path.Combine(directory, config.BasicFormat.Sleep1));
+                //this.Sleep2 = loadBitmapImage(Path.Combine(directory, config.BasicFormat.Sleep2));
+                //this.Sleep2 ??= this.Sleep1;
+                //Image.Value = this.Base;
+                //this.state = CharacterState.Normal;
+                //try
+                //{
+                //    this.darkBackground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(config.DarkBackGroundColor));
+                //}
+                //catch
+                //{
+                //}
+                //try
+                //{
+                //    this.lightBackground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(config.LightBackGroundColor));
+                //}
+                //catch
+                //{
+                //}
+                //SetBackground(settingService.Theme.Value);
             }).AddTo(Disposables);
             settingService.Theme.Subscribe(theme => SetBackground(theme));
             timer_Eye.Subscribe(async _ => await TimerAction());
@@ -132,6 +136,40 @@ namespace Yomiage.GUI.ViewModels
                 }
             });
             IsCharacterMaximized = layoutService.IsCharacterMaximized;
+        }
+
+        private void ChangePreset(VoicePreset preset)
+        {
+            if (preset == null) { return; }
+            this.PresetName.Value = preset.Name;
+            var directory = preset.Library.ConfigDirectory;
+            var config = preset.Library.CharacterConfig;
+            if (config == null) { return; }
+            this.Base = loadBitmapImage(Path.Combine(directory, config.BasicFormat.Base));
+            this.MouthOpen = loadBitmapImage(Path.Combine(directory, config.BasicFormat.MouthOpen));
+            this.MouthOpen ??= this.Base;
+            this.EyeClose = loadBitmapImage(Path.Combine(directory, config.BasicFormat.EyeClose));
+            this.EyeClose ??= this.Base;
+            this.Sleep1 = loadBitmapImage(Path.Combine(directory, config.BasicFormat.Sleep1));
+            this.Sleep2 = loadBitmapImage(Path.Combine(directory, config.BasicFormat.Sleep2));
+            this.Sleep2 ??= this.Sleep1;
+            Image.Value = this.Base;
+            this.state = CharacterState.Normal;
+            try
+            {
+                this.darkBackground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(config.DarkBackGroundColor));
+            }
+            catch
+            {
+            }
+            try
+            {
+                this.lightBackground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(config.LightBackGroundColor));
+            }
+            catch
+            {
+            }
+            SetBackground(settingService.Theme.Value);
         }
 
         private BitmapImage loadBitmapImage(string path)
@@ -202,7 +240,10 @@ namespace Yomiage.GUI.ViewModels
         {
             OnWakeup();
             this.state = CharacterState.Talking;
-            var max = playingEvent.part.Max();
+            var max = playingEvent.part != null ? playingEvent.part.Max() : 0;
+
+            ChangePreset(playingEvent.preset != null ? playingEvent.preset : voicePresetService.SelectedPreset.Value);
+
             this.Image.Value = (max > 0.01 && MouthEnable.Value) ? this.MouthOpen : this.Base;
             timer_Talk.Reset();
             timer_Talk.Start();

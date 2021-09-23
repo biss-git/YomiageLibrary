@@ -20,6 +20,7 @@ using NAudio.MediaFoundation;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Text.RegularExpressions;
 using System.Collections.Concurrent;
+using Yomiage.GUI.Dialog;
 
 namespace Yomiage.GUI.Models
 {
@@ -48,7 +49,7 @@ namespace Yomiage.GUI.Models
         PhraseDictionaryService phraseDictionaryService;
         WordDictionaryService wordDictionaryService;
         PauseDictionaryService pauseDictionaryService;
-    IMessageBroker messageBroker;
+        IMessageBroker messageBroker;
         public VoicePlayerService(
             SettingService settingService,
             VoicePresetService voicePresetService,
@@ -109,14 +110,13 @@ namespace Yomiage.GUI.Models
                     }
                 }
 
+                // キャラクターにメッセージを送る
                 var part = GetPart(tempWave, tempWave.Count - bufferedWaveProvider.BufferedBytes / 2);
                 this.messageBroker.Publish(new PlayingEvent() { part = part, fs = fs });
+
                 await Task.Delay(100);
             }
             await Task.Delay(100);
-            //this.mmDevice?.Dispose();
-            //this.wavPlayer?.Dispose();
-            //this.IsPlaying.Value = false;
             await Stop();
         }
 
@@ -142,12 +142,16 @@ namespace Yomiage.GUI.Models
             var tempWave = new List<double>();
             int scriptIndex = 0;
             List<double[]> nextBuffer = null;
+            VoicePreset presetNow = null;
+            VoicePreset presetNext = null;
             while (this.wavPlayer.PlaybackState != PlaybackState.Stopped &&
                   (bufferedWaveProvider.BufferedBytes > 0 || buffer.Count > 0 || scriptIndex < scripts.Length))
             {
                 if (nextBuffer == null && scriptIndex < scripts.Length)
                 {
+                    // 次の音声を合成する。
                     nextBuffer = await GetVoiceBuffer(scripts[scriptIndex], preset, fs);
+                    presetNext = GetPreset(scripts[scriptIndex], preset);
                     scriptIndex += 1;
                     if (nextBuffer?.Count == 0)
                     {
@@ -156,9 +160,16 @@ namespace Yomiage.GUI.Models
                 }
                 if (nextBuffer != null && buffer.Count <= 1)
                 {
+                    // 再生中の音声が少なくなったら次の音声を流し込む
                     nextBuffer.ForEach(l => buffer.Enqueue(l));
                     nextBuffer = null;
-                    SubmitPlayIndex(scriptIndex - 1);
+                    if(SubmitPlayIndex != null)
+                    {
+                        // 台本のほうに現在の再生位置を送る
+                        SubmitPlayIndex(scriptIndex - 1);
+                    }
+                    presetNow = presetNext;
+                    await Task.Delay(500);
                 }
                 if (bufferedWaveProvider.BufferedBytes < bytesLimit)
                 {
@@ -175,14 +186,14 @@ namespace Yomiage.GUI.Models
                     }
                 }
 
+                // キャラクターにメッセージを送る
                 var part = GetPart(tempWave, tempWave.Count - bufferedWaveProvider.BufferedBytes / 2);
-                this.messageBroker.Publish(new PlayingEvent() { part = part, fs = fs });
+                this.messageBroker.Publish(new PlayingEvent() { part = part, fs = fs, preset = presetNow });
+
                 await Task.Delay(100);
             }
+            this.messageBroker.Publish(new PlayingEvent() { preset = null });
             await Task.Delay(100);
-            //this.mmDevice?.Dispose();
-            //this.wavPlayer?.Dispose();
-            //this.IsPlaying.Value = false;
             await Stop();
         }
 
@@ -208,13 +219,10 @@ namespace Yomiage.GUI.Models
 
         private async Task<double[]> GetVoice(TalkScript script, VoicePreset preset = null, int target_fs = 44100)
         {
-            target_fs = Math.Max(target_fs, 8000);
+            target_fs = Math.Clamp(target_fs, 8000, 80000);
             if (script == null) { return null; }
-            if (preset == null)
-            {
-                preset = this.voicePresetService.SelectedPreset.Value;
-                if (preset == null) { return null; }
-            }
+            preset = GetPreset(script, preset);
+            if (preset == null) { return null; }
             int fs = 44100;
             var wave = await preset.Play(script, settingService.GetMasterEffectValue(),
                 x => fs = x);
@@ -243,6 +251,24 @@ namespace Yomiage.GUI.Models
                 }
             }
             return reSampledWave.ToArray();
+        }
+
+        private VoicePreset GetPreset(TalkScript script, VoicePreset preset)
+        {
+            if (preset == null)
+            {
+                if (!string.IsNullOrWhiteSpace(script?.PresetName))
+                {
+                    // プリセットタグから
+                    preset = this.voicePresetService.AllPresets.FirstOrDefault(p => p.Name == script?.PresetName);
+                }
+                if (preset == null)
+                {
+                    // デフォルトプリセット
+                    preset = this.voicePresetService.SelectedPreset.Value;
+                }
+            }
+            return preset;
         }
 
         private void InitWaveProvider(IWaveProvider wavProvider)
@@ -283,6 +309,11 @@ namespace Yomiage.GUI.Models
 
         public async Task Save(string text, VoicePreset preset = null)
         {
+            using var waitDialog = new WaitDialog();
+            waitDialog.Show();
+
+            await Task.Delay(30);
+
             string[] texts;
             if (settingService.OutputMultiByChar)
             {
@@ -295,16 +326,12 @@ namespace Yomiage.GUI.Models
             var scriptsList = new List<TalkScript[]>();
             foreach (var t in texts)
             {
-                var scripts = this.textService.Parse(t, settingService.SplitByEnter, phraseDictionaryService.SearchDictionary, this.wordDictionaryService.WordDictionarys, this.pauseDictionaryService.PauseDictionary.ToList());
+                var scripts = this.textService.Parse(t, settingService.SplitByEnter, settingService.PromptStringEnable, settingService.PromptString, phraseDictionaryService.SearchDictionary, this.wordDictionaryService.WordDictionarys, this.pauseDictionaryService.PauseDictionary.ToList());
                 scriptsList.Add(scripts);
             }
             if (scriptsList.Count <= 0) { return; }
 
-            if (preset == null)
-            {
-                preset = this.voicePresetService.SelectedPreset.Value;
-                if (preset == null) { return; }
-            }
+            if (preset == null && this.voicePresetService.SelectedPreset.Value == null) { return; }
 
             string fileName = null;
             if (settingService.SaveByDialog)
@@ -340,8 +367,9 @@ namespace Yomiage.GUI.Models
                 {
                     foreach (var script in scripts)
                     {
+                        var p = GetPreset(script, preset);
                         if (await Save(new TalkScript[] { script },
-                            FileNameWithNumber(fileName, count, script.OriginalText, preset), preset))
+                            FileNameWithNumber(fileName, count, script.OriginalText, p), p))
                         {
                             count += 1;
                         }
@@ -351,8 +379,9 @@ namespace Yomiage.GUI.Models
             else if (scriptsList.Count == 1)
             {
                 // 一つのファイルに書き出す
-                var allText = string.Join("", scriptsList.First().Select(s => s.OriginalText).ToArray());
-                await Save(scriptsList.First(), FileNameWithNumber(fileName, -1, allText, preset), preset);
+                var p = GetPreset(scriptsList.First().First(), preset);
+                var allText = string.Join("", scriptsList.First().Select(s =>s.OriginalText ).ToArray());
+                await Save(scriptsList.First(), FileNameWithNumber(fileName, -1, allText, p), preset);
             }
             else
             {
@@ -360,14 +389,16 @@ namespace Yomiage.GUI.Models
                 int count = 0;
                 foreach (var scripts in scriptsList)
                 {
+                    var p = GetPreset(scripts.First(), preset);
                     var allText = string.Join("", scripts.Select(s => s.OriginalText).ToArray());
-                    if (await Save(scripts, FileNameWithNumber(fileName, count, allText, preset), preset))
+                    if (await Save(scripts, FileNameWithNumber(fileName, count, allText, p), preset))
                     {
                         count += 1;
                     }
                 }
             }
 
+            await Task.Delay(1000);
         }
 
         private async Task<bool> Save(TalkScript[] scripts, string filePath, VoicePreset preset = null)
@@ -381,27 +412,32 @@ namespace Yomiage.GUI.Models
             {
                 Directory.CreateDirectory(directory);
             }
-            if (preset == null)
+
+            if (preset == null && this.voicePresetService.SelectedPreset.Value == null)
             {
-                preset = this.voicePresetService.SelectedPreset.Value;
-                if (preset == null) { return false; }
+                return false;
             }
-            if (preset.Engine.EngineConfig.EngineSaveEnable)
+
+            var firstPreset = GetPreset(scripts.First(), preset);
+            if (scripts.All(s => firstPreset == GetPreset(s, preset)) && // 全て同じプリセットのときのみ、本当は同じエンジンにしたほうがよさそう。
+                firstPreset.Engine.EngineConfig.EngineSaveEnable)
             {
                 Encoding enc = Encoding.UTF8;
                 if (settingService.Encoding.Contains("UTF-16 LE")) { enc = Encoding.Unicode; }
                 if (settingService.Encoding.Contains("UTF-16 BE")) { enc = Encoding.BigEndianUnicode; }
                 if (settingService.Encoding == "Shift-JIS") { enc = Encoding.GetEncoding("Shift-JIS"); }
 
-                await preset.Save(scripts, settingService.GetMasterEffectValue(), filePath, settingService.StartPause, settingService.EndPause, settingService.SaveWithText, enc);
+                await firstPreset.Save(scripts, settingService.GetMasterEffectValue(), filePath, settingService.StartPause, settingService.EndPause, settingService.SaveWithText, enc);
                 return true;
             }
+
             int fs = 44100;
             var waves = new List<double[]>();
             foreach (var script in scripts)
             {
                 if (script.MoraCount <= 0) { continue; }
-                var wave = await preset.Play(script, settingService.GetMasterEffectValue(),
+                var p = GetPreset(script, preset);
+                var wave = await p.Play(script, settingService.GetMasterEffectValue(),
                     x => fs = x);
                 waves.Add(wave);
             }
@@ -420,7 +456,7 @@ namespace Yomiage.GUI.Models
                 var text = "";
                 foreach (var s in scripts)
                 {
-                    text += s.OriginalText;
+                    text += settingService.PromptStringOutput ? s.GetOriginalTextWithPresetName(settingService.PromptString) : s.OriginalText;
                 }
                 SaveText(textPath, text, settingService.Encoding);
             }

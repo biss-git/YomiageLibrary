@@ -40,6 +40,8 @@ namespace Yomiage.GUI.Dialog.ViewModels
                     "Dark.Akari" => 5,
                     "Light.Kiritan" => 6,
                     "Light.Maki" => 7,
+                    "Light.Monochrome" => 8,
+                    "Dark.Monochrome" => 9,
                     _ => 0,
                 });
             ThemeIndex.Subscribe(i =>
@@ -54,6 +56,8 @@ namespace Yomiage.GUI.Dialog.ViewModels
                     5 => "Dark.Akari",
                     6 => "Light.Kiritan",
                     7 => "Light.Maki",
+                    8 => "Light.Monochrome",
+                    9 => "Dark.Monochrome",
                     _ => "System",
                 };
             }).AddTo(Disposables);

@@ -144,6 +144,19 @@ namespace Yomiage.GUI
                     )
                 );
 
+            var darkMono = ThemeManager.Current.AddLibraryTheme(
+                new LibraryTheme(
+                    new Uri("pack://application:,,,/Yomiage.GUI;component/Themes/Dark.Monochrome.xaml"),
+                    MahAppsLibraryThemeProvider.DefaultInstance
+                    )
+                );
+
+            var lightMono = ThemeManager.Current.AddLibraryTheme(
+                new LibraryTheme(
+                    new Uri("pack://application:,,,/Yomiage.GUI;component/Themes/Light.Monochrome.xaml"),
+                    MahAppsLibraryThemeProvider.DefaultInstance
+                    )
+                );
 
             base.OnStartup(e);
         }

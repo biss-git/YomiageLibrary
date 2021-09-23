@@ -155,6 +155,5 @@ namespace Yomiage.Core.Types
     {
         Standard,
         User,
-        External,
     }
 }

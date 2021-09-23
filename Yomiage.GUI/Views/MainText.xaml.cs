@@ -142,6 +142,26 @@ namespace Yomiage.GUI.Views
             int num = text.Replace("\r", "").Replace("\n", "").Length;
             return (row, col, num);
         }
+        private (int, int) GetLineRange()
+        {
+            var row1 = 0;
+            var row2 = 0;
+            {
+                var pos = this.rich.Selection.Start;
+                var text = GetContent();
+                string subText = new TextRange(pos.DocumentStart, pos).Text;
+                var lines = subText.Split('\n');
+                row1 = lines.Length;
+            }
+            {
+                var pos = this.rich.Selection.End;
+                var text = GetContent();
+                string subText = new TextRange(pos.DocumentStart, pos).Text;
+                var lines = subText.Split('\n');
+                row2 = lines.Length;
+            }
+            return (row1, row2);
+        }
 
         private void MenuItem_Cut(object sender, RoutedEventArgs e)
         {
@@ -161,17 +181,37 @@ namespace Yomiage.GUI.Views
         private void AddPresetAction()
         {
             (int row, int col, int num) = GetPosition();
-            if(this.DataContext is MainTextViewModel vm)
+            var pos = Math.Abs(this.rich.Selection.Start.GetOffsetToPosition(this.rich.CaretPosition.DocumentStart)) - (col - 1);
+            (int row1, int row2) = GetLineRange();
+            if (this.DataContext is MainTextViewModel vm)
             {
-                vm.AddPresetAction(row);
+                vm.AddPresetAction(row1, row2);
+                Task.Run(async () =>
+                {
+                    await Task.Delay(100);
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        this.rich.CaretPosition = this.rich.CaretPosition.DocumentStart.GetPositionAtOffset(pos);
+                    });
+                });
             }
         }
         private void RemovePresetAction()
         {
             (int row, int col, int num) = GetPosition();
+            var pos = Math.Abs(this.rich.Selection.Start.GetOffsetToPosition(this.rich.CaretPosition.DocumentStart)) - (col - 1);
+            (int row1, int row2) = GetLineRange();
             if (this.DataContext is MainTextViewModel vm)
             {
-                vm.RemovePresetAction(row);
+                vm.RemovePresetAction(row1, row2);
+                Task.Run(async () =>
+                {
+                    await Task.Delay(100);
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        this.rich.CaretPosition = this.rich.CaretPosition.DocumentStart.GetPositionAtOffset(pos);
+                    });
+                });
             }
         }
         private void WordAction()

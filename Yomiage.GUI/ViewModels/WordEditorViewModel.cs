@@ -71,7 +71,7 @@ namespace Yomiage.GUI.ViewModels
 
         private void MakeScript(string text)
         {
-            var scripts = this.textService.Parse(text, WordDictionarys:this.wordDictionaryService.WordDictionarys);
+            var scripts = this.textService.Parse(text, PromptStringEnable: false, WordDictionarys: this.wordDictionaryService.WordDictionarys);
             if(scripts.Length > 0)
             {
                 this.Phrase.Value = scripts.First();

@@ -62,10 +62,13 @@ namespace Yomiage.GUI.Dialog.ViewModels
             ZipFile.ExtractToDirectory(ofd.FileName, directory, Encoding.GetEncoding("sjis"));
 
             var configs = new List<string>();
-            Util.Utility.SearchFile(directory, "engine.config.json", 4, configs);
+            Util.Utility.SearchFile(directory, "engine.config.json", 6, configs);
+
+            ConfigService.LoadEngine(ConfigService.EngineDirectory);
+            ConfigService.InitPreset();
 
             var Text = configs.Count == 0 ? ($"音声合成エンジンが見つかりませんでした。\n{directory} を確認してください。") :
-                                            ($"音声合成エンジンが {configs.Count} 件みつかりました。\nアプリケーションを再起動してください。");
+                                            ($"音声合成エンジンが {configs.Count} 件みつかりました。");
 
             MessageBox.Show(Text, "音声合成エンジンのインストール", MessageBoxButton.OK);
         }

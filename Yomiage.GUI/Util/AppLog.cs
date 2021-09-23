@@ -1,6 +1,8 @@
 ﻿using NLog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,11 +17,22 @@ namespace Yomiage.GUI.Util
         {
             var config = new NLog.Config.LoggingConfiguration();
 
-            var logfile = new NLog.Targets.FileTarget("logfile") { FileName = @"log\log" + DateTime.Now.ToString("yyMMdd_HHmmss") + ".txt" };
+
+            var directory = GetProcessPath();
+            var filePath = Path.Combine(directory, @"log\log" + DateTime.Now.ToString("yyMMdd_HHmmss") + ".txt");
+
+            var logfile = new NLog.Targets.FileTarget("logfile") { FileName = filePath };
             config.AddRule(LogLevel.Debug, LogLevel.Fatal, logfile);
 
             LogManager.Configuration = config;
             logger.Info(" Start");
+        }
+
+        static string GetProcessPath()
+        {
+            using var processModule = Process.GetCurrentProcess().MainModule;
+            if (string.IsNullOrWhiteSpace(processModule?.FileName)) { return string.Empty; }
+            return Path.GetDirectoryName(processModule.FileName);
         }
 
         public static void Init()
@@ -36,6 +49,7 @@ namespace Yomiage.GUI.Util
                 if (e.Exception.Message == "ウィンドウ ハンドルが無効です。") { return; }
                 if (e.Exception.Message.Contains("JpnKanaConversion.XmlSerializers.dll")) { return; }
             }
+            Data.Status.StatusText.Value = "マネージコード内で例外が発生しました。エラー内容についてはログファイルをご確認ください。";
             logger.Error("マネージコード内で例外が発生しました。");
             logger.Error(e.ToString());
             logger.Error("e.Exception.TargetSite.Name : " + e.Exception?.TargetSite?.Name);
@@ -48,6 +62,7 @@ namespace Yomiage.GUI.Util
                 object sender,
                 System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
+            Data.Status.StatusText.Value = "UIスレッドで例外が発生しました。エラー内容についてはログファイルをご確認ください。";
             logger.Error("UIスレッドで例外が発生しました。");
             logger.Error(e.ToString());
             logger.Error("e.Exception.TargetSite.Name : " + e.Exception?.TargetSite?.Name);
@@ -62,6 +77,7 @@ namespace Yomiage.GUI.Util
                 object sender,
                 UnobservedTaskExceptionEventArgs e)
         {
+            Data.Status.StatusText.Value = "バックグラウンドで例外が発生しました。エラー内容についてはログファイルをご確認ください。";
             logger.Error("バックグラウンドで例外が発生しました。");
             logger.Error(e.ToString());
             logger.Error("e.Exception.TargetSite.Name : " + e.Exception?.TargetSite?.Name);

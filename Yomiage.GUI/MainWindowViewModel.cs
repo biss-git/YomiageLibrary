@@ -41,6 +41,8 @@ namespace Yomiage.GUI
 
         public ReactivePropertySlim<bool> IsCharacterMaximized { get; }
         public ReactivePropertySlim<bool> IsLineNumberVisible { get; }
+
+        public ReadOnlyReactivePropertySlim<string> StatusText { get; }
         
         public ReactivePropertySlim<int> TunerSpan { get; } = new ReactivePropertySlim<int>(5);
         public ReactivePropertySlim<int> CharacterSpan { get; } = new ReactivePropertySlim<int>(1);
@@ -93,6 +95,8 @@ namespace Yomiage.GUI
             this.pauseDictionaryService = pauseDictionaryService;
             this.messageBroker = messageBroker;
             PhraseGraph.DialogService = dialogService;
+
+            StatusText = Data.Status.StatusText.ToReadOnlyReactivePropertySlim();
 
             TunerSpan = new ReactivePropertySlim<int>(5).AddTo(Disposables);
             CharacterSpan = new ReactivePropertySlim<int>(1).AddTo(Disposables);
@@ -181,8 +185,7 @@ namespace Yomiage.GUI
                     messageBroker.Publish(new ChangeTuningTab() { TabIndex = 2 });
                     break;
                 case "Copy":
-                    if( this.VoicePresetService.SelectedPreset.Value != null &&
-                        this.VoicePresetService.SelectedPreset.Value.Type != PresetType.External)
+                    if( this.VoicePresetService.SelectedPreset.Value != null)
                     {
                         var result = MessageBox.Show(this.VoicePresetService.SelectedPreset.Value.Name + " のコピーを作成してよろしいですか？", "確認", MessageBoxButton.YesNo);
                         if (result == MessageBoxResult.Yes)

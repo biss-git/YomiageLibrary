@@ -24,7 +24,6 @@ namespace Yomiage.Core.Models
         public ReadOnlyObservableCollection<VoicePreset> AllPresets { get; }
         public IFilteredReadOnlyObservableCollection<VoicePreset> StandardPreset { get; }
         public IFilteredReadOnlyObservableCollection<VoicePreset> UserPreset { get; }
-        public IFilteredReadOnlyObservableCollection<VoicePreset> ExternalPreset { get; }
 
 
         public VoicePresetService(IMessageBroker messageBroker)
@@ -32,7 +31,6 @@ namespace Yomiage.Core.Models
             AllPresets = new ReadOnlyObservableCollection<VoicePreset>(presets);
             StandardPreset = AllPresets.ToFilteredReadOnlyObservableCollection(p => p.Type == PresetType.Standard).AddTo(disposables);
             UserPreset = AllPresets.ToFilteredReadOnlyObservableCollection(p => p.Type == PresetType.User).AddTo(disposables);
-            ExternalPreset = AllPresets.ToFilteredReadOnlyObservableCollection(p => p.Type == PresetType.External).AddTo(disposables);
         }
 
         public bool Add(VoicePreset preset)
