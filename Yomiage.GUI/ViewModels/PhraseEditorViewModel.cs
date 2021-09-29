@@ -23,9 +23,7 @@ namespace Yomiage.GUI.ViewModels
 {
     public class PhraseEditorViewModel : ViewModelBase
     {
-        public ReactivePropertySlim<string> Title { get; }
         public ReactivePropertySlim<string> TitleWithDirty { get; }
-        public ReactivePropertySlim<string> FilePath { get; }
         public ReactivePropertySlim<Visibility> Visibility { get; }
         public ReactiveProperty<string> Content { get; }
 
@@ -55,7 +53,7 @@ namespace Yomiage.GUI.ViewModels
         public ReactivePropertySlim<bool> PitchSelected { get; } = new(false);
         public ReactivePropertySlim<bool> EmphasisSelected { get; } = new(false);
         public ReactivePropertySlim<TalkScript> Phrase { get; }
-        public ReactivePropertySlim<string> OriginalText { get; } = new ReactivePropertySlim<string>();
+        public ReactivePropertySlim<string> OriginalText { get; } = new ReactivePropertySlim<string>(string.Empty);
         public ReadOnlyReactivePropertySlim<EngineConfig> EngineConfig { get; }
         public ReadOnlyReactivePropertySlim<EffectSetting> VolumeSetting { get; }
         public ReadOnlyReactivePropertySlim<EffectSetting> SpeedSetting { get; }
@@ -78,6 +76,9 @@ namespace Yomiage.GUI.ViewModels
         PhraseDictionaryService PhraseDictionaryService;
         VoicePresetService voicePresetService;
         VoicePlayerService voicePlayerService;
+        TextService textService;
+        WordDictionaryService wordDictionaryService;
+        PauseDictionaryService pauseDictionaryService;
 
         public PhraseEditorViewModel(
             PhraseService phraseService,
@@ -85,6 +86,9 @@ namespace Yomiage.GUI.ViewModels
             VoicePresetService voicePresetService,
             VoicePlayerService voicePlayerService,
             SettingService settingService,
+            TextService textService,
+            WordDictionaryService wordDictionaryService,
+            PauseDictionaryService pauseDictionaryService,
             IMessageBroker messageBroker,
             IDialogService _dialogService) : base(_dialogService)
         {
@@ -93,10 +97,11 @@ namespace Yomiage.GUI.ViewModels
             this.messageBroker = messageBroker;
             this.voicePresetService = voicePresetService;
             this.voicePlayerService = voicePlayerService;
+            this.textService = textService;
+            this.wordDictionaryService = wordDictionaryService;
+            this.pauseDictionaryService = pauseDictionaryService;
 
-            Title = new ReactivePropertySlim<string>("新規フレーズ").AddTo(Disposables);
             TitleWithDirty = new ReactivePropertySlim<string>("最初").AddTo(Disposables);
-            FilePath = new ReactivePropertySlim<string>(null).AddTo(Disposables);
             Visibility = new ReactivePropertySlim<Visibility>(System.Windows.Visibility.Visible).AddTo(Disposables);
             Content = new ReactiveProperty<string>("").AddTo(Disposables);
 
@@ -151,7 +156,6 @@ namespace Yomiage.GUI.ViewModels
             StopCommand = new AsyncReactiveCommand().WithSubscribe(voicePlayerService.Stop).AddTo(Disposables);
             CopyEditorCommand = new ReactiveCommand().WithSubscribe(CopyEditorAction).AddTo(Disposables);
 
-            this.Title.Subscribe(_ => SetTitleWithDirty()).AddTo(Disposables);
             this.CanRegister.Subscribe(_ => SetTitleWithDirty()).AddTo(Disposables);
             this.CanRegisterChara.Subscribe(_ => SetTitleWithDirty()).AddTo(Disposables);
 
@@ -160,7 +164,11 @@ namespace Yomiage.GUI.ViewModels
             UnRegisterCommand = this.CanUnRegister.ToReactiveCommand().WithSubscribe(UnRegisterAction).AddTo(Disposables);
             ClearCommand = this.CanClear.ToReactiveCommand().WithSubscribe(ClearAction).AddTo(Disposables);
 
-            this.OriginalText.Subscribe(_ => UpdateState()).AddTo(Disposables);
+            this.OriginalText.Subscribe(_ =>
+            {
+                UpdateState();
+                SetTitleWithDirty();
+            }).AddTo(Disposables);
 
             this.messageBroker.Subscribe<PhraseDictionaryChanged>(value => UpdateState());
         }
@@ -254,6 +262,7 @@ namespace Yomiage.GUI.ViewModels
 
         private void RegisterAction()
         {
+            this.Phrase.Value.RemoveUnnecessaryParameters(this.voicePresetService.SelectedPreset.Value.Engine.EngineConfig);
             this.PhraseDictionaryService.RegisterDictionary(
                 this.OriginalText.Value,
                 this.voicePresetService.SelectedPreset.Value.Engine.EngineConfig.Key,
@@ -265,6 +274,7 @@ namespace Yomiage.GUI.ViewModels
         }
         private void RegisterCharaAction()
         {
+            this.Phrase.Value.RemoveUnnecessaryParameters(this.voicePresetService.SelectedPreset.Value.Engine.EngineConfig);
             this.PhraseDictionaryService.RegisterDictionary(
                 this.OriginalText.Value,
                 this.voicePresetService.SelectedPreset.Value.Engine.EngineConfig.Key,
@@ -288,7 +298,15 @@ namespace Yomiage.GUI.ViewModels
                 this.voicePresetService.SelectedPreset.Value.Engine.EngineConfig.Key,
                 this.voicePresetService.SelectedPreset.Value.Library.LibraryConfig.Key
                 );
-            if(phrase != null)
+            if(phrase == null)
+            {
+                var scripts = this.textService.Parse(OriginalText.Value, false, false, "", this.PhraseDictionaryService.SearchDictionary, this.wordDictionaryService.WordDictionarys, this.pauseDictionaryService.PauseDictionary.ToList());
+                if(scripts.Length > 0)
+                {
+                    phrase = scripts.First();
+                }
+            }
+            if (phrase != null)
             {
                 Phrase.Value = phrase;
                 UpdateState();
@@ -306,8 +324,8 @@ namespace Yomiage.GUI.ViewModels
                 );
             this.CanRegister.Value = engineRegisterd != true;
             this.CanRegisterChara.Value = charaRegisterd != true;
-            this.CanUnRegister.Value = engineRegisterd != false || charaRegisterd != false;
-            this.CanClear.Value = engineRegisterd != false || charaRegisterd != false;
+            this.CanUnRegister.Value = engineRegisterd != false || charaRegisterd != false || IsDirty.Value;
+            this.CanClear.Value = true; // engineRegisterd != false || charaRegisterd != false || IsDirty.Value;
         }
 
         private void CopyEditorAction()
@@ -342,7 +360,8 @@ namespace Yomiage.GUI.ViewModels
         public void SetTitleWithDirty()
         {
             this.IsDirty.Value = this.CanRegister.Value && this.CanRegisterChara.Value && CanUndo.Value;
-            this.TitleWithDirty.Value = this.Title.Value + (this.IsDirty.Value ? "*" : "");
+            var title = OriginalText.Value.Substring(0, Math.Min(6, OriginalText.Value.Length)).Replace("\n", "").Replace("\r", "");
+            this.TitleWithDirty.Value = title + (this.IsDirty.Value ? "*" : "");
         }
 
         public void CloseAction()

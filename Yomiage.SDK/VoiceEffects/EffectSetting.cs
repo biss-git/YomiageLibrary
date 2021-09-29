@@ -104,5 +104,17 @@ namespace Yomiage.SDK.VoiceEffects
             }
         }
 
+        /// <summary>
+        /// Mora か Section かが Type と一致しているかを確認します。
+        /// </summary>
+        /// <param name="isMora"></param>
+        /// <returns>
+        /// true: isMora が Type と一致している
+        /// false: isMora が Type と一致していない
+        /// </returns>
+        public bool CheckIsMora(bool isMora, bool isEndSection)
+        {
+            return isEndSection || Type == "Mora" && isMora || Type != "Mora" && !isMora;
+        }
     }
 }

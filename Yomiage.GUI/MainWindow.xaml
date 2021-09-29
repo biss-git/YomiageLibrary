@@ -144,10 +144,10 @@
                         <MenuItem Header="設定の初期化" Command="{Binding InitializeSettingCommand}" Margin="0,0,0,6"/>
                     </MenuItem>
                     <MenuItem Header=" ヘルプ ">
-                        <MenuItem Header="ヘルプの表示" Margin="0,6,0,0"/>
+                        <MenuItem Header="ヘルプの表示" Command="{Binding HelpCommand}" Margin="0,6,0,0"/>
                         <Separator/>
-                        <MenuItem Header="お知らせ・最新情報"/>
-                        <Separator/>
+                        <!--<MenuItem Header="お知らせ・最新情報"/>
+                        <Separator/>-->
                         <!--<MenuItem Header="更新確認" IsEnabled="False"/>
                         <Separator/>-->
                         <MenuItem Header="バージョン情報" Command="{Binding OpenDialogCommand}" CommandParameter="VersionInfoDialog" Margin="0,0,0,6"/>
@@ -306,7 +306,7 @@
                                     <DockingManager.LayoutItemContainerStyle>
                                         <Style TargetType="{x:Type LayoutItem}">
                                             <Setter Property="Title" Value="{Binding Model.TitleWithDirty.Value}" />
-                                            <Setter Property="ToolTip" Value="{Binding Model.FilePath.Value}" />
+                                            <!--<Setter Property="ToolTip" Value="{Binding Model.FilePath.Value}" />-->
                                             <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}"/>
                                             <Setter Property="Visibility" Value="{Binding Model.Visibility.Value}"/>
                                             <!--<Setter Property="ContentId" Value="{Binding Model.ContentId.Value}" />-->

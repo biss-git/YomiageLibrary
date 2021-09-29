@@ -15,6 +15,8 @@ namespace Yomiage.SDK.Talk
     /// </summary>
     public class Mora : VoiceEffectValueBase
     {
+        public override bool IsMora => true;
+
         /// <summary>
         /// モーラの記号
         /// 日本語の場合は　ア　とか全角文字で来るはず。

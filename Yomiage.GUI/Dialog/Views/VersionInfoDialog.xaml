@@ -1,18 +1,23 @@
 ﻿<UserControl x:Class="Yomiage.GUI.Dialog.Views.VersionInfoDialog"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:const="clr-namespace:Yomiage.GUI.Data"
-             xmlns:local="clr-namespace:Yomiage.GUI.Dialog.Views"
              mc:Ignorable="d">
     <DockPanel>
-        <StackPanel DockPanel.Dock="Top">
+        <StackPanel DockPanel.Dock="Top" Margin="0,5,0,0">
             <Label Content="{x:Static const:ConstData.AppName}"/>
-            <Label>version 1.0.0</Label>
-            <Label>製作者：ビス</Label>
-            <Label>Copyright</Label>
-            <Label>コンポーネント情報</Label>
+            <StackPanel Orientation="Horizontal">
+                <Label>version</Label>
+                <Label Content="{Binding Version.Value}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label>作者：</Label>
+                <Button Command="{Binding AuthorCommand}" BorderThickness="0">ビス</Button>
+            </StackPanel>
+            <Label>Copyright 2021 bisu</Label>
+            <Label Margin="0,10,0,0">コンポーネント情報</Label>
         </StackPanel>
 
         <DockPanel DockPanel.Dock="Bottom">
@@ -21,8 +26,20 @@
             <Label/>
         </DockPanel>
 
-        <ListView MinHeight="300">
-            
+        <ListView MinHeight="300" ItemsSource="{Binding ComponentList}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="コンポーネント名" DisplayMemberBinding="{Binding Name}" Width="200"/>
+                    <GridViewColumn Header="バージョン" DisplayMemberBinding="{Binding Version}" Width="100"/>
+                    <GridViewColumn Header="バージョン" Width="100">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="表示" Command="{Binding ShowCommand}" Visibility="{Binding CanShow.Value, Converter={StaticResource BooleanToVisibilityConverter}}" MinHeight="22" Height="22" Padding="0"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
         </ListView>
     </DockPanel>
 </UserControl>

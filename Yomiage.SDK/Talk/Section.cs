@@ -86,6 +86,8 @@ namespace Yomiage.SDK.Talk
             });
         }
 
+
+
         public string GetYomi()
         {
             return string.Join("", Moras.Select(m => m.Character));

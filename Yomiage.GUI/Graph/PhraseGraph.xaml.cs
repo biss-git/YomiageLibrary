@@ -1510,23 +1510,23 @@ namespace Yomiage.GUI.Graph
         }
         private double?[] Get_VolumeValues()
         {
-            return Get_Values(GetEffectVolume);
+            return Get_Values(GetEffectVolume, this.EngineConfig?.VolumeSetting?.Type == "Mora");
         }
         private double?[] Get_SpeedValues()
         {
-            return Get_Values(GetEffectSpeed);
+            return Get_Values(GetEffectSpeed, this.EngineConfig?.SpeedSetting?.Type == "Mora");
         }
         private double?[] Get_PitchValues()
         {
-            return Get_Values(GetEffectPitch);
+            return Get_Values(GetEffectPitch, this.EngineConfig?.PitchSetting?.Type == "Mora");
         }
         private double?[] Get_EmphasisValues()
         {
-            return Get_Values(GetEffectEmphasis);
+            return Get_Values(GetEffectEmphasis, this.EngineConfig?.EmphasisSetting?.Type == "Mora");
         }
         private double?[] Get_SettingValues(PhraseSettingConfig setting)
         {
-            return Get_Values((VoiceEffectValueBase item) => item.GetAdditionalValue(setting.Key));
+            return Get_Values((VoiceEffectValueBase item) => item.GetAdditionalValue(setting.Key), setting.Setting?.Type == "Mora");
         }
 
 
@@ -1568,20 +1568,20 @@ namespace Yomiage.GUI.Graph
             Canvas.SetTop(PreValueText, h1 + rate * GraphHeight);
             this.graph.Children.Add(PreValueText);
         }
-        private double?[] Get_Values(Func<VoiceEffectValueBase, double?> getValue)
+        private double?[] Get_Values(Func<VoiceEffectValueBase, double?> getValue, bool isMora)
         {
             double?[] values = new double?[this.Phrase.Sections.Count + this.Phrase.MoraCount + 2];
             int moraCount = 0;
             foreach (var section in this.Phrase.Sections)
             {
                 moraCount += 1;
-                if (getValue(section) != null)
+                if (!isMora && getValue(section) != null)
                 {
                     values[moraCount] = getValue(section);
                 }
                 foreach (var mora in section.Moras)
                 {
-                    if (getValue(mora) != null)
+                    if (isMora && getValue(mora) != null)
                     {
                         values[moraCount] = getValue(mora);
                     }

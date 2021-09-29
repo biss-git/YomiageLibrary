@@ -23,15 +23,19 @@ namespace Yomiage.GUI.Dialog.ViewModels
 
         private ReactivePropertySlim<bool> CanRelease = new();
 
+
+        VoicePresetService voicePresetService;
         public PresetFusionViewModel(
             VoicePresetService voicePresetService)
         {
-            var list = new List<VoicePreset>();
-            foreach( var p in voicePresetService.AllPresets)
-            {
-                list.Add(p);
-            }
-            Presets.Value = list.ToArray();
+            this.voicePresetService = voicePresetService;
+            //var list = new List<VoicePreset>();
+            //foreach( var p in voicePresetService.AllPresets)
+            //{
+            //    if(p.EngineKey == )
+            //    list.Add(p);
+            //}
+            //Presets.Value = list.ToArray();
             ReleaseCommand = CanRelease.ToReactiveCommand().WithSubscribe(ReleaseAction).AddTo(Disposables);
             SubPreset.Subscribe(p => CanRelease.Value = p != null);
         }
@@ -42,6 +46,17 @@ namespace Yomiage.GUI.Dialog.ViewModels
             {
                 Preset.Value = parameters.GetValue<VoicePreset>("Preset");
                 SubPreset.Value = Preset.Value?.SubPreset;
+
+                var list = new List<VoicePreset>();
+                foreach (var p in voicePresetService.AllPresets)
+                {
+                    if (p.EngineKey == Preset.Value.EngineKey &&
+                        p != Preset.Value)
+                    {
+                        list.Add(p);
+                    }
+                }
+                Presets.Value = list.ToArray();
             }
             if (Preset == null)
             {

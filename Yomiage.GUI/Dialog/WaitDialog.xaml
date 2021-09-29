@@ -10,10 +10,16 @@
         Topmost="True"
         WindowStyle="None"
         BorderThickness="1"
+        Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
         BorderBrush="{DynamicResource MahApps.Brushes.ThemeForeground}"
         WindowStartupLocation="CenterScreen"
-        Title="WaitDialog" Height="300" Width="400">
+        Title="WaitDialog" Height="200" Width="300">
     <Grid>
-        <Label>音声保存</Label>
+        <Label Margin="74,60,28,105">音声保存</Label>
+        <Image Source="../coloricon.png" Margin="23,64,224,86"/>
+        <Button x:Name="cancelButton" Margin="195,61,23,110" BorderThickness="0" Padding="0" Click="Button_Click">キャンセル</Button>
+        <ProgressBar x:Name="progress" Margin="79,90,23,86" Value="0.0" Minimum="0" Maximum="1"/>
+        <TextBlock x:Name="text" Margin="24,117,23,33" Text="" TextWrapping="Wrap"
+                   Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}" Opacity="0.7"/>
     </Grid>
 </Window>

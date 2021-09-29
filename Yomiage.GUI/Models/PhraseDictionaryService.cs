@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Yomiage.Core.Models;
 using Yomiage.Core.Types;
 using Yomiage.GUI.Classes;
 using Yomiage.GUI.EventMessages;
@@ -21,12 +22,18 @@ namespace Yomiage.GUI.Models
         PhraseService phraseService;
         SettingService settingService;
         ConfigService configService;
+        TextService textService;
+        WordDictionaryService wordDictionaryService;
+        PauseDictionaryService pauseDictionaryService;
 
         IMessageBroker messageBroker;
         public PhraseDictionaryService(
             SettingService settingService,
             ConfigService configService,
             PhraseService phraseService,
+            TextService textService,
+            WordDictionaryService wordDictionaryService,
+            PauseDictionaryService pauseDictionaryService,
             IMessageBroker messageBroker
             )
         {
@@ -34,6 +41,9 @@ namespace Yomiage.GUI.Models
             this.settingService = settingService;
             this.configService = configService;
             this.messageBroker = messageBroker;
+            this.textService = textService;
+            this.wordDictionaryService = wordDictionaryService;
+            this.pauseDictionaryService = pauseDictionaryService;
             LoadDictionary();
         }
 
@@ -134,7 +144,15 @@ namespace Yomiage.GUI.Models
         public void Edit(string key, string engineId, string libraryId)
         {
             var phrase = GetDictionary(key, engineId, libraryId);
-            if(phrase == null) { return; }
+            if(phrase == null)
+            {
+                var scripts = this.textService.Parse(key, false, false, "", SearchDictionary, this.wordDictionaryService.WordDictionarys, this.pauseDictionaryService.PauseDictionary.ToList());
+                if(scripts.Length == 0)
+                {
+                    return;
+                }
+                phrase = scripts.First();
+            }
             phrase.OriginalText = key;
             phraseService.Send(phrase);
             this.messageBroker.Publish(new ChangeTuningTab() { TabIndex = 3 });

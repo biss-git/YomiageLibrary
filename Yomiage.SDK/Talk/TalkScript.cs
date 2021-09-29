@@ -80,6 +80,20 @@ namespace Yomiage.SDK.Talk
             }
         }
 
+        /// <summary>
+        /// 不要なパラメータを削除する。
+        /// </summary>
+        /// <param name="engineConfig"></param>
+        public void RemoveUnnecessaryParameters(EngineConfig engineConfig)
+        {
+            Sections.ForEach(s =>
+            {
+                s.RemoveUnnecessaryParameters(engineConfig);
+                s.Moras.ForEach(m => m.RemoveUnnecessaryParameters(engineConfig));
+            });
+            EndSection.RemoveUnnecessaryParameters(engineConfig);
+        }
+
         public string GetOriginalTextWithPresetName(string PromptString = "＞")
         {
             if (!string.IsNullOrWhiteSpace(PresetName))

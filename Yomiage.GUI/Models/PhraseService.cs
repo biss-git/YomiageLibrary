@@ -40,7 +40,6 @@ namespace Yomiage.GUI.Models
             var editor = container.Resolve<PhraseEditorViewModel>();
             if(script != null)
             {
-                editor.Title.Value = script.OriginalText.Substring(0, Math.Min(5, script.OriginalText.Length)).Replace("\n", "").Replace("\r", "");
                 editor.ClearUndoRedo();
                 editor.Phrase.Value = script;
             }
@@ -78,7 +77,6 @@ namespace Yomiage.GUI.Models
         public void CopyWithFocus(PhraseEditorViewModel editor)
         {
             var newEditor = container.Resolve<PhraseEditorViewModel>();
-            newEditor.Title.Value = editor.Title.Value;
             newEditor.Phrase.Value = JsonUtil.DeepClone(editor.Phrase.Value);
             newEditor.OriginalText.Value = editor.OriginalText.Value;
             Add(newEditor);
@@ -103,7 +101,6 @@ namespace Yomiage.GUI.Models
             var dict = editors.Select(e =>
                 new Dictionary<string, string>()
                 {
-                    {"Title" , e.Title.Value},
                     {"IsActive" , (e == ActiveEditor.Value).ToString()},
                     {"OriginalText" , e.OriginalText.Value},
                     {"Phrase" , JsonUtil.SerializeToString(e.Phrase.Value)},
@@ -122,7 +119,7 @@ namespace Yomiage.GUI.Models
                     {
                         var editor = container.Resolve<PhraseEditorViewModel>();
                         editor.ClearUndoRedo();
-                        editor.Title.Value = s["Title"];
+                        //editor.Title.Value = s["Title"];
                         editor.OriginalText.Value = s["OriginalText"];
                         editor.LoadPhraseDictionary(s["Phrase"]);
                         if (s["IsActive"] == "True")

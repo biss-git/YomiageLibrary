@@ -26,6 +26,7 @@ using Yomiage.SDK.Config;
 using Yomiage.SDK.Settings;
 using Yomiage.SDK.VoiceEffects;
 using Yomiage.GUI.Data;
+using System.Diagnostics;
 
 namespace Yomiage.GUI
 {
@@ -61,6 +62,7 @@ namespace Yomiage.GUI
         public ReactiveCommand<string> MasterCommand { get; }
         public ReactiveCommand<string> VoiceCommand { get; }
         public ReactiveCommand<string> MenuCommand { get; }
+        public ReactiveCommand HelpCommand { get; }
 
         public ScriptService ScriptService { get; }
         public PhraseService PhraseService { get; }
@@ -127,6 +129,7 @@ namespace Yomiage.GUI
             VoiceCommand = new ReactiveCommand<string>().WithSubscribe(VoiceAction).AddTo(Disposables);
             MenuCommand = new ReactiveCommand<string>().WithSubscribe(MenuAction).AddTo(Disposables);
             InitializeSettingCommand = new ReactiveCommand().WithSubscribe(InitializeSettingAction).AddTo(Disposables);
+            HelpCommand = new ReactiveCommand().WithSubscribe(HelpAction).AddTo(Disposables);
 
             MessageBroker.Default.Subscribe<TextCursorPosition>(value =>
             {
@@ -136,6 +139,15 @@ namespace Yomiage.GUI
             });
         }
 
+        private void HelpAction()
+        {
+            ProcessStartInfo pi = new ProcessStartInfo()
+            {
+                FileName = "https://sites.google.com/view/unicoe/%E3%83%9B%E3%83%BC%E3%83%A0",
+                UseShellExecute = true,
+            };
+            Process.Start(pi);
+        }
 
         private void MasterAction(string param)
         {

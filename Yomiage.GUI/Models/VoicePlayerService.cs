@@ -144,19 +144,32 @@ namespace Yomiage.GUI.Models
             List<double[]> nextBuffer = null;
             VoicePreset presetNow = null;
             VoicePreset presetNext = null;
+            Task<List<double[]>> synthesize = null;
             while (this.wavPlayer.PlaybackState != PlaybackState.Stopped &&
                   (bufferedWaveProvider.BufferedBytes > 0 || buffer.Count > 0 || scriptIndex < scripts.Length))
             {
                 if (nextBuffer == null && scriptIndex < scripts.Length)
                 {
-                    // 次の音声を合成する。
-                    nextBuffer = await GetVoiceBuffer(scripts[scriptIndex], preset, fs);
+                    // 次の音声を合成する。 合成に時間がかかる場合に再生処理が停滞しないようにここで await はしない。
+                    synthesize = GetVoiceBuffer(scripts[scriptIndex], preset, fs);
+                    //nextBuffer = await GetVoiceBuffer(scripts[scriptIndex], preset, fs);
+                    //presetNext = GetPreset(scripts[scriptIndex], preset);
+                    //scriptIndex += 1;
+                    //if (nextBuffer?.Count == 0)
+                    //{
+                    //    nextBuffer = null;
+                    //}
+                }
+                if(synthesize != null && synthesize.IsCompleted)
+                {
+                    nextBuffer = synthesize.Result;
                     presetNext = GetPreset(scripts[scriptIndex], preset);
                     scriptIndex += 1;
                     if (nextBuffer?.Count == 0)
                     {
                         nextBuffer = null;
                     }
+                    synthesize = null;
                 }
                 if (nextBuffer != null && buffer.Count <= 1)
                 {
@@ -312,6 +325,13 @@ namespace Yomiage.GUI.Models
             using var waitDialog = new WaitDialog();
             waitDialog.Show();
 
+            var stopFlag = false;
+            waitDialog.CancelAction = () =>
+            {
+                stopFlag = true;
+                this.Stop();
+            };
+
             await Task.Delay(30);
 
             string[] texts;
@@ -363,13 +383,18 @@ namespace Yomiage.GUI.Models
             {
                 // １文毎に区切って複数のファイルに書き出す
                 int count = 0;
+                var total = scriptsList.Sum(s => s.Count(script => script.MoraCount > 0));
                 foreach (var scripts in scriptsList)
                 {
                     foreach (var script in scripts)
                     {
+                        if (stopFlag) { continue; }
                         var p = GetPreset(script, preset);
+                        var filename = FileNameWithNumber(fileName, count, script.OriginalText, p);
+                        waitDialog.SetProgress(filename, (double)count / total);
+                        await Task.Delay(10);
                         if (await Save(new TalkScript[] { script },
-                            FileNameWithNumber(fileName, count, script.OriginalText, p), p))
+                            filename, p))
                         {
                             count += 1;
                         }
@@ -381,17 +406,25 @@ namespace Yomiage.GUI.Models
                 // 一つのファイルに書き出す
                 var p = GetPreset(scriptsList.First().First(), preset);
                 var allText = string.Join("", scriptsList.First().Select(s =>s.OriginalText ).ToArray());
-                await Save(scriptsList.First(), FileNameWithNumber(fileName, -1, allText, p), preset);
+                var filename = FileNameWithNumber(fileName, -1, allText, p);
+                waitDialog.SetProgress(filename, 0.5);
+                await Task.Delay(10);
+                await Save(scriptsList.First(), filename, preset);
             }
             else
             {
                 // 指定された文字列で区切って複数のファイルに書き出す
                 int count = 0;
+                var total = scriptsList.Count(s => s.Any(script => script.MoraCount > 0));
                 foreach (var scripts in scriptsList)
                 {
+                    if (stopFlag) { continue; }
                     var p = GetPreset(scripts.First(), preset);
                     var allText = string.Join("", scripts.Select(s => s.OriginalText).ToArray());
-                    if (await Save(scripts, FileNameWithNumber(fileName, count, allText, p), preset))
+                    var filename = FileNameWithNumber(fileName, count, allText, p);
+                    waitDialog.SetProgress(filename, (double)count / total);
+                    await Task.Delay(10);
+                    if (await Save(scripts, filename, preset))
                     {
                         count += 1;
                     }

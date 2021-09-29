@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="coloricon.png" />
     <None Remove="icon.png" />
     <None Remove="original.gif" />
     <None Remove="picture\Base.png" />
@@ -65,6 +66,7 @@
     <EmbeddedResource Include="Resources\original.gif">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
+    <Resource Include="coloricon.png" />
     <Resource Include="icon.png" />
     <Resource Include="picture\Base.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

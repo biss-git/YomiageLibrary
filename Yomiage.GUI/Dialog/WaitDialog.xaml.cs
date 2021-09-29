@@ -19,14 +19,34 @@ namespace Yomiage.GUI.Dialog
     /// </summary>
     public partial class WaitDialog : Window , IDisposable
     {
+        public Action CancelAction;
+
         public WaitDialog()
         {
             InitializeComponent();
         }
 
+        public void SetProgress(string state, double progress)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                this.text.Text = state;
+                this.progress.Value = Math.Clamp(progress, 0, 1);
+            });
+        }
+
         public void Dispose()
         {
             this.Close();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if(CancelAction != null)
+            {
+                CancelAction();
+            }
+            this.cancelButton.IsEnabled = false;
         }
     }
 }

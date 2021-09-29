@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using Yomiage.SDK.Common;
+using Yomiage.SDK.Config;
 
 namespace Yomiage.SDK.VoiceEffects
 {
@@ -13,6 +14,11 @@ namespace Yomiage.SDK.VoiceEffects
     /// </summary>
     public abstract class VoiceEffectValueBase : IFixAble
     {
+        [JsonIgnore]
+        public virtual bool IsMora => false;
+        [JsonIgnore]
+        public virtual bool IsEndSection => false;
+
         /// <summary>
         /// 音量の設定値
         /// </summary>
@@ -226,6 +232,41 @@ namespace Yomiage.SDK.VoiceEffects
             var values = new float[10];
             Buffer.BlockCopy(bytes, 0, values, 0, bytes.Length);
             return values.Select(v => (double)v).ToArray();
+        }
+
+
+        /// <summary>
+        /// 不要なパラメータを削除する。
+        /// </summary>
+        /// <param name="engineConfig"></param>
+        public void RemoveUnnecessaryParameters(EngineConfig engineConfig)
+        {
+            if (engineConfig.VolumeSetting.Hide || !engineConfig.VolumeSetting.CheckIsMora(IsMora, IsEndSection)) { this.Volume = null; }
+            if (engineConfig.SpeedSetting.Hide || !engineConfig.SpeedSetting.CheckIsMora(IsMora, IsEndSection)) { this.Speed = null; }
+            if (engineConfig.PitchSetting.Hide || !engineConfig.PitchSetting.CheckIsMora(IsMora, IsEndSection)) { this.Pitch = null; }
+            if (engineConfig.EmphasisSetting.Hide || !engineConfig.EmphasisSetting.CheckIsMora(IsMora, IsEndSection)) { this.Emphasis = null; }
+            {
+                var keys = AdditionalEffect.Keys.ToList();
+                foreach (var key in keys)
+                {
+                    if (!engineConfig.AdditionalSettings.Any(s =>
+                        s.Key == key && s.Type != "Curve" && !s.Hide && s.CheckIsMora(IsMora, IsEndSection)))
+                    {
+                        AdditionalEffect.Remove(key);
+                    }
+                }
+            }
+            {
+                var keys = AdditionalEffects.Keys.ToList();
+                foreach (var key in keys)
+                {
+                    if (!engineConfig.AdditionalSettings.Any(s =>
+                        s.Key == key && s.Type == "Curve" && !s.Hide && s.CheckIsMora(IsMora, IsEndSection)))
+                    {
+                        AdditionalEffects.Remove(key);
+                    }
+                }
+            }
         }
     }
 }

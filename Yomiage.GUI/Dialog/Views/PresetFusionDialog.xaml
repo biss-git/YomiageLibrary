@@ -37,18 +37,19 @@
         <ListBox MinHeight="300" MinWidth="300" Margin="3,5,3,5" MaxWidth="1300"
                  ItemsSource="{Binding Presets.Value}"
                  SelectedItem="{Binding SubPreset.Value}"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ScrollViewer.VerticalScrollBarVisibility="Visible">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel Orientation="Horizontal" />
+                    <WrapPanel Orientation="Horizontal"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <DockPanel Width="140" Height="80" Margin="0,3,0,5">
                         <Label DockPanel.Dock="Bottom" HorizontalAlignment="Center"
-                               Content="{Binding Library.Name}"
-                               FontSize="14"/>
+                               Content="{Binding Name}"
+                               FontSize="12"/>
                         <Image Source="{Binding Library.IconPath}"/>
                     </DockPanel>
                 </DataTemplate>

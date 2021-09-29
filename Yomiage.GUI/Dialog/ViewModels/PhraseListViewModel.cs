@@ -86,11 +86,11 @@ namespace Yomiage.GUI.Dialog.ViewModels
             UnRegisterCommand = CanUnRegister.ToReactiveCommand().WithSubscribe(DeleteAction).AddTo(Disposables);
             Selected.Subscribe(x =>
             {
-                CanEdit.Value =
-                (x != null && this.phraseDictionaryService.GetDictionary(
-                    x.OriginalText,
-                    this.voicePresetService.SelectedEngineKey,
-                    this.voicePresetService.SelectedLibraryKey) != null);
+                CanEdit.Value = x != null;
+                //(x != null && this.phraseDictionaryService.GetDictionary(
+                //    x.OriginalText,
+                //    this.voicePresetService.SelectedEngineKey,
+                //    this.voicePresetService.SelectedLibraryKey) != null);
             });
         }
 

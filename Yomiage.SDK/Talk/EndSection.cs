@@ -13,6 +13,8 @@ namespace Yomiage.SDK.Talk
     /// </summary>
     public class EndSection : VoiceEffectValueBase
     {
+        public override bool IsEndSection => true;
+
         /// <summary>
         /// フレーズ編集の最後のポーズ
         /// </summary>
