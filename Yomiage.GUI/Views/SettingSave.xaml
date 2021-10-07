@@ -1,27 +1,39 @@
-﻿<UserControl x:Class="Yomiage.GUI.Views.SettingSave"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Yomiage.GUI.Views"
-             xmlns:prism="http://prismlibrary.com/"
-             prism:ViewModelLocator.AutoWireViewModel="True"
-             xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-             mc:Ignorable="d" 
-             d:DesignWidth="800">
+﻿<UserControl
+    x:Class="Yomiage.GUI.Views.SettingSave"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Yomiage.GUI.Views"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    d:DesignWidth="800"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    mc:Ignorable="d">
     <StackPanel Margin="6">
         <GroupBox Margin="0,5,0,0">
             <GroupBox.Header>
                 <Label Margin="3,0,3,0">ファイル分割</Label>
             </GroupBox.Header>
             <StackPanel Margin="10">
-                <RadioButton IsChecked="{Binding SettingService.OutputSingleFile}" HorizontalAlignment="Left">１つのファイルに書き出す</RadioButton>
-                <RadioButton IsChecked="{Binding SettingService.OutputMultiFile}" Margin="0,10,0,0" HorizontalAlignment="Left">１文毎に区切って複数のファイルに書き出す</RadioButton>
-                <RadioButton x:Name="charSplit" IsChecked="{Binding SettingService.OutputMultiByChar}" Margin="0,10,0,0" HorizontalAlignment="Left">指定された文字列で区切って複数のファイルに書き出す</RadioButton>
-                <StackPanel Orientation="Horizontal" IsEnabled="{Binding IsChecked, ElementName=charSplit}">
+                <RadioButton HorizontalAlignment="Left" IsChecked="{Binding SettingService.OutputSingleFile}">１つのファイルに書き出す</RadioButton>
+                <RadioButton
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Left"
+                    IsChecked="{Binding SettingService.OutputMultiFile}">
+                    １文毎に区切って複数のファイルに書き出す
+                </RadioButton>
+                <RadioButton
+                    x:Name="charSplit"
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Left"
+                    IsChecked="{Binding SettingService.OutputMultiByChar}">
+                    指定された文字列で区切って複数のファイルに書き出す
+                </RadioButton>
+                <StackPanel IsEnabled="{Binding IsChecked, ElementName=charSplit}" Orientation="Horizontal">
                     <Label Margin="30,0,0,0">区切り文字</Label>
-                    <TextBox Width="100" Text="{Binding SettingService.OutputSplitChar}"/>
+                    <TextBox Width="100" Text="{Binding SettingService.OutputSplitChar}" />
                 </StackPanel>
             </StackPanel>
         </GroupBox>
@@ -29,19 +41,25 @@
             <GroupBox.Header>
                 <Label Margin="3,0,3,0">ポーズ</Label>
             </GroupBox.Header>
-            <StackPanel Orientation="Horizontal" Margin="10">
-                <StackPanel Orientation="Horizontal" Margin="0,3,0,3">
+            <StackPanel Margin="10" Orientation="Horizontal">
+                <StackPanel Margin="0,3,0,3" Orientation="Horizontal">
                     <Label Width="80">開始ポーズ</Label>
-                    <mah:NumericUpDown UpDownButtonsWidth="18" Width="100"
-                                       Value="{Binding SettingService.StartPause}"
-                                       Minimum="0" Maximum="60000"/>
+                    <mah:NumericUpDown
+                        Width="100"
+                        Maximum="60000"
+                        Minimum="0"
+                        UpDownButtonsWidth="18"
+                        Value="{Binding SettingService.StartPause}" />
                     <Label Width="90">[ﾐﾘ秒]</Label>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,3,0,3">
+                <StackPanel Margin="0,3,0,3" Orientation="Horizontal">
                     <Label Width="80">終了ポーズ</Label>
-                    <mah:NumericUpDown UpDownButtonsWidth="18" Width="100"
-                                       Value="{Binding SettingService.EndPause}"
-                                       Minimum="0" Maximum="60000"/>
+                    <mah:NumericUpDown
+                        Width="100"
+                        Maximum="60000"
+                        Minimum="0"
+                        UpDownButtonsWidth="18"
+                        Value="{Binding SettingService.EndPause}" />
                     <Label Width="90">[ﾐﾘ秒]</Label>
                 </StackPanel>
             </StackPanel>
@@ -51,12 +69,14 @@
                 <Label Margin="3,0,3,0">ファイル形式</Label>
             </GroupBox.Header>
             <StackPanel Margin="10">
-            <!--<StackPanel Orientation="Horizontal" Margin="10">
+                <!--<StackPanel Orientation="Horizontal" Margin="10">
                 <ComboBox SelectedItem="{Binding SettingService.OutputFormat}" Width="75">
                     <ComboBox.Items>
                         <sys:String>WAVE</sys:String>
                         <sys:String>MP3</sys:String>
-                        --><!--<sys:String>WMA</sys:String>--><!--
+                -->
+                <!--<sys:String>WMA</sys:String>-->
+                <!--
                     </ComboBox.Items>
                     <ComboBox.SelectedIndex>0</ComboBox.SelectedIndex>
                 </ComboBox>
@@ -75,15 +95,19 @@
                         <sys:String>8000Hz 8bit μ-low</sys:String>
                     </ComboBox.Items>
                 </ComboBox>
-                --><!--<CheckBox IsChecked="{Binding SettingService.FileHeaderEnable}" Margin="6,0,0,0">ファイルヘッダー有り</CheckBox>--><!--
+                -->
+                <!--<CheckBox IsChecked="{Binding SettingService.FileHeaderEnable}" Margin="6,0,0,0">ファイルヘッダー有り</CheckBox>-->
+                <!--
             </StackPanel>-->
 
                 <RadioButton x:Name="wav" IsChecked="{Binding SettingService.OutputModeWav}">
                     <StackPanel Orientation="Horizontal">
                         <Label Width="50">Wav</Label>
-                        <ComboBox Margin="6,0,0,0" Width="150"
-                                  SelectedItem="{Binding SettingService.OutputFormatWav}"
-                                  IsEnabled="{Binding IsChecked, ElementName=wav}">
+                        <ComboBox
+                            Width="150"
+                            Margin="6,0,0,0"
+                            IsEnabled="{Binding IsChecked, ElementName=wav}"
+                            SelectedItem="{Binding SettingService.OutputFormatWav}">
                             <ComboBox.Items>
                                 <sys:String>48000Hz 16bit</sys:String>
                                 <sys:String>44100Hz 16bit</sys:String>
@@ -98,7 +122,10 @@
                                 <!--<sys:String>8000Hz 8bit μ-low</sys:String>-->
                             </ComboBox.Items>
                         </ComboBox>
-                        <Label Margin="10,0,0,0" Foreground="{DynamicResource MahApps.Brushes.Gray5}" FontSize="12">
+                        <Label
+                            Margin="10,0,0,0"
+                            FontSize="12"
+                            Foreground="{DynamicResource MahApps.Brushes.Gray5}">
                             指定のフォーマットで劣化無しで音声波形を保存します。
                         </Label>
                     </StackPanel>
@@ -106,16 +133,21 @@
                 <RadioButton x:Name="mp3" IsChecked="{Binding SettingService.OutputModeMp3}">
                     <StackPanel Orientation="Horizontal">
                         <Label Width="50">Mp3</Label>
-                        <ComboBox Margin="6,0,0,0" Width="150"
-                                  SelectedItem="{Binding SettingService.OutputFormatMp3}"
-                                  IsEnabled="{Binding IsChecked, ElementName=mp3}">
+                        <ComboBox
+                            Width="150"
+                            Margin="6,0,0,0"
+                            IsEnabled="{Binding IsChecked, ElementName=mp3}"
+                            SelectedItem="{Binding SettingService.OutputFormatMp3}">
                             <ComboBox.Items>
                                 <sys:String>高品質 (128 kbps)</sys:String>
                                 <sys:String>中品質 (96 kbps)</sys:String>
                                 <sys:String>低品質 (48 kbps)</sys:String>
                             </ComboBox.Items>
                         </ComboBox>
-                        <Label Margin="10,0,0,0" Foreground="{DynamicResource MahApps.Brushes.Gray5}" FontSize="12">
+                        <Label
+                            Margin="10,0,0,0"
+                            FontSize="12"
+                            Foreground="{DynamicResource MahApps.Brushes.Gray5}">
                             音声を圧縮してファイルサイズを小さくします。
                         </Label>
                     </StackPanel>
@@ -123,16 +155,21 @@
                 <RadioButton x:Name="wma" IsChecked="{Binding SettingService.OutputModeWma}">
                     <StackPanel Orientation="Horizontal">
                         <Label Width="50">WMA</Label>
-                        <ComboBox Margin="6,0,0,0" Width="150"
-                                  SelectedItem="{Binding SettingService.OutputFormatWma}"
-                                  IsEnabled="{Binding IsChecked, ElementName=wma}">
+                        <ComboBox
+                            Width="150"
+                            Margin="6,0,0,0"
+                            IsEnabled="{Binding IsChecked, ElementName=wma}"
+                            SelectedItem="{Binding SettingService.OutputFormatWma}">
                             <ComboBox.Items>
                                 <sys:String>高品質 (48 kbps)</sys:String>
                                 <sys:String>中品質 (32 kbps)</sys:String>
                                 <sys:String>低品質 (20 kbps)</sys:String>
                             </ComboBox.Items>
                         </ComboBox>
-                        <Label Margin="10,0,0,0" Foreground="{DynamicResource MahApps.Brushes.Gray5}" FontSize="12">
+                        <Label
+                            Margin="10,0,0,0"
+                            FontSize="12"
+                            Foreground="{DynamicResource MahApps.Brushes.Gray5}">
                             mp3よりもさらにファイルサイズを小さくします。
                         </Label>
                     </StackPanel>
@@ -143,12 +180,14 @@
             <GroupBox.Header>
                 <Label Margin="3,0,3,0">テキストファイル</Label>
             </GroupBox.Header>
-            <StackPanel Orientation="Horizontal" Margin="10">
+            <StackPanel Margin="10" Orientation="Horizontal">
                 <CheckBox x:Name="text" IsChecked="{Binding SettingService.SaveWithText}">テキストファイルを音声ファイルと一緒に保存する</CheckBox>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,0"
-                            IsEnabled="{Binding IsChecked, ElementName=text}">
+                <StackPanel
+                    Margin="0,0,0,0"
+                    IsEnabled="{Binding IsChecked, ElementName=text}"
+                    Orientation="Horizontal">
                     <Label Margin="20,0,0,0">文字コード :</Label>
-                    <ComboBox SelectedItem="{Binding SettingService.Encoding}" Margin="6,0,0,0">
+                    <ComboBox Margin="6,0,0,0" SelectedItem="{Binding SettingService.Encoding}">
                         <ComboBox.Items>
                             <!--<sys:String>SJIS</sys:String>-->
                             <sys:String>UTF-8</sys:String>
@@ -165,21 +204,47 @@
                 <Label Margin="3,0,3,0">音声ファイルパスの指定方法</Label>
             </GroupBox.Header>
             <StackPanel Margin="10">
-                <RadioButton IsChecked="{Binding SettingService.SaveByDialog}" HorizontalAlignment="Left">ファイル保存ダイアログで選択する</RadioButton>
-                <RadioButton x:Name="ruleRadioButton" IsChecked="{Binding SettingService.SaveByRule}" Margin="0,10,0,0" HorizontalAlignment="Left"
-                             d:IsChecked="True">ファイル名名規則を指定して選択する</RadioButton>
-                <StackPanel Visibility="{Binding IsChecked, ElementName=ruleRadioButton, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="20,5,0,0">
+                <RadioButton HorizontalAlignment="Left" IsChecked="{Binding SettingService.SaveByDialog}">ファイル保存ダイアログで選択する</RadioButton>
+                <RadioButton
+                    x:Name="ruleRadioButton"
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Left"
+                    d:IsChecked="True"
+                    IsChecked="{Binding SettingService.SaveByRule}">
+                    ファイル命名規則を指定する
+                </RadioButton>
+                <StackPanel Margin="20,5,0,0" Visibility="{Binding IsChecked, ElementName=ruleRadioButton, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <DockPanel>
-                        <Label DockPanel.Dock="Left" Width="70">フォルダー</Label>
-                        <Button DockPanel.Dock="Right" MinWidth="60" Command="{Binding SelectFolderCommand}">参照...</Button>
-                        <TextBox Text="{Binding RuleFolderPath.Value, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Width="70" DockPanel.Dock="Left">フォルダー</Label>
+                        <Button
+                            MinWidth="60"
+                            Command="{Binding SelectFolderCommand}"
+                            DockPanel.Dock="Right">
+                            参照...
+                        </Button>
+                        <TextBox Text="{Binding RuleFolderPath.Value, UpdateSourceTrigger=PropertyChanged}" />
                     </DockPanel>
                     <DockPanel>
-                        <Label DockPanel.Dock="Left" Width="70">命名規則</Label>
-                        <Label DockPanel.Dock="Right" Width="60" Visibility="{Binding SettingService.OutputModeWav, Converter={StaticResource BooleanToVisibilityConverter}}">.wav</Label>
-                        <Label DockPanel.Dock="Right" Width="60" Visibility="{Binding SettingService.OutputModeMp3, Converter={StaticResource BooleanToVisibilityConverter}}">.mp3</Label>
-                        <Label DockPanel.Dock="Right" Width="60" Visibility="{Binding SettingService.OutputModeWma, Converter={StaticResource BooleanToVisibilityConverter}}">.wma</Label>
-                        <TextBox Text="{Binding Rule.Value, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Width="70" DockPanel.Dock="Left">命名規則</Label>
+                        <Label
+                            Width="60"
+                            DockPanel.Dock="Right"
+                            Visibility="{Binding SettingService.OutputModeWav, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            .wav
+                        </Label>
+                        <Label
+                            Width="60"
+                            DockPanel.Dock="Right"
+                            Visibility="{Binding SettingService.OutputModeMp3, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            .mp3
+                        </Label>
+                        <Label
+                            Width="60"
+                            DockPanel.Dock="Right"
+                            Visibility="{Binding SettingService.OutputModeWma, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            .wma
+                        </Label>
+                        <TextBox Text="{Binding Rule.Value, UpdateSourceTrigger=PropertyChanged}" />
                     </DockPanel>
                     <StackPanel Margin="70,5,60,0">
                         <mah:DropDownButton Content="プリセットから選択">
@@ -199,37 +264,55 @@
                         </mah:DropDownButton>
                         <Grid Margin="0,5,0,0">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="90"/>
-                                <ColumnDefinition Width="140"/>
-                                <ColumnDefinition/>
+                                <ColumnDefinition Width="90" />
+                                <ColumnDefinition Width="140" />
+                                <ColumnDefinition />
                             </Grid.ColumnDefinitions>
                             <StackPanel>
-                                <Button Margin="0,0,3,3" Command="{Binding AddTemplateCommand}" CommandParameter="yyMMdd_HHmmss">日時</Button>
-                                <Button Margin="0,3,3,3" Command="{Binding AddTemplateCommand}" CommandParameter="VoicePreset">キャラ名</Button>
+                                <Button
+                                    Margin="0,0,3,3"
+                                    Command="{Binding AddTemplateCommand}"
+                                    CommandParameter="yyMMdd_HHmmss">
+                                    日時
+                                </Button>
+                                <Button
+                                    Margin="0,3,3,3"
+                                    Command="{Binding AddTemplateCommand}"
+                                    CommandParameter="VoicePreset">
+                                    キャラ名
+                                </Button>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Margin="10,0,10,0">
                                 <Button Command="{Binding AddTemplateCommand}" CommandParameter="Text">入力文</Button>
                                 <DockPanel Margin="3,5,0,0">
                                     <Label>文字数</Label>
-                                    <mah:NumericUpDown Minimum="1" Maximum="30"
-                                                       UpDownButtonsWidth="18"
-                                                       TrackMouseWheelWhenMouseOver="True"
-                                                       Value="{Binding SettingService.RuleTextLength}"/>
+                                    <mah:NumericUpDown
+                                        Maximum="30"
+                                        Minimum="1"
+                                        TrackMouseWheelWhenMouseOver="True"
+                                        UpDownButtonsWidth="18"
+                                        Value="{Binding SettingService.RuleTextLength}" />
                                 </DockPanel>
                             </StackPanel>
                             <StackPanel Grid.Column="2" Margin="5,0,0,0">
                                 <Button Command="{Binding AddTemplateCommand}" CommandParameter="Number">連番</Button>
                                 <DockPanel Margin="3,5,0,0">
                                     <Label Width="65">桁数</Label>
-                                    <mah:NumericUpDown Minimum="1" Maximum="10" UpDownButtonsWidth="18"
-                                                       TrackMouseWheelWhenMouseOver="True"
-                                                       Value="{Binding SettingService.RuleNumDigits}"/>
+                                    <mah:NumericUpDown
+                                        Maximum="10"
+                                        Minimum="1"
+                                        TrackMouseWheelWhenMouseOver="True"
+                                        UpDownButtonsWidth="18"
+                                        Value="{Binding SettingService.RuleNumDigits}" />
                                 </DockPanel>
                                 <DockPanel Margin="3,5,0,0">
                                     <Label Width="65">開始番号</Label>
-                                    <mah:NumericUpDown Minimum="0" Maximum="2147483647" UpDownButtonsWidth="18"
-                                                       TrackMouseWheelWhenMouseOver="True"
-                                                       Value="{Binding SettingService.RuleStartNum}"/>
+                                    <mah:NumericUpDown
+                                        Maximum="2147483647"
+                                        Minimum="0"
+                                        TrackMouseWheelWhenMouseOver="True"
+                                        UpDownButtonsWidth="18"
+                                        Value="{Binding SettingService.RuleStartNum}" />
                                 </DockPanel>
                             </StackPanel>
                         </Grid>

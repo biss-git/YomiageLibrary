@@ -2,7 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Version>0.0.2</Version>
+    <Version>0.0.3</Version>
+    <PackageProjectUrl>https://github.com/biss-git/YomiageLibrary</PackageProjectUrl>
+    <Copyright />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -12,11 +12,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="picture\**" />
+    <EmbeddedResource Remove="picture\**" />
+    <None Remove="picture\**" />
+    <Page Remove="picture\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="coloricon.png" />
     <None Remove="icon.png" />
     <None Remove="original.gif" />
-    <None Remove="picture\Base.png" />
-    <None Remove="picture\EyeClose.png" />
     <None Remove="Themes\Light.Zunda" />
     <None Remove="スプラッシュ.png" />
   </ItemGroup>
@@ -26,7 +31,6 @@
     <PackageReference Include="Dirkster.AvalonDock.Themes.VS2013" Version="4.50.3" />
     <PackageReference Include="MahApps.Metro" Version="2.4.5" />
     <PackageReference Include="MahApps.Metro.IconPacks" Version="4.8.0" />
-    <PackageReference Include="Markdig.Wpf" Version="0.5.0.1" />
     <PackageReference Include="NAudio" Version="2.0.0" />
     <PackageReference Include="NLog" Version="4.7.10" />
     <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
@@ -68,10 +72,6 @@
     </EmbeddedResource>
     <Resource Include="coloricon.png" />
     <Resource Include="icon.png" />
-    <Resource Include="picture\Base.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="picture\EyeClose.png" />
   </ItemGroup>
 
   <ItemGroup>

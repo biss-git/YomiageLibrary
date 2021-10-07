@@ -72,22 +72,38 @@ namespace Yomiage.SDK.Common
         {
             if (string.IsNullOrWhiteSpace(fileName) || !File.Exists(fileName)) { return default(T); }
             var jsonstr = File.ReadAllText(fileName);
-            var x = JsonSerializer.Deserialize<T>(jsonstr);
-            if (x is IFixAble xx)
+            try
             {
-                xx.Fix();
+                var x = JsonSerializer.Deserialize<T>(jsonstr);
+                if (x is IFixAble xx)
+                {
+                    xx.Fix();
+                }
+                return x;
             }
-            return x;
+            catch(Exception e)
+            {
+
+            }
+            return null;
         }
 
         public static T DeserializeFromString<T>(string jsonstr) where T : class
         {
-            var x = JsonSerializer.Deserialize<T>(jsonstr);
-            if (x is IFixAble xx)
+            try
             {
-                xx.Fix();
+                var x = JsonSerializer.Deserialize<T>(jsonstr);
+                if (x is IFixAble xx)
+                {
+                    xx.Fix();
+                }
+                return x;
             }
-            return x;
+            catch(Exception e)
+            {
+
+            }
+            return null;
         }
 
     }

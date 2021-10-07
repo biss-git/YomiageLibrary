@@ -29,9 +29,9 @@ namespace Yomiage.GUI.Dialog.Views
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if(this.Parent is MetroWindow window)
+            if (this.Parent is MetroWindow window)
             {
-                ThemeManager.Current.ChangeTheme(window, "Light.Aoi");
+                ThemeManager.Current.ChangeTheme(window, "Light.Monochrome");
             }
 
         }

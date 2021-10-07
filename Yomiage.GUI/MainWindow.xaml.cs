@@ -33,6 +33,9 @@ namespace Yomiage.GUI
         private double CharacterWidth;
         private double TuningHeight;
 
+        private string TuningLayoutPath = "tuningLayout.xml";
+        private MemoryStream defaultLayout;
+
         private SettingService SettingService;
         private ScriptService ScriptService;
         private PhraseService PhraseService;
@@ -69,6 +72,9 @@ namespace Yomiage.GUI
             this.messageBroker = messageBroker;
             InitializeComponent();
             RecoverWindowBounds();
+
+            SetDefaultTuningLayout();
+            LoadTuningLayout();
 
             PresetWidth = settingService.settings.Default.PresetWidth;
             CharacterWidth = settingService.settings.Default.CharacterWidth;
@@ -139,6 +145,8 @@ namespace Yomiage.GUI
                 this.Left = 100;
                 this.Top = 100;
                 this.WindowState = WindowState.Normal;
+
+                ResetTuningLayout();
             });
 
             layoutService.ShowTabCommand.Subscribe(tab =>
@@ -188,6 +196,7 @@ namespace Yomiage.GUI
             this.SettingService.Save();
             SaveWindowBounds();
             SettingService.SaveMaster();
+            SaveTuningLayout();
         }
 
 
@@ -280,6 +289,7 @@ namespace Yomiage.GUI
             this.voiceEngineService.Dispose();
             this.voiceLibraryService.Dispose();
             this.voicePlayerService.Stop();
+            defaultLayout?.Dispose();
         }
 
         private void TuningDocking_ActiveContentChanged(object sender, EventArgs e)
@@ -305,6 +315,63 @@ namespace Yomiage.GUI
             ExecutedRoutedEventArgs e)
         {
             this.Close();
+        }
+
+
+
+        private void SetDefaultTuningLayout()
+        {
+            try
+            {
+                var serializer = new XmlLayoutSerializer(TuningDocking);
+                MemoryStream stream = new MemoryStream(); // これは実行中使う可能性があるのでここでは Dispose しない。でも終了時には Dispose を忘れないこと。
+                serializer.Serialize(stream);
+                defaultLayout = stream;
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+        private void ResetTuningLayout()
+        {
+            try
+            {
+                var serializer = new XmlLayoutSerializer(TuningDocking);
+                defaultLayout.Seek(0, SeekOrigin.Begin);
+                serializer.Deserialize(defaultLayout);
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+        private void SaveTuningLayout()
+        {
+            try
+            {
+                var serializer = new XmlLayoutSerializer(TuningDocking);
+                using var stream = new StreamWriter(TuningLayoutPath);
+                serializer.Serialize(stream);
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+        private void LoadTuningLayout()
+        {
+            if (!File.Exists(TuningLayoutPath)) { return; }
+            try
+            {
+                var serializer = new XmlLayoutSerializer(TuningDocking);
+                using var stream = new StreamReader(TuningLayoutPath);
+                serializer.Deserialize(stream);
+            }
+            catch (Exception)
+            {
+
+            }
         }
     }
 }

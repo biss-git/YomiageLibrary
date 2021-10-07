@@ -148,19 +148,12 @@ namespace Yomiage.GUI.Models
             while (this.wavPlayer.PlaybackState != PlaybackState.Stopped &&
                   (bufferedWaveProvider.BufferedBytes > 0 || buffer.Count > 0 || scriptIndex < scripts.Length))
             {
-                if (nextBuffer == null && scriptIndex < scripts.Length)
+                if (synthesize == null && nextBuffer == null && scriptIndex < scripts.Length)
                 {
                     // 次の音声を合成する。 合成に時間がかかる場合に再生処理が停滞しないようにここで await はしない。
                     synthesize = GetVoiceBuffer(scripts[scriptIndex], preset, fs);
-                    //nextBuffer = await GetVoiceBuffer(scripts[scriptIndex], preset, fs);
-                    //presetNext = GetPreset(scripts[scriptIndex], preset);
-                    //scriptIndex += 1;
-                    //if (nextBuffer?.Count == 0)
-                    //{
-                    //    nextBuffer = null;
-                    //}
                 }
-                if(synthesize != null && synthesize.IsCompleted)
+                if (synthesize != null && synthesize.IsCompleted)
                 {
                     nextBuffer = synthesize.Result;
                     presetNext = GetPreset(scripts[scriptIndex], preset);
@@ -176,7 +169,7 @@ namespace Yomiage.GUI.Models
                     // 再生中の音声が少なくなったら次の音声を流し込む
                     nextBuffer.ForEach(l => buffer.Enqueue(l));
                     nextBuffer = null;
-                    if(SubmitPlayIndex != null)
+                    if (SubmitPlayIndex != null)
                     {
                         // 台本のほうに現在の再生位置を送る
                         SubmitPlayIndex(scriptIndex - 1);
@@ -405,7 +398,7 @@ namespace Yomiage.GUI.Models
             {
                 // 一つのファイルに書き出す
                 var p = GetPreset(scriptsList.First().First(), preset);
-                var allText = string.Join("", scriptsList.First().Select(s =>s.OriginalText ).ToArray());
+                var allText = string.Join("", scriptsList.First().Select(s => s.OriginalText).ToArray());
                 var filename = FileNameWithNumber(fileName, -1, allText, p);
                 waitDialog.SetProgress(filename, 0.5);
                 await Task.Delay(10);
@@ -675,7 +668,7 @@ namespace Yomiage.GUI.Models
         private static string RemoveInvalidChar(string filePath)
         {
             var invalids = Path.GetInvalidFileNameChars();
-            foreach(var i in invalids)
+            foreach (var i in invalids)
             {
                 filePath = filePath.Replace(i.ToString(), "");
             }

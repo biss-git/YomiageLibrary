@@ -67,6 +67,10 @@ namespace Yomiage.Core.Types
 
         public async Task<double[]> Play(TalkScript talkScript, MasterEffectValue masterEffectValue, Action<int> SetSamplingRate_Hz)
         {
+            if(!Engine.VoiceEngine.IsEnable || !Library.VoiceLibrary.IsEnable)
+            {
+                return new double[0];
+            }
             var script = JsonUtil.DeepClone(talkScript);
             (int shortPause, int longPause) = GetPauseSpan(masterEffectValue);
             script.Fill(Engine.EngineConfig, shortPause, longPause);
@@ -88,6 +92,10 @@ namespace Yomiage.Core.Types
         public async Task Save(TalkScript[] talkScripts, MasterEffectValue masterEffectValue, string filePath,
             int startPause, int endPause, bool saveWithText, Encoding encoding)
         {
+            if (!Engine.VoiceEngine.IsEnable || !Library.VoiceLibrary.IsEnable)
+            {
+                return;
+            }
             var scripts = new List<TalkScript>();
             (int shortPause, int longPause) = GetPauseSpan(masterEffectValue);
             foreach(var s in talkScripts)

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Yomiage.Core;
 using Yomiage.GUI.ViewModels;
 
 namespace Yomiage.GUI.Dialog.ViewModels
@@ -34,12 +35,13 @@ namespace Yomiage.GUI.Dialog.ViewModels
             ComponentList.Add(new ComponentItem(Assembly.GetAssembly(typeof(AvalonDock.Themes.VS2013.Themes.ResourceKeys)), "https://www.nuget.org/packages/Dirkster.AvalonDock.Themes.VS2013/4.60.0/License"));
             ComponentList.Add(new ComponentItem(Assembly.GetAssembly(typeof(MahApps.Metro.Controls.MetroWindow)), "https://github.com/MahApps/MahApps.Metro/blob/develop/LICENSE"));
             ComponentList.Add(new ComponentItem(Assembly.GetAssembly(typeof(MahApps.Metro.IconPacks.BasePackIconExtension)), "https://github.com/MahApps/MahApps.Metro.IconPacks/blob/develop/LICENSE"));
-            ComponentList.Add(new ComponentItem(Assembly.GetAssembly(typeof(Markdig.Markdown)), "https://github.com/Kryptos-FR/markdig.wpf/blob/develop/LICENSE.md"));
             ComponentList.Add(new ComponentItem(Assembly.GetAssembly(typeof(NAudio.Dsp.FastFourierTransform)), "https://github.com/naudio/NAudio/blob/master/license.txt"));
             ComponentList.Add(new ComponentItem(Assembly.GetAssembly(typeof(NLog.Config.AdvancedAttribute)), "https://github.com/NLog/NLog/blob/dev/LICENSE.txt"));
             ComponentList.Add(new ComponentItem(Assembly.GetAssembly(typeof(Prism.DryIoc.PrismApplication)), "https://github.com/PrismLibrary/Prism/blob/master/LICENSE"));
             ComponentList.Add(new ComponentItem(Assembly.GetAssembly(typeof(Reactive.Bindings.ReactiveProperty)), "https://github.com/runceel/ReactiveProperty/blob/main/LICENSE.txt"));
 
+            ComponentList.Add(new ComponentItem(AssemblyList.GetJPNKanaConv(), ""));
+            ComponentList.Add(new ComponentItem(AssemblyList.GetLibNMeCab(), "https://licenses.nuget.org/LGPL-2.1-or-later"));
 
 
         }

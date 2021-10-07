@@ -39,8 +39,8 @@ namespace Yomiage.SDK
         /// <param name="mainVoice"> 読み上げてほしい子のボイス設定 </param>
         /// <param name="subVoice"> サブの音声情報。EnginConfig で VoiceFusionEnable を true にしたときにのみ呼ばれる。基本的には使わなくていい。 </param>
         /// <param name="talkScript"> 読み上げる内容 </param>
-        /// <param name="MasterEffect"> マスターコントロールの音声効果 </param>
-        /// <param name="SamplingRate_Hz"> サンプリング周波数を教えてほしい </param>
+        /// <param name="masterEffect"> マスターコントロールの音声効果 </param>
+        /// <param name="setSamplingRate_Hz"> サンプリング周波数を教えてほしい </param>
         /// <returns> 音声波形 </returns>
         Task<double[]> Play(VoiceConfig mainVoice, VoiceConfig subVoice, TalkScript talkScript, MasterEffectValue masterEffect, Action<int> setSamplingRate_Hz);
         /// <summary>
@@ -49,8 +49,8 @@ namespace Yomiage.SDK
         /// EngineSaveEnable が true の場合、保存ボタンを押したときに呼ばれる。
         /// UI 側で保存処理は行われないので、この関数内で保存処理を行う。
         /// </summary>
-        /// <param name="voicePreset"> 読み上げてほしい子のボイス設定 </param>
-        /// <param name="subPreset"> サブの音声情報。EnginConfig で VoiceFusionEnable を true にしたときにのみ呼ばれる。基本的には使わなくていい。 </param>
+        /// <param name="mainVoice"> 読み上げてほしい子のボイス設定 </param>
+        /// <param name="subVoice"> サブの音声情報。EnginConfig で VoiceFusionEnable を true にしたときにのみ呼ばれる。基本的には使わなくていい。 </param>
         /// <param name="talkScripts"> 読み上げる内容 </param>
         /// <param name="masterEffect"> マスターコントロールの音声効果 </param>
         /// <param name="filePath"> 保存先の指定アドレス (拡張子は .wav, .mp3 の可能性がある) </param>
@@ -59,11 +59,11 @@ namespace Yomiage.SDK
         /// <param name="saveWithText"> テキストを一緒に保存するかどうか </param>
         /// <param name="encoding"> テキストのエンコード情報 </param>
         /// <returns> 音声波形 </returns>
-        Task Save(VoiceConfig voicePreset, VoiceConfig subPreset, TalkScript[] talkScripts, MasterEffectValue masterEffect, string filePath, int startPause, int endPause, bool saveWithText, Encoding encoding);
+        Task Save(VoiceConfig mainVoice, VoiceConfig subVoice, TalkScript[] talkScripts, MasterEffectValue masterEffect, string filePath, int startPause, int endPause, bool saveWithText, Encoding encoding);
         /// <summary>
         /// 音声生成の中断処理
         /// </summary>
-        /// <returns> true: 成功、false: 失敗 (まあ失敗することは無いと思いますが) </returns>
+        /// <returns> true: 成功、false: 失敗 </returns>
         Task<bool> Stop();
     }
 }

@@ -48,14 +48,18 @@ namespace Yomiage.GUI.Util
             {
                 if (e.Exception.Message == "ウィンドウ ハンドルが無効です。") { return; }
                 if (e.Exception.Message.Contains("JpnKanaConversion.XmlSerializers.dll")) { return; }
+                if (e.Exception.Message.Contains("Could not load file or assembly")) { return; }
+                if (e.Exception.Message.Contains("The path is empty. (Parameter 'path')")) { return; }
+                if (e.Exception.Message.Contains("The input does not contain any JSON tokens. Expected the input to start with a valid JSON token,")) { return; }
             }
             Data.Status.StatusText.Value = "マネージコード内で例外が発生しました。エラー内容についてはログファイルをご確認ください。";
-            logger.Error("マネージコード内で例外が発生しました。");
-            logger.Error(e.ToString());
-            logger.Error("e.Exception.TargetSite.Name : " + e.Exception?.TargetSite?.Name);
-            logger.Error("e.Exception.Message : " + e.Exception?.Message);
-            logger.Error("e.Exception.StackTrace : " + e.Exception?.StackTrace);
-            logger.Error("e.Exception.Source : " + e.Exception?.Source);
+            var logText = "マネージコード内で例外が発生しました。" + Environment.NewLine;
+            logText += e.ToString() + Environment.NewLine;
+            logText += "e.Exception.TargetSite.Name : " + e.Exception?.TargetSite?.Name + Environment.NewLine;
+            logText += "e.Exception.Message : " + e.Exception?.Message + Environment.NewLine;
+            logText += "e.Exception.StackTrace : " + e.Exception?.StackTrace + Environment.NewLine;
+            logText += "e.Exception.Source : " + e.Exception?.Source + Environment.NewLine;
+            logger.Error(logText);
         }
 
         public static void App_DispatcherUnhandledException(
@@ -63,12 +67,13 @@ namespace Yomiage.GUI.Util
                 System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             Data.Status.StatusText.Value = "UIスレッドで例外が発生しました。エラー内容についてはログファイルをご確認ください。";
-            logger.Error("UIスレッドで例外が発生しました。");
-            logger.Error(e.ToString());
-            logger.Error("e.Exception.TargetSite.Name : " + e.Exception?.TargetSite?.Name);
-            logger.Error("e.Exception.Message : " + e.Exception?.Message);
-            logger.Error("e.Exception.StackTrace : " + e.Exception?.StackTrace);
-            logger.Error("e.Exception.Source : " + e.Exception?.Source);
+            var logText = "UIスレッドで例外が発生しました。" + Environment.NewLine;
+            logText += e.ToString() + Environment.NewLine;
+            logText += "e.Exception.TargetSite.Name : " + e.Exception?.TargetSite?.Name + Environment.NewLine;
+            logText += "e.Exception.Message : " + e.Exception?.Message + Environment.NewLine;
+            logText += "e.Exception.StackTrace : " + e.Exception?.StackTrace + Environment.NewLine;
+            logText += "e.Exception.Source : " + e.Exception?.Source + Environment.NewLine;
+            logger.Error(logText);
 
             e.Handled = true;
         }
@@ -78,12 +83,13 @@ namespace Yomiage.GUI.Util
                 UnobservedTaskExceptionEventArgs e)
         {
             Data.Status.StatusText.Value = "バックグラウンドで例外が発生しました。エラー内容についてはログファイルをご確認ください。";
-            logger.Error("バックグラウンドで例外が発生しました。");
-            logger.Error(e.ToString());
-            logger.Error("e.Exception.TargetSite.Name : " + e.Exception?.TargetSite?.Name);
-            logger.Error("e.Exception.Message : " + e.Exception?.Message);
-            logger.Error("e.Exception.StackTrace : " + e.Exception?.StackTrace);
-            logger.Error("e.Exception.Source : " + e.Exception?.Source);
+            var logText = "バックグラウンドで例外が発生しました。" + Environment.NewLine;
+            logText += e.ToString() + Environment.NewLine;
+            logText += "e.Exception.TargetSite.Name : " + e.Exception?.TargetSite?.Name + Environment.NewLine;
+            logText += "e.Exception.Message : " + e.Exception?.Message + Environment.NewLine;
+            logText += "e.Exception.StackTrace : " + e.Exception?.StackTrace + Environment.NewLine;
+            logText += "e.Exception.Source : " + e.Exception?.Source + Environment.NewLine;
+            logger.Error(logText);
 
             e.SetObserved();
         }
@@ -92,19 +98,21 @@ namespace Yomiage.GUI.Util
                   object sender,
                   UnhandledExceptionEventArgs e)
         {
-            logger.Error("トラップできない例外が発生しました。");
-            logger.Error(e.ToString());
+            var logText = "トラップできない例外が発生しました。" + Environment.NewLine;
+            logText += e.ToString() + Environment.NewLine;
             var exception = e.ExceptionObject as Exception;
             if (exception == null)
             {
-                logger.Error("System.Exceptionとして扱えない例外");
+                logText += "System.Exceptionとして扱えない例外" + Environment.NewLine;
+                logger.Error(logText);
                 return;
             }
 
-            logger.Error("exception.TargetSite.Name : " + exception.TargetSite?.Name);
-            logger.Error("exception.Message : " + exception.Message);
-            logger.Error("exception.StackTrace : " + exception.StackTrace);
-            logger.Error("exception.Source : " + exception.Source);
+            logText += "exception.TargetSite.Name : " + exception.TargetSite?.Name + Environment.NewLine;
+            logText += "exception.Message : " + exception.Message + Environment.NewLine;
+            logText += "exception.StackTrace : " + exception.StackTrace + Environment.NewLine;
+            logText += "exception.Source : " + exception.Source + Environment.NewLine;
+            logger.Error(logText);
 
 
             Environment.Exit(0);

@@ -17,21 +17,21 @@
                 <Button Command="{Binding AuthorCommand}" BorderThickness="0">ビス</Button>
             </StackPanel>
             <Label>Copyright 2021 bisu</Label>
-            <Label Margin="0,10,0,0">コンポーネント情報</Label>
+            <Label Margin="0,10,0,0">ライブラリ情報</Label>
         </StackPanel>
 
         <DockPanel DockPanel.Dock="Bottom">
             <Button Command="{Binding OkCommand}" DockPanel.Dock="Right" Width="80" Margin="3">OK</Button>
-            <Button DockPanel.Dock="Left" Width="80" Margin="3">コピー</Button>
+            <!--<Button DockPanel.Dock="Left" Width="80" Margin="3">コピー</Button>-->
             <Label/>
         </DockPanel>
 
         <ListView MinHeight="300" ItemsSource="{Binding ComponentList}">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="コンポーネント名" DisplayMemberBinding="{Binding Name}" Width="200"/>
+                    <GridViewColumn Header="ライブラリ名" DisplayMemberBinding="{Binding Name}" Width="200"/>
                     <GridViewColumn Header="バージョン" DisplayMemberBinding="{Binding Version}" Width="100"/>
-                    <GridViewColumn Header="バージョン" Width="100">
+                    <GridViewColumn Header="ライセンス" Width="100">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Content="表示" Command="{Binding ShowCommand}" Visibility="{Binding CanShow.Value, Converter={StaticResource BooleanToVisibilityConverter}}" MinHeight="22" Height="22" Padding="0"/>

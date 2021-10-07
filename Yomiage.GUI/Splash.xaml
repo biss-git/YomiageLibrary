@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:local="clr-namespace:Yomiage.GUI"
         mc:Ignorable="d"
         WindowStyle="None"
@@ -13,13 +14,17 @@
         Topmost="True"
         WindowStartupLocation="CenterScreen"
         Height="360" Width="800">
-    <DockPanel>
-        <ProgressBar x:Name="progBar" Minimum="0" Maximum="1" Value="0.0"
-                     DockPanel.Dock="Bottom"/>
-        <Grid>
-            <Image Grid.Row="1" x:Name="image2" Source="./スプラッシュ.png"/>
-            <TextBlock x:Name="text" Text="起動中" VerticalAlignment="Bottom"
+    <Grid>
+        <DockPanel>
+            <mah:MetroProgressBar x:Name="progBar" Minimum="0" Maximum="1" Value="0.0" d:Value="1"
+                                  DockPanel.Dock="Bottom"
+                                  Height="10">
+            </mah:MetroProgressBar>
+            <Grid>
+                <Image Grid.Row="1" x:Name="image2" Source="./スプラッシュ.png"/>
+                <TextBlock x:Name="text" Text="起動中" VerticalAlignment="Bottom"
                        Foreground="White"/>
-        </Grid>
-    </DockPanel>
+            </Grid>
+        </DockPanel>
+    </Grid>
 </Window>

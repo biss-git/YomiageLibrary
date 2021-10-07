@@ -1,45 +1,49 @@
-﻿<mah:MetroWindow x:Class="Yomiage.GUI.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Yomiage.GUI"
-        xmlns:conv="clr-namespace:Yomiage.GUI.Converters"
-        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-                 xmlns:data="clr-namespace:Yomiage.GUI.Data"
-                 xmlns:const="clr-namespace:Yomiage.GUI.Data"
-                 xmlns:avalon="https://github.com/Dirkster99/AvalonDock"
-                 xmlns:view="clr-namespace:Yomiage.GUI.Views"
-                 xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
-                 xmlns:prism="http://prismlibrary.com/"
-                 prism:ViewModelLocator.AutoWireViewModel="True"
-                 Loaded="MetroWindow_Loaded"
-                 Closed="MetroWindow_Closed"
-        mc:Ignorable="d"
-                 Title="{x:Static const:ConstData.AppName}"
-                 Height="700" Width="1010"
-                 TitleBarHeight="24"
-                 Closing="MetroWindow_Closing"
-                 MouseDown="MetroWindow_MouseDown"
-                 IsEnabled="False">
+﻿<mah:MetroWindow
+    x:Class="Yomiage.GUI.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:avalon="https://github.com/Dirkster99/AvalonDock"
+    xmlns:const="clr-namespace:Yomiage.GUI.Data"
+    xmlns:conv="clr-namespace:Yomiage.GUI.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:data="clr-namespace:Yomiage.GUI.Data"
+    xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:local="clr-namespace:Yomiage.GUI"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
+    xmlns:view="clr-namespace:Yomiage.GUI.Views"
+    Title="{x:Static const:ConstData.AppName}"
+    Width="1010"
+    Height="700"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    Closed="MetroWindow_Closed"
+    Closing="MetroWindow_Closing"
+    IsEnabled="False"
+    Loaded="MetroWindow_Loaded"
+    MouseDown="MetroWindow_MouseDown"
+    TitleBarHeight="24"
+    mc:Ignorable="d">
     <mah:MetroWindow.Resources>
-        <conv:ActiveScriptConverter x:Key="ActiveScriptConverter"/>
-        <conv:ActivePhraseEditorConverter x:Key="ActivePhraseEditorConverter"/>
+        <conv:ActiveScriptConverter x:Key="ActiveScriptConverter" />
+        <conv:ActivePhraseEditorConverter x:Key="ActivePhraseEditorConverter" />
     </mah:MetroWindow.Resources>
     <mah:MetroWindow.CommandBindings>
-        <CommandBinding Command="{x:Static ApplicationCommands.Close}"
-                    Executed="ExecutedCloseCommand"
-                    CanExecute="CanExecuteCloseCommand" />
+        <CommandBinding
+            CanExecute="CanExecuteCloseCommand"
+            Command="{x:Static ApplicationCommands.Close}"
+            Executed="ExecutedCloseCommand" />
     </mah:MetroWindow.CommandBindings>
     <mah:MetroWindow.TitleTemplate>
         <DataTemplate>
-            <TextBlock Text="{TemplateBinding Content}"
-                   TextTrimming="CharacterEllipsis"
-                   VerticalAlignment="Center"
-                       HorizontalAlignment="Center"
-                   Margin="20 0 8 0"
-                   FontWeight="DemiBold"
-                   FontSize="12"/>
+            <TextBlock
+                Margin="20,0,8,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="12"
+                FontWeight="DemiBold"
+                Text="{TemplateBinding Content}"
+                TextTrimming="CharacterEllipsis" />
         </DataTemplate>
     </mah:MetroWindow.TitleTemplate>
     <mah:MetroWindow.LeftWindowCommands>
@@ -57,39 +61,75 @@
                    Margin="8 0 8 0"
                    FontWeight="DemiBold"
                    FontSize="12"/>-->
-                
-                <!-- メニューバー -->
-                <Image Source="./icon.png" Margin="8,2"/>
-                <Menu DockPanel.Dock="Top" Background="Transparent" Foreground="White">
+
+                <!--  メニューバー  -->
+                <Image Margin="8,2" Source="./icon.png" />
+                <Menu
+                    Background="Transparent"
+                    DockPanel.Dock="Top"
+                    Foreground="White">
                     <Menu.Resources>
-                        <Style TargetType="MenuItem" BasedOn="{StaticResource MyMenuItem}">
+                        <Style BasedOn="{StaticResource MyMenuItem}" TargetType="MenuItem">
                             <Style.Triggers>
                                 <Trigger Property="IsHighlighted" Value="True">
-                                    <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.ThemeForeground}" />
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
                     </Menu.Resources>
                     <MenuItem Header=" ファイル">
-                        <MenuItem Header="新規テキスト" Command="{Binding ScriptCommand}" CommandParameter="New" Margin="0,6,0,0"/>
-                        <MenuItem Header="テキストを開く" Command="{Binding ScriptCommand}" CommandParameter="Open"/>
-                        <MenuItem Header="テキストを上書き保存" Command="{Binding ScriptCommand}" CommandParameter="Save"/>
-                        <MenuItem Header="名前をつけてテキストを保存" Command="{Binding ScriptCommand}" CommandParameter="SaveAs"/>
-                        <Separator/>
+                        <MenuItem
+                            Margin="0,6,0,0"
+                            Command="{Binding ScriptCommand}"
+                            CommandParameter="New"
+                            Header="新規テキスト" />
+                        <MenuItem
+                            Command="{Binding ScriptCommand}"
+                            CommandParameter="Open"
+                            Header="テキストを開く" />
+                        <MenuItem
+                            Command="{Binding ScriptCommand}"
+                            CommandParameter="Save"
+                            Header="テキストを上書き保存" />
+                        <MenuItem
+                            Command="{Binding ScriptCommand}"
+                            CommandParameter="SaveAs"
+                            Header="名前をつけてテキストを保存" />
+                        <Separator />
                         <!--<MenuItem Header="音声ファイルを保存"/>
                         <Separator/>-->
                         <!--<MenuItem Header="プロジェクトをインポート"/>
                         <MenuItem Header="プロジェクトをエクスポート"/>
                         <Separator/>-->
-                        <MenuItem Header="設定のインポート" Command="{Binding MenuCommand}" CommandParameter="LoadSettings"/>
-                        <MenuItem Header="設定のエクスポート" Command="{Binding MenuCommand}" CommandParameter="SaveSettings"/>
-                        <Separator/>
-                        <MenuItem Header="終了" Command="ApplicationCommands.Close" Margin="0,0,0,6"/>
+                        <MenuItem
+                            Command="{Binding MenuCommand}"
+                            CommandParameter="LoadSettings"
+                            Header="設定のインポート" />
+                        <MenuItem
+                            Command="{Binding MenuCommand}"
+                            CommandParameter="SaveSettings"
+                            Header="設定のエクスポート" />
+                        <Separator />
+                        <MenuItem
+                            Margin="0,0,0,6"
+                            Command="ApplicationCommands.Close"
+                            Header="終了" />
                     </MenuItem>
                     <MenuItem Header=" テキスト">
-                        <MenuItem Header="再生" Command="{Binding ScriptCommand}" CommandParameter="Play" Margin="0,6,0,0"/>
-                        <MenuItem Header="音声保存" Command="{Binding ScriptCommand}" CommandParameter="SaveVoice"/>
-                        <MenuItem Header="保存設定" Command="{Binding OpenDialogCommand}" CommandParameter="SaveVoiceDialog" Margin="0,0,0,6"/>
+                        <MenuItem
+                            Margin="0,6,0,0"
+                            Command="{Binding ScriptCommand}"
+                            CommandParameter="Play"
+                            Header="再生" />
+                        <MenuItem
+                            Command="{Binding ScriptCommand}"
+                            CommandParameter="SaveVoice"
+                            Header="音声保存" />
+                        <MenuItem
+                            Margin="0,0,0,6"
+                            Command="{Binding OpenDialogCommand}"
+                            CommandParameter="SaveVoiceDialog"
+                            Header="保存設定" />
                         <!--<MenuItem Header="再生時間" Margin="0,0,0,6"/>-->
                         <!--<Separator/>
                         <MenuItem Header="ボイスプリセットを割り当てる"/>
@@ -98,59 +138,126 @@
                         <MenuItem Header="単語の編集" Margin="0,0,0,6"/>-->
                     </MenuItem>
                     <MenuItem Header=" マスター">
-                        <MenuItem Header="設定値を全て初期化" Command="{Binding MasterCommand}" CommandParameter="Initialize" Margin="0,6,0,0"/>
-                        <Separator/>
-                        <MenuItem Header="記号ポーズを新規登録" Command="{Binding MasterCommand}" CommandParameter="CreatePause" Margin="0,0,0,6"/>
+                        <MenuItem
+                            Margin="0,6,0,0"
+                            Command="{Binding MasterCommand}"
+                            CommandParameter="Initialize"
+                            Header="設定値を全て初期化" />
+                        <Separator />
+                        <MenuItem
+                            Margin="0,0,0,6"
+                            Command="{Binding MasterCommand}"
+                            CommandParameter="CreatePause"
+                            Header="記号ポーズを新規登録" />
                     </MenuItem>
                     <MenuItem Header=" ボイス">
-                        <MenuItem Header="ユーザーボイスの新規作成" Command="{Binding OpenDialogCommand}" CommandParameter="PresetNewDialog" Margin="0,6,0,0"/>
-                        <Separator/>
-                        <MenuItem Header="ボイスプリセットの編集" Command="{Binding VoiceCommand}" CommandParameter="SelectPresetTab" Margin="0,0,0,6"/>
+                        <MenuItem
+                            Margin="0,6,0,0"
+                            Command="{Binding OpenDialogCommand}"
+                            CommandParameter="PresetNewDialog"
+                            Header="ユーザーボイスの新規作成" />
+                        <Separator />
+                        <MenuItem
+                            Margin="0,0,0,6"
+                            Command="{Binding VoiceCommand}"
+                            CommandParameter="SelectPresetTab"
+                            Header="ボイスプリセットの編集" />
                         <!--<Separator/>
                         <MenuItem Header="標準プリセットを全て初期化" Margin="0,0,0,6"/>-->
                     </MenuItem>
                     <MenuItem Header=" フレーズ">
-                        <MenuItem Header="フレーズ辞書一覧" Command="{Binding OpenDialogCommand}" CommandParameter="PhraseListDialog" Margin="0,6,0,6"/>
+                        <MenuItem
+                            Margin="0,6,0,6"
+                            Command="{Binding OpenDialogCommand}"
+                            CommandParameter="PhraseListDialog"
+                            Header="フレーズ一覧" />
                     </MenuItem>
                     <MenuItem Header=" 単語">
-                        <MenuItem Header="単語辞書一覧" Command="{Binding OpenDialogCommand}" CommandParameter="WordListDialog" Margin="0,6,0,6"/>
+                        <MenuItem
+                            Margin="0,6,0,6"
+                            Command="{Binding OpenDialogCommand}"
+                            CommandParameter="WordListDialog"
+                            Header="単語一覧" />
                     </MenuItem>
                     <MenuItem Header=" 表示">
-                        <MenuItem Header="ボイスプリセット" IsChecked="{Binding PresetVisible.Value}" IsCheckable="True" Margin="0,6,0,0"/>
-                        <MenuItem Header="チューニング" IsChecked="{Binding TuningVisible.Value}" IsCheckable="True"/>
-                        <MenuItem Header="キャラクター" IsChecked="{Binding CharacterVisible.Value}" IsCheckable="True"/>
-                        <Separator/>
-                        <MenuItem Header="キャラクターを大きく表示" IsChecked="{Binding IsCharacterMaximized.Value}" IsCheckable="True"/>
-                        <Separator/>
-                        <MenuItem Header="テキストに行数を表示" IsChecked="{Binding IsLineNumberVisible.Value}" IsCheckable="True"/>
-                        <Separator/>
-                        <MenuItem Header="ウィンドウの配置とレイアウトを初期化" Margin="0,0,0,6"
-                          Command="{Binding InitializeLayoutCommand}"/>
+                        <MenuItem
+                            Margin="0,6,0,0"
+                            Header="ボイスプリセット"
+                            IsCheckable="True"
+                            IsChecked="{Binding PresetVisible.Value}" />
+                        <MenuItem
+                            Header="チューニング"
+                            IsCheckable="True"
+                            IsChecked="{Binding TuningVisible.Value}" />
+                        <MenuItem
+                            Header="キャラクター"
+                            IsCheckable="True"
+                            IsChecked="{Binding CharacterVisible.Value}" />
+                        <Separator />
+                        <MenuItem
+                            Header="キャラクターを大きく表示"
+                            IsCheckable="True"
+                            IsChecked="{Binding IsCharacterMaximized.Value}" />
+                        <Separator />
+                        <MenuItem
+                            Header="テキストに行数を表示"
+                            IsCheckable="True"
+                            IsChecked="{Binding IsLineNumberVisible.Value}" />
+                        <Separator />
+                        <MenuItem
+                            Margin="0,0,0,6"
+                            Command="{Binding InitializeLayoutCommand}"
+                            Header="ウィンドウの配置とレイアウトを初期化" />
                     </MenuItem>
                     <MenuItem Header=" エンジン">
-                        <MenuItem Header="音声合成エンジン一覧" Command="{Binding OpenDialogCommand}" CommandParameter="EngineListDialog" Margin="0,6,0,6"/>
+                        <MenuItem
+                            Margin="0,6,0,6"
+                            Command="{Binding OpenDialogCommand}"
+                            CommandParameter="EngineListDialog"
+                            Header="音声合成エンジン一覧" />
                     </MenuItem>
                     <MenuItem Header=" ライブラリ">
-                        <MenuItem Header="音声ライブラリ一覧" Command="{Binding OpenDialogCommand}" CommandParameter="LibraryListDialog" Margin="0,6,0,6"/>
+                        <MenuItem
+                            Margin="0,6,0,6"
+                            Command="{Binding OpenDialogCommand}"
+                            CommandParameter="LibraryListDialog"
+                            Header="音声ライブラリ一覧" />
                     </MenuItem>
                     <MenuItem Header=" 設定">
-                        <MenuItem Header="プロジェクト設定" Command="{Binding OpenDialogCommand}" CommandParameter="SettingProjectDialog" Margin="0,6,0,0"/>
-                        <MenuItem Header="環境設定" Command="{Binding OpenDialogCommand}" CommandParameter="SettingEnvironmentDialog"/>
+                        <MenuItem
+                            Margin="0,6,0,0"
+                            Command="{Binding OpenDialogCommand}"
+                            CommandParameter="SettingProjectDialog"
+                            Header="プロジェクト設定" />
+                        <MenuItem
+                            Command="{Binding OpenDialogCommand}"
+                            CommandParameter="SettingEnvironmentDialog"
+                            Header="環境設定" />
                         <!--<MenuItem Header="ショートカット設定" Command="{Binding OpenDialogCommand}" CommandParameter="SettingShortcutDialog"/>-->
-                        <Separator/>
+                        <Separator />
                         <!--<MenuItem Header="音声合成エンジン設定" Command="{Binding OpenDialogCommand}" CommandParameter="EngineListDialog"/>
                         <MenuItem Header="音声ライブラリ設定" Command="{Binding OpenDialogCommand}" CommandParameter="LibraryListDialog"/>
                         <Separator/>-->
-                        <MenuItem Header="設定の初期化" Command="{Binding InitializeSettingCommand}" Margin="0,0,0,6"/>
+                        <MenuItem
+                            Margin="0,0,0,6"
+                            Command="{Binding InitializeSettingCommand}"
+                            Header="設定の初期化" />
                     </MenuItem>
                     <MenuItem Header=" ヘルプ ">
-                        <MenuItem Header="ヘルプの表示" Command="{Binding HelpCommand}" Margin="0,6,0,0"/>
-                        <Separator/>
+                        <MenuItem
+                            Margin="0,6,0,0"
+                            Command="{Binding HelpCommand}"
+                            Header="ヘルプの表示" />
+                        <Separator />
                         <!--<MenuItem Header="お知らせ・最新情報"/>
                         <Separator/>-->
                         <!--<MenuItem Header="更新確認" IsEnabled="False"/>
                         <Separator/>-->
-                        <MenuItem Header="バージョン情報" Command="{Binding OpenDialogCommand}" CommandParameter="VersionInfoDialog" Margin="0,0,0,6"/>
+                        <MenuItem
+                            Margin="0,0,0,6"
+                            Command="{Binding OpenDialogCommand}"
+                            CommandParameter="VersionInfoDialog"
+                            Header="バージョン情報" />
                     </MenuItem>
                 </Menu>
                 <!--<TextBlock Text="{x:Static const:ConstData.AppName}"
@@ -163,164 +270,226 @@
         </mah:WindowCommands>
     </mah:MetroWindow.LeftWindowCommands>
     <DockPanel>
-        
-        <!-- ステータスバー -->
-        <DockPanel DockPanel.Dock="Bottom" Background="{DynamicResource MahApps.Brushes.Control.Background}">
+
+        <!--  ステータスバー  -->
+        <DockPanel Background="{DynamicResource MahApps.Brushes.Control.Background}" DockPanel.Dock="Bottom">
             <DockPanel.Resources>
-                <Style TargetType="Button" BasedOn="{StaticResource MahApps.Styles.Button}">
-                    <Setter Property="FontSize" Value="12"/>
-                    <Setter Property="Background" Value="#00000000"/>
-                    <Setter Property="Margin" Value="0,5,0,5"/>
-                    <Setter Property="Padding" Value="6,0,6,0"/>
-                    <Setter Property="BorderThickness" Value="1,0,0,0"/>
-                    <Setter Property="BorderBrush" Value="Gray"/>
-                    <Setter Property="MinHeight" Value="10"/>
-                    <Setter Property="FontWeight" Value="Normal"/>
+                <Style BasedOn="{StaticResource MahApps.Styles.Button}" TargetType="Button">
+                    <Setter Property="FontSize" Value="12" />
+                    <Setter Property="Background" Value="#00000000" />
+                    <Setter Property="Margin" Value="0,5,0,5" />
+                    <Setter Property="Padding" Value="6,0,6,0" />
+                    <Setter Property="BorderThickness" Value="1,0,0,0" />
+                    <Setter Property="BorderBrush" Value="Gray" />
+                    <Setter Property="MinHeight" Value="10" />
+                    <Setter Property="FontWeight" Value="Normal" />
                 </Style>
                 <Style TargetType="Label">
-                    <Setter Property="FontSize" Value="12"/>
-                    <Setter Property="Margin" Value="0,5,0,5"/>
-                    <Setter Property="Padding" Value="6,0,6,0"/>
-                    <Setter Property="BorderThickness" Value="1,0,0,0"/>
-                    <Setter Property="BorderBrush" Value="Gray"/>
+                    <Setter Property="FontSize" Value="12" />
+                    <Setter Property="Margin" Value="0,5,0,5" />
+                    <Setter Property="Padding" Value="6,0,6,0" />
+                    <Setter Property="BorderThickness" Value="1,0,0,0" />
+                    <Setter Property="BorderBrush" Value="Gray" />
                 </Style>
                 <Style TargetType="TextBlock">
-                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="VerticalAlignment" Value="Center" />
                 </Style>
             </DockPanel.Resources>
-            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,6,0">
-                <Label Content="{Binding Num.Value}"/>
+            <StackPanel
+                Margin="0,0,6,0"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Right"
+                Orientation="Horizontal">
+                <Label Content="{Binding Num.Value}" />
                 <TextBlock>文字</TextBlock>
             </StackPanel>
-            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,6,0">
-                <Label Content="{Binding Row.Value}"/>
+            <StackPanel
+                Margin="0,0,6,0"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Right"
+                Orientation="Horizontal">
+                <Label Content="{Binding Row.Value}" />
                 <TextBlock>行、</TextBlock>
-                <TextBlock Text="{Binding Col.Value}"/>
+                <TextBlock Text="{Binding Col.Value}" />
                 <TextBlock>列</TextBlock>
             </StackPanel>
             <!--<Button DockPanel.Dock="Right">記号ポーズ辞書</Button>
             <Button DockPanel.Dock="Right">単語辞書</Button>
             <Button DockPanel.Dock="Right">フレーズ辞書</Button>-->
-            <Label BorderThickness="0" Content="{Binding StatusText.Value}"/>
+            <Label BorderThickness="0" Content="{Binding StatusText.Value}" />
         </DockPanel>
-        
-        <!-- メインコンテンツ -->
+
+        <!--  メインコンテンツ  -->
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition x:Name="Row2" Height="auto"/>
-                <RowDefinition x:Name="Row3" Height="320"/>
+                <RowDefinition />
+                <RowDefinition x:Name="Row2" Height="auto" />
+                <RowDefinition x:Name="Row3" Height="320" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="Column1" Width="290"/>
-                <ColumnDefinition x:Name="Column2" Width="4"/>
-                <ColumnDefinition/>
-                <ColumnDefinition x:Name="Column4" Width="auto"/>
-                <ColumnDefinition x:Name="Column5" Width="190"/>
+                <ColumnDefinition x:Name="Column1" Width="290" />
+                <ColumnDefinition x:Name="Column2" Width="4" />
+                <ColumnDefinition />
+                <ColumnDefinition x:Name="Column4" Width="auto" />
+                <ColumnDefinition x:Name="Column5" Width="190" />
             </Grid.ColumnDefinitions>
 
-            <GridSplitter Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="{Binding TunerSpan.Value}" Height="4"/>
-            <GridSplitter Grid.Row="0" Grid.Column="1" Width="4"/>
-            <GridSplitter Grid.Row="0" Grid.Column="3"  Grid.RowSpan="{Binding CharacterSpan.Value}" Width="4"/>
+            <GridSplitter
+                Grid.Row="1"
+                Grid.Column="0"
+                Grid.ColumnSpan="{Binding TunerSpan.Value}"
+                Height="4" />
+            <GridSplitter
+                Grid.Row="0"
+                Grid.Column="1"
+                Width="4" />
+            <GridSplitter
+                Grid.Row="0"
+                Grid.RowSpan="{Binding CharacterSpan.Value}"
+                Grid.Column="3"
+                Width="4" />
 
 
-            <!-- ボイスプリセット -->
+            <!--  ボイスプリセット  -->
             <DockingManager x:Name="PresetDocking" Grid.Column="0">
                 <LayoutRoot>
                     <LayoutPanel>
                         <LayoutDocumentPane DockHeight="*" DockWidth="*">
-                            <LayoutDocument x:Name="StandartTab" Title="　標準ボイス　" CanClose="False" CanFloat="False" CanMove="False">
-                                <view:PresetStandard/>
+                            <LayoutDocument
+                                x:Name="StandartTab"
+                                Title="　標準ボイス　"
+                                CanClose="False"
+                                CanFloat="False"
+                                CanMove="False">
+                                <view:PresetStandard />
                             </LayoutDocument>
-                            <LayoutDocument x:Name="UserTab" Title="　ユーザーボイス　" CanClose="False" CanFloat="False" CanMove="False">
-                                <view:PresetUser/>
+                            <LayoutDocument
+                                x:Name="UserTab"
+                                Title="　ユーザーボイス　"
+                                CanClose="False"
+                                CanFloat="False"
+                                CanMove="False">
+                                <view:PresetUser />
                             </LayoutDocument>
                         </LayoutDocumentPane>
                     </LayoutPanel>
                 </LayoutRoot>
             </DockingManager>
 
-            <!-- テキスト入力 -->
-            <DockingManager x:Name="TextDocking" Grid.Row="0" Grid.Column="2"
-                            DocumentsSource="{Binding ScriptService.Scripts}"
-                            ActiveContent="{Binding ScriptService.ActiveScript.Value, Mode=TwoWay, Converter={StaticResource ActiveScriptConverter}}">
+            <!--  テキスト入力  -->
+            <DockingManager
+                x:Name="TextDocking"
+                Grid.Row="0"
+                Grid.Column="2"
+                ActiveContent="{Binding ScriptService.ActiveScript.Value, Mode=TwoWay, Converter={StaticResource ActiveScriptConverter}}"
+                DocumentsSource="{Binding ScriptService.Scripts}">
                 <DockingManager.LayoutItemTemplate>
                     <DataTemplate>
-                        <view:MainText DataContext="{Binding}"/>
+                        <view:MainText DataContext="{Binding}" />
                     </DataTemplate>
                 </DockingManager.LayoutItemTemplate>
                 <DockingManager.LayoutItemContainerStyle>
                     <Style TargetType="{x:Type LayoutItem}">
                         <Setter Property="Title" Value="{Binding Model.TitleWithDirty.Value}" />
                         <Setter Property="ToolTip" Value="{Binding Model.FilePath.Value}" />
-                        <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}"/>
-                        <Setter Property="Visibility" Value="{Binding Model.Visibility.Value}"/>
+                        <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
+                        <Setter Property="Visibility" Value="{Binding Model.Visibility.Value}" />
                         <!--<Setter Property="ContentId" Value="{Binding Model.ContentId.Value}" />-->
                     </Style>
                 </DockingManager.LayoutItemContainerStyle>
                 <LayoutRoot>
                     <LayoutPanel>
-                        <LayoutDocumentPane/>
+                        <LayoutDocumentPane />
                     </LayoutPanel>
                 </LayoutRoot>
             </DockingManager>
-            <Button Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Top" MinWidth="20" MinHeight="20" Padding="5,0"
-                    BorderThickness="0"
-                    Background="Transparent"
-                    Margin="0,3,30,0"
-                    Command="{Binding ScriptCommand}" CommandParameter="New">
-                <icon:PackIconBoxIcons Kind="RegularPlus" Width="14"/>
+            <Button
+                Grid.Row="0"
+                Grid.Column="2"
+                MinWidth="20"
+                MinHeight="20"
+                Margin="0,3,30,0"
+                Padding="5,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                BorderThickness="0"
+                Command="{Binding ScriptCommand}"
+                CommandParameter="New">
+                <icon:PackIconBoxIcons Width="14" Kind="RegularPlus" />
             </Button>
 
 
-            <!-- キャラクター -->
-            <Grid Grid.Row="0" Grid.Column="4" Grid.RowSpan="{Binding CharacterSpan.Value}">
-                <view:CharacterPanel/>
+            <!--  キャラクター  -->
+            <Grid
+                Grid.Row="0"
+                Grid.RowSpan="{Binding CharacterSpan.Value}"
+                Grid.Column="4">
+                <view:CharacterPanel />
             </Grid>
 
-            <!-- チューニング -->
-            <DockingManager x:Name="TuningDocking" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="{Binding TunerSpan.Value}" d:Grid.ColumnSpan="5" ActiveContentChanged="TuningDocking_ActiveContentChanged">
+            <!--  チューニング  -->
+            <DockingManager
+                x:Name="TuningDocking"
+                Grid.Row="2"
+                Grid.Column="0"
+                Grid.ColumnSpan="{Binding TunerSpan.Value}"
+                d:Grid.ColumnSpan="5"
+                ActiveContentChanged="TuningDocking_ActiveContentChanged">
                 <LayoutRoot>
                     <LayoutPanel>
                         <LayoutDocumentPane>
-                            <LayoutDocument Title=" 　マスターコントロール　 " CanClose="False">
-                                <view:MasterControl x:Name="TuneTab1"/>
+                            <LayoutDocument
+                                Title=" 　マスターコントロール　 "
+                                CanClose="False"
+                                ContentId="master">
+                                <view:MasterControl x:Name="TuneTab1" />
                             </LayoutDocument>
-                            <LayoutDocument Title=" 　ボイスプリセット編集　 " CanClose="False">
-                                <view:PresetEditor x:Name="TuneTab2"/>
+                            <LayoutDocument
+                                Title=" 　ボイスプリセット編集　 "
+                                CanClose="False"
+                                ContentId="preset">
+                                <view:PresetEditor x:Name="TuneTab2" />
                             </LayoutDocument>
-                            <LayoutDocument Title=" 　フレーズ編集　 " CanClose="False">
-                                <DockingManager x:Name="TuneTab3"
-                                                DocumentsSource="{Binding PhraseService.Editors}"
-                                                ActiveContent="{Binding PhraseService.ActiveEditor.Value, Mode=TwoWay, Converter={StaticResource ActivePhraseEditorConverter}}">
+                            <LayoutDocument
+                                Title=" 　フレーズ編集　 "
+                                CanClose="False"
+                                ContentId="phrase">
+                                <DockingManager
+                                    x:Name="TuneTab3"
+                                    ActiveContent="{Binding PhraseService.ActiveEditor.Value, Mode=TwoWay, Converter={StaticResource ActivePhraseEditorConverter}}"
+                                    DocumentsSource="{Binding PhraseService.Editors}">
                                     <DockingManager.LayoutItemTemplate>
                                         <DataTemplate>
-                                            <view:PhraseEditor DataContext="{Binding}"/>
+                                            <view:PhraseEditor DataContext="{Binding}" />
                                         </DataTemplate>
                                     </DockingManager.LayoutItemTemplate>
                                     <DockingManager.DocumentContextMenu>
                                         <ContextMenu>
-                                            <MenuItem Header="フレーズ編集を複製する" Command="{Binding Model.CopyEditorCommand}"/>
+                                            <MenuItem Command="{Binding Model.CopyEditorCommand}" Header="フレーズ編集を複製する" />
                                         </ContextMenu>
                                     </DockingManager.DocumentContextMenu>
                                     <DockingManager.LayoutItemContainerStyle>
                                         <Style TargetType="{x:Type LayoutItem}">
                                             <Setter Property="Title" Value="{Binding Model.TitleWithDirty.Value}" />
                                             <!--<Setter Property="ToolTip" Value="{Binding Model.FilePath.Value}" />-->
-                                            <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}"/>
-                                            <Setter Property="Visibility" Value="{Binding Model.Visibility.Value}"/>
+                                            <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
+                                            <Setter Property="Visibility" Value="{Binding Model.Visibility.Value}" />
                                             <!--<Setter Property="ContentId" Value="{Binding Model.ContentId.Value}" />-->
                                         </Style>
                                     </DockingManager.LayoutItemContainerStyle>
                                     <LayoutRoot>
                                         <LayoutPanel>
-                                            <LayoutDocumentPane/>
+                                            <LayoutDocumentPane />
                                         </LayoutPanel>
                                     </LayoutRoot>
                                 </DockingManager>
                             </LayoutDocument>
-                            <LayoutDocument Title=" 　単語編集　 " CanClose="False">
-                                <view:WordEditor x:Name="TuneTab4"/>
+                            <LayoutDocument
+                                Title=" 　単語編集　 "
+                                CanClose="False"
+                                ContentId="word">
+                                <view:WordEditor x:Name="TuneTab4" />
                             </LayoutDocument>
                         </LayoutDocumentPane>
                     </LayoutPanel>

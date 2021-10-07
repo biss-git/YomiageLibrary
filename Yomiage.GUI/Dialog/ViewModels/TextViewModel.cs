@@ -14,7 +14,6 @@ namespace Yomiage.GUI.Dialog.ViewModels
         public override string Title => "ライセンス";
 
         public ReactivePropertySlim<string> TextPath { get; } = new();
-        public ReactivePropertySlim<string> MD { get; } = new();
         public ReactivePropertySlim<string> Text { get; } = new();
 
         public override void OnDialogOpened(IDialogParameters parameters)
@@ -25,14 +24,7 @@ namespace Yomiage.GUI.Dialog.ViewModels
                 if (File.Exists(path))
                 {
                     TextPath.Value = path;
-                    if (Path.GetExtension(path).Contains("md"))
-                    {
-                        MD.Value = File.ReadAllText(path, Encoding.UTF8);
-                    }
-                    else
-                    {
-                        Text.Value = File.ReadAllText(path, Encoding.UTF8);
-                    }
+                    Text.Value = File.ReadAllText(path, Encoding.UTF8);
                 }
             }
         }

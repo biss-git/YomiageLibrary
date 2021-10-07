@@ -78,7 +78,7 @@ namespace Yomiage.GUI.Dialog.ViewModels
         {
             ProcessStartInfo pi = new ProcessStartInfo()
             {
-                FileName = "https://sites.google.com/view/unicoe/%E3%83%9B%E3%83%BC%E3%83%A0",
+                FileName = "https://sites.google.com/view/unicoe/%E3%83%81%E3%83%A5%E3%83%BC%E3%83%88%E3%83%AA%E3%82%A2%E3%83%AB/%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3%E3%83%A9%E3%82%A4%E3%83%96%E3%83%A9%E3%83%AA%E3%82%92%E5%89%8A%E9%99%A4%E3%81%99%E3%82%8B",
                 UseShellExecute = true,
             };
             Process.Start(pi);
@@ -93,7 +93,7 @@ namespace Yomiage.GUI.Dialog.ViewModels
         {
             IDialogParameters parameters = new DialogParameters();
             parameters.Add("Library", library);
-            this.dialogService.ShowDialog("SettingsLibraryDialog", parameters, result=> { });
+            this.dialogService.ShowDialog("SettingsLibraryDialog", parameters, result => { });
         }
 
     }
