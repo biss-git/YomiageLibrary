@@ -11,6 +11,7 @@ namespace Yomiage.GUI.Util
 {
     static class AppLog
     {
+        public static string LogDirectory { get; }
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         static AppLog()
@@ -19,7 +20,8 @@ namespace Yomiage.GUI.Util
 
 
             var directory = GetProcessPath();
-            var filePath = Path.Combine(directory, @"log\log" + DateTime.Now.ToString("yyMMdd_HHmmss") + ".txt");
+            LogDirectory = Path.Combine(directory, "log");
+            var filePath = Path.Combine(LogDirectory, "log" + DateTime.Now.ToString("yyMMdd_HHmmss") + ".txt");
 
             var logfile = new NLog.Targets.FileTarget("logfile") { FileName = filePath };
             config.AddRule(LogLevel.Debug, LogLevel.Fatal, logfile);

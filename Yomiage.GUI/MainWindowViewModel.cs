@@ -27,6 +27,7 @@ using Yomiage.SDK.Settings;
 using Yomiage.SDK.VoiceEffects;
 using Yomiage.GUI.Data;
 using System.Diagnostics;
+using Yomiage.GUI.Util;
 
 namespace Yomiage.GUI
 {
@@ -44,7 +45,7 @@ namespace Yomiage.GUI
         public ReactivePropertySlim<bool> IsLineNumberVisible { get; }
 
         public ReadOnlyReactivePropertySlim<string> StatusText { get; }
-        
+
         public ReactivePropertySlim<int> TunerSpan { get; } = new ReactivePropertySlim<int>(5);
         public ReactivePropertySlim<int> CharacterSpan { get; } = new ReactivePropertySlim<int>(1);
 
@@ -63,6 +64,7 @@ namespace Yomiage.GUI
         public ReactiveCommand<string> VoiceCommand { get; }
         public ReactiveCommand<string> MenuCommand { get; }
         public ReactiveCommand HelpCommand { get; }
+        public ReactiveCommand LogCommand { get; }
 
         public ScriptService ScriptService { get; }
         public PhraseService PhraseService { get; }
@@ -76,7 +78,7 @@ namespace Yomiage.GUI
 
 
         public MainWindowViewModel(
-            LayoutService layoutService, 
+            LayoutService layoutService,
             SettingService settingService,
             ScriptService scriptService,
             PhraseService phraseService,
@@ -85,7 +87,7 @@ namespace Yomiage.GUI
             VoicePlayerService voicePlayerService,
             PauseDictionaryService pauseDictionaryService,
             IMessageBroker messageBroker,
-            IDialogService dialogService): base(dialogService)
+            IDialogService dialogService) : base(dialogService)
         {
             this.SettingService = settingService;
             this.LayoutService = layoutService;
@@ -130,6 +132,7 @@ namespace Yomiage.GUI
             MenuCommand = new ReactiveCommand<string>().WithSubscribe(MenuAction).AddTo(Disposables);
             InitializeSettingCommand = new ReactiveCommand().WithSubscribe(InitializeSettingAction).AddTo(Disposables);
             HelpCommand = new ReactiveCommand().WithSubscribe(HelpAction).AddTo(Disposables);
+            LogCommand = new ReactiveCommand().WithSubscribe(LogAction).AddTo(Disposables);
 
             MessageBroker.Default.Subscribe<TextCursorPosition>(value =>
             {
@@ -147,6 +150,11 @@ namespace Yomiage.GUI
                 UseShellExecute = true,
             };
             Process.Start(pi);
+        }
+
+        private void LogAction()
+        {
+            Process.Start("EXPLORER.EXE", AppLog.LogDirectory);
         }
 
         private void MasterAction(string param)
@@ -171,7 +179,7 @@ namespace Yomiage.GUI
                     break;
                 case "Open":
                     var ofd = new OpenFileDialog() { Filter = "テキスト文書|*.txt|すべてのファイル|*.*" };
-                    if(ofd.ShowDialog() != true) { return; }
+                    if (ofd.ShowDialog() != true) { return; }
                     this.ScriptService.AddOpen(ofd.FileName);
                     break;
                 case "Save":
@@ -197,7 +205,7 @@ namespace Yomiage.GUI
                     messageBroker.Publish(new ChangeTuningTab() { TabIndex = 2 });
                     break;
                 case "Copy":
-                    if( this.VoicePresetService.SelectedPreset.Value != null)
+                    if (this.VoicePresetService.SelectedPreset.Value != null)
                     {
                         var result = MessageBox.Show(this.VoicePresetService.SelectedPreset.Value.Name + " のコピーを作成してよろしいですか？", "確認", MessageBoxButton.YesNo);
                         if (result == MessageBoxResult.Yes)
@@ -231,7 +239,7 @@ namespace Yomiage.GUI
                         {
                             Filter = "設定ファイル(*.ysettings)|*.ysettings",
                         };
-                        if(sfd.ShowDialog() == true)
+                        if (sfd.ShowDialog() == true)
                         {
                             this.SettingService.Save(sfd.FileName);
                         }
@@ -260,7 +268,7 @@ namespace Yomiage.GUI
                 "設定を全てリセットします",
                 System.Windows.MessageBoxButton.OKCancel);
 
-            if(result == System.Windows.MessageBoxResult.OK)
+            if (result == System.Windows.MessageBoxResult.OK)
             {
                 SettingService.Reset();
                 LayoutService.InitializeCommand.Execute();

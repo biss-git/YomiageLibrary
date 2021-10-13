@@ -248,6 +248,10 @@
                             Margin="0,6,0,0"
                             Command="{Binding HelpCommand}"
                             Header="ヘルプの表示" />
+                        <MenuItem
+                            Margin="0,0,0,0"
+                            Command="{Binding LogCommand}"
+                            Header="ログの表示" />
                         <Separator />
                         <!--<MenuItem Header="お知らせ・最新情報"/>
                         <Separator/>-->

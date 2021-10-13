@@ -35,7 +35,7 @@ namespace Yomiage.GUI.ViewModels
         public ReactivePropertySlim<string> Title { get; }
         public ReactivePropertySlim<string> TitleWithDirty { get; }
         public ReactivePropertySlim<string> FilePath { get; }
-		public ReactivePropertySlim<Visibility> Visibility { get; }
+        public ReactivePropertySlim<Visibility> Visibility { get; }
         public ReactiveProperty<string> Content { get; }
         public ReadOnlyReactivePropertySlim<bool> IsLineNumberVisible { get; }
 
@@ -146,7 +146,7 @@ namespace Yomiage.GUI.ViewModels
                         }
                     }
                 }
-                if(block != document.Blocks.Last())
+                if (block != document.Blocks.Last())
                 {
                     text += Environment.NewLine;
                 }
@@ -210,7 +210,7 @@ namespace Yomiage.GUI.ViewModels
             {
                 text = GetCursorText();
             }
-            else if(GetSelectedText != null)
+            else if (GetSelectedText != null)
             {
                 text = GetSelectedText();
             }
@@ -244,7 +244,7 @@ namespace Yomiage.GUI.ViewModels
                     }
                 }
 
-                if(index > 0)
+                if (index > 0)
                 {
                     await Task.Delay(1000);
                 }
@@ -263,7 +263,21 @@ namespace Yomiage.GUI.ViewModels
         private async Task SaveAction()
         {
             Content.Value = GetContent();
-            await this.voicePlayerService.Save(Content.Value);
+            var text = "";
+            if (Keyboard.Modifiers == ModifierKeys.Shift &&
+                GetCursorText != null)
+            {
+                text = GetCursorText();
+            }
+            else if (GetSelectedText != null)
+            {
+                text = GetSelectedText();
+            }
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                text = Content.Value;
+            }
+            await this.voicePlayerService.Save(text);
             //var script = this.textService.Parse(Content.Value, SettingService.SplitByEnter);
             //await this.voicePlayerService.Save(script);
         }
@@ -293,7 +307,7 @@ namespace Yomiage.GUI.ViewModels
         {
             Content.Value = GetContent();
             var sfd = new SaveFileDialog() { Filter = "テキスト文書|*.txt" };
-            if(sfd.ShowDialog() != true) { return false; }
+            if (sfd.ShowDialog() != true) { return false; }
             FilePath.Value = sfd.FileName;
             Title.Value = Path.GetFileNameWithoutExtension(sfd.FileName);
             try
@@ -318,16 +332,16 @@ namespace Yomiage.GUI.ViewModels
         {
             var text = GetContent();
             var lines = text.Replace("\r", "").Split("\n");
-            for(int i = line1; i <= line2; i++)
+            for (int i = line1; i <= line2; i++)
             {
                 if (i - 1 >= lines.Length || i <= 0) { continue; }
                 lines[i - 1] = AddCharaLine(lines[i - 1]);
             }
             text = "";
-            for( int i = 0; i<lines.Length; i++)
+            for (int i = 0; i < lines.Length; i++)
             {
                 text += lines[i];
-                if(i != lines.Length -1 )
+                if (i != lines.Length - 1)
                 {
                     text += Environment.NewLine;
                 }
@@ -361,7 +375,11 @@ namespace Yomiage.GUI.ViewModels
             if (string.IsNullOrWhiteSpace(promptString)) { return line; }
             line = RemoveCharaLine(line);
             if (string.IsNullOrWhiteSpace(line)) { return line; }
-            var charaName = this.voicePresetService.SelectedPreset.Value.Name;
+            var charaName = this.voicePresetService.SelectedPreset.Value?.Name;
+            if (string.IsNullOrWhiteSpace(charaName))
+            {
+                return line;
+            }
 
             return charaName + promptString + line;
         }
@@ -372,7 +390,7 @@ namespace Yomiage.GUI.ViewModels
             if (line.Contains(promptString))
             {
                 var index = line.IndexOf(promptString);
-                if(line.Length > index + 1)
+                if (line.Length > index + 1)
                 {
                     line = line.Substring(index + 1);
                 }

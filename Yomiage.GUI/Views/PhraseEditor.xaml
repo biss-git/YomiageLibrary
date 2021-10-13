@@ -1,229 +1,291 @@
-﻿<UserControl x:Class="Yomiage.GUI.Views.PhraseEditor"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Yomiage.GUI.Views"
-             xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:prism="http://prismlibrary.com/"
-             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-             xmlns:graph="clr-namespace:Yomiage.GUI.Graph"
-             xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
-             xmlns:rp="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.WPF"
-             xmlns:conv="clr-namespace:Yomiage.GUI.Converters"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+﻿<UserControl
+    x:Class="Yomiage.GUI.Views.PhraseEditor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:conv="clr-namespace:Yomiage.GUI.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:graph="clr-namespace:Yomiage.GUI.Graph"
+    xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:local="clr-namespace:Yomiage.GUI.Views"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
+    xmlns:rp="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.WPF"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
     <behaviors:Interaction.Triggers>
         <behaviors:EventTrigger EventName="KeyDown">
             <rp:EventToReactiveCommand Command="{Binding KeyDownCommand}">
-                <conv:KeyDownConverter/>
+                <conv:KeyDownConverter />
             </rp:EventToReactiveCommand>
         </behaviors:EventTrigger>
     </behaviors:Interaction.Triggers>
     <UserControl.ContextMenu>
         <ContextMenu>
-            <MenuItem Header="戻る" InputGestureText="Ctrl+Z" Command="{Binding UndoCommand}"/>
-            <MenuItem Header="進む" InputGestureText="Ctrl+Y" Command="{Binding RedoCommand}"/>
+            <MenuItem
+                Command="{Binding UndoCommand}"
+                Header="戻る"
+                InputGestureText="Ctrl+Z" />
+            <MenuItem
+                Command="{Binding RedoCommand}"
+                Header="進む"
+                InputGestureText="Ctrl+Y" />
         </ContextMenu>
     </UserControl.ContextMenu>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="120"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="35"/>
-            <RowDefinition/>
-            <RowDefinition Height="35"/>
+            <RowDefinition Height="35" />
+            <RowDefinition />
+            <RowDefinition Height="35" />
         </Grid.RowDefinitions>
-        <GridSplitter Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" Width="4"/>
+        <GridSplitter
+            Grid.Row="1"
+            Grid.RowSpan="3"
+            Grid.Column="1"
+            Width="4" />
 
-        <!-- 発話内容と語尾 -->
-        <DockPanel Grid.Row="0" Grid.Column="2" Margin="0,3,0,3">
-            <ComboBox DockPanel.Dock="Right" Height="24" Margin="3,0,0,0" Width="85"
-                      ItemsSource="{Binding EndChars}" SelectedItem="{Binding SelectedEndChar.Value}"/>
-            <TextBox Text="{Binding OriginalText.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="12" Height="24"/>
+        <!--  発話内容と語尾  -->
+        <DockPanel
+            Grid.Row="0"
+            Grid.Column="2"
+            Margin="0,3,0,3">
+            <ComboBox
+                Width="85"
+                Height="24"
+                Margin="3,0,0,0"
+                DockPanel.Dock="Right"
+                ItemsSource="{Binding EndChars}"
+                SelectedItem="{Binding SelectedEndChar.Value}" />
+            <TextBox
+                Height="24"
+                FontSize="12"
+                Text="{Binding OriginalText.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </DockPanel>
 
-        <!-- ボタン -->
+        <!--  ボタン  -->
         <DockPanel Grid.Row="2" Grid.Column="2">
-            <Button Style="{StaticResource IconButton}" DockPanel.Dock="Right" IsEnabled="False" Visibility="Collapsed">
+            <Button
+                DockPanel.Dock="Right"
+                IsEnabled="False"
+                Style="{StaticResource IconButton}"
+                Visibility="Collapsed">
                 <DockPanel>
-                    <icon:PackIconBoxIcons Kind="SolidShareAlt" RotationAngle="90" Margin="0,0,4,0"/>
+                    <icon:PackIconBoxIcons
+                        Margin="0,0,4,0"
+                        Kind="SolidShareAlt"
+                        RotationAngle="90" />
                     <TextBlock VerticalAlignment="Bottom">標準語に変換</TextBlock>
                 </DockPanel>
             </Button>
             <StackPanel Orientation="Horizontal">
-                <Button Style="{StaticResource IconButton}"
-                        Command="{Binding PlayCommand}">
+                <Button Command="{Binding PlayCommand}" Style="{StaticResource IconButton}">
                     <DockPanel>
-                        <icon:PackIconBoxIcons Kind="RegularPlayCircle" Margin="0,0,4,0"/>
+                        <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="RegularPlayCircle" />
                         <TextBlock VerticalAlignment="Bottom">再生</TextBlock>
                     </DockPanel>
                 </Button>
-                <Button Style="{StaticResource IconButton}"
-                        Command="{Binding StopCommand}">
+                <Button Command="{Binding StopCommand}" Style="{StaticResource IconButton}">
                     <DockPanel>
-                        <icon:PackIconBoxIcons Kind="RegularStopCircle" Margin="0,0,4,0"/>
+                        <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="RegularStopCircle" />
                         <TextBlock VerticalAlignment="Bottom">停止</TextBlock>
                     </DockPanel>
                 </Button>
-                <Button Style="{StaticResource IconButton}" Margin="18,0,6,0"
-                        Command="{Binding RegisterCommand}">
+                <Button
+                    Margin="18,0,6,0"
+                    Command="{Binding RegisterCommand}"
+                    Style="{StaticResource IconButton}">
                     <DockPanel>
-                        <icon:PackIconBoxIcons Kind="SolidSave" Margin="0,0,4,0"/>
+                        <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="SolidSave" />
                         <TextBlock VerticalAlignment="Bottom">登録</TextBlock>
                     </DockPanel>
                 </Button>
-                <Button Style="{StaticResource IconButton}"
-                        Command="{Binding UnRegisterCommand}">
+                <Button
+                    Margin="0,0,6,0"
+                    Command="{Binding RegisterCharaCommand}"
+                    Style="{StaticResource IconButton}">
                     <DockPanel>
-                        <icon:PackIconMaterial Kind="TrashCanOutline" Margin="0,0,4,0"/>
-                        <TextBlock VerticalAlignment="Bottom">登録解除</TextBlock>
-                    </DockPanel>
-                </Button>
-                <Button Style="{StaticResource IconButton}" Margin="0,0,6,0"
-                        Command="{Binding RegisterCharaCommand}">
-                    <DockPanel>
-                        <icon:PackIconBoxIcons Kind="SolidSave" Margin="0,0,4,0"/>
+                        <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="SolidSave" />
                         <TextBlock VerticalAlignment="Bottom">キャラ登録</TextBlock>
                     </DockPanel>
                 </Button>
-                <Button Style="{StaticResource IconButton}"
-                        Command="{Binding OpenDialogCommand}" CommandParameter="PhraseListDialog">
+                <Button Command="{Binding UnRegisterCommand}" Style="{StaticResource IconButton}">
                     <DockPanel>
-                        <icon:PackIconMaterial Kind="FormatListBulletedSquare" Margin="0,0,6,0"/>
+                        <icon:PackIconMaterial Margin="0,0,6,0" Kind="TrashCanOutline" />
+                        <TextBlock VerticalAlignment="Bottom">登録解除</TextBlock>
+                    </DockPanel>
+                </Button>
+                <Button
+                    Command="{Binding OpenDialogCommand}"
+                    CommandParameter="PhraseListDialog"
+                    Style="{StaticResource IconButton}">
+                    <DockPanel>
+                        <icon:PackIconMaterial Margin="0,0,6,0" Kind="FormatListBulletedSquare" />
                         <TextBlock VerticalAlignment="Bottom">一覧</TextBlock>
                     </DockPanel>
                 </Button>
-                <Button Style="{StaticResource IconButton}" Margin="18,0,6,0"
-                        Command="{Binding ClearCommand}">
+                <Button
+                    Margin="18,0,6,0"
+                    Command="{Binding ClearCommand}"
+                    Style="{StaticResource IconButton}">
                     <DockPanel>
-                        <icon:PackIconBoxIcons Kind="RegularRefresh" Margin="0,0,4,0"/>
+                        <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="RegularRefresh" />
                         <TextBlock VerticalAlignment="Bottom">元に戻す</TextBlock>
                     </DockPanel>
                 </Button>
-                <Button Style="{StaticResource IconButton}" Command="{Binding UndoCommand}">
+                <Button Command="{Binding UndoCommand}" Style="{StaticResource IconButton}">
                     <DockPanel>
-                        <icon:PackIconBoxIcons Kind="RegularUndo" Margin="0,0,4,0"/>
+                        <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="RegularUndo" />
                         <TextBlock VerticalAlignment="Bottom">戻る</TextBlock>
                     </DockPanel>
                 </Button>
-                <Button Style="{StaticResource IconButton}" Command="{Binding RedoCommand}">
+                <Button Command="{Binding RedoCommand}" Style="{StaticResource IconButton}">
                     <DockPanel>
-                        <icon:PackIconBoxIcons Kind="RegularRedo" Margin="0,0,4,0"/>
+                        <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="RegularRedo" />
                         <TextBlock VerticalAlignment="Bottom">進む</TextBlock>
                     </DockPanel>
                 </Button>
             </StackPanel>
         </DockPanel>
 
-        <!-- 左のタブ -->
-        <ScrollViewer Grid.Row="1" Grid.RowSpan="2" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden">
+        <!--  左のタブ  -->
+        <ScrollViewer
+            Grid.Row="1"
+            Grid.RowSpan="2"
+            HorizontalScrollBarVisibility="Hidden"
+            VerticalScrollBarVisibility="Hidden">
             <StackPanel Margin="3,0,3,0">
                 <StackPanel.Resources>
                     <Style TargetType="Border">
-                        <Setter Property="Width" Value="5"/>
-                        <Setter Property="BorderThickness" Value="5"/>
-                        <Setter Property="Margin" Value="0,9,0,10"/>
+                        <Setter Property="Width" Value="5" />
+                        <Setter Property="BorderThickness" Value="5" />
+                        <Setter Property="Margin" Value="0,9,0,10" />
                     </Style>
                 </StackPanel.Resources>
                 <DockPanel Visibility="{Binding AccentHide.Value, Converter={InverseBoolToVisibilityConverter}}">
-                    <CheckBox Name="AccentCheck"
-                          IsChecked="True"
-                          mah:CheckBoxHelper.CheckGlyphForegroundChecked="{DynamicResource MahApps.Brushes.ThemeForeground}"
-                          mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="{DynamicResource MahApps.Brushes.ThemeForeground}"
-                          mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
-                    <Border BorderBrush="{DynamicResource MahApps.Brushes.ThemeForeground}"
-                        Visibility="{Binding AccentSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                    <Button Style="{StaticResource IconButton}"
+                    <CheckBox
+                        Name="AccentCheck"
+                        mah:CheckBoxHelper.CheckGlyphForegroundChecked="{DynamicResource MahApps.Brushes.ThemeForeground}"
+                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="{DynamicResource MahApps.Brushes.ThemeForeground}"
+                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="{DynamicResource MahApps.Brushes.ThemeForeground}"
+                        IsChecked="True" />
+                    <Border BorderBrush="{DynamicResource MahApps.Brushes.ThemeForeground}" Visibility="{Binding AccentSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <Button
+                        Height="35"
+                        Margin="0,0,0,2"
+                        Padding="5,0,0,0"
+                        HorizontalContentAlignment="Left"
                         Command="{Binding SelectCommand}"
                         CommandParameter="Accent"
-                    Height="35" Margin="0,0,0,2" Padding="5,0,0,0" HorizontalContentAlignment="Left">
+                        Style="{StaticResource IconButton}">
                         <DockPanel>
-                            <icon:PackIconBoxIcons Kind="SolidShareAlt" RotationAngle="90" Margin="0,0,4,0"/>
+                            <icon:PackIconBoxIcons
+                                Margin="0,0,4,0"
+                                Kind="SolidShareAlt"
+                                RotationAngle="90" />
                             <TextBlock VerticalAlignment="Bottom">アクセント</TextBlock>
                         </DockPanel>
                     </Button>
                 </DockPanel>
                 <DockPanel Visibility="{Binding VolumeSetting.Value.Hide, Converter={InverseBoolToVisibilityConverter}}">
-                    <CheckBox Name="VolumeCheck"
-                          mah:CheckBoxHelper.CheckGlyphForegroundChecked="Firebrick"
-                          mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="Firebrick"
-                          mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="Firebrick"
-                          mah:CheckBoxHelper.CheckBackgroundStrokeChecked="Firebrick"
-                          mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="Firebrick"/>
-                    <Border BorderBrush="Firebrick"
-                        Visibility="{Binding VolumeSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                    <Button Style="{StaticResource IconButton}"
+                    <CheckBox
+                        Name="VolumeCheck"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeChecked="Firebrick"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="Firebrick"
+                        mah:CheckBoxHelper.CheckGlyphForegroundChecked="Firebrick"
+                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="Firebrick"
+                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="Firebrick" />
+                    <Border BorderBrush="Firebrick" Visibility="{Binding VolumeSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <Button
+                        Height="35"
+                        Margin="0,0,0,2"
+                        Padding="5,0,0,0"
+                        HorizontalContentAlignment="Left"
                         Command="{Binding SelectCommand}"
                         CommandParameter="Volume"
-                    Height="35" Margin="0,0,0,2" Padding="5,0,0,0" HorizontalContentAlignment="Left"
-                            ToolTip="{Binding VolumeSetting.Value.Description}">
+                        Style="{StaticResource IconButton}"
+                        ToolTip="{Binding VolumeSetting.Value.Description}">
                         <DockPanel HorizontalAlignment="Stretch">
-                            <icon:PackIconBoxIcons Kind="SolidMegaphone" Margin="0,0,4,0"/>
-                            <TextBlock VerticalAlignment="Bottom" Text="{Binding VolumeSetting.Value.Name}"/>
+                            <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="SolidMegaphone" />
+                            <TextBlock VerticalAlignment="Bottom" Text="{Binding VolumeSetting.Value.Name}" />
                         </DockPanel>
                     </Button>
                 </DockPanel>
                 <DockPanel Visibility="{Binding SpeedSetting.Value.Hide, Converter={InverseBoolToVisibilityConverter}}">
-                    <CheckBox Name="SpeedCheck"
-                          mah:CheckBoxHelper.CheckGlyphForegroundChecked="ForestGreen"
-                          mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="ForestGreen"
-                          mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="ForestGreen"
-                          mah:CheckBoxHelper.CheckBackgroundStrokeChecked="ForestGreen"
-                          mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="ForestGreen"/>
-                    <Border BorderBrush="ForestGreen"
-                        Visibility="{Binding SpeedSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                    <Button Style="{StaticResource IconButton}"
+                    <CheckBox
+                        Name="SpeedCheck"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeChecked="ForestGreen"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="ForestGreen"
+                        mah:CheckBoxHelper.CheckGlyphForegroundChecked="ForestGreen"
+                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="ForestGreen"
+                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="ForestGreen" />
+                    <Border BorderBrush="ForestGreen" Visibility="{Binding SpeedSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <Button
+                        Height="35"
+                        Margin="0,0,0,2"
+                        Padding="5,0,0,0"
+                        HorizontalContentAlignment="Left"
                         Command="{Binding SelectCommand}"
                         CommandParameter="Speed"
-                    Height="35" Margin="0,0,0,2" Padding="5,0,0,0" HorizontalContentAlignment="Left"
-                            ToolTip="{Binding SpeedSetting.Value.Description}">
+                        Style="{StaticResource IconButton}"
+                        ToolTip="{Binding SpeedSetting.Value.Description}">
                         <DockPanel>
-                            <icon:PackIconMaterial Kind="Speedometer" Margin="0,0,4,0"/>
-                            <TextBlock VerticalAlignment="Bottom" Text="{Binding SpeedSetting.Value.Name}"/>
+                            <icon:PackIconMaterial Margin="0,0,4,0" Kind="Speedometer" />
+                            <TextBlock VerticalAlignment="Bottom" Text="{Binding SpeedSetting.Value.Name}" />
                         </DockPanel>
                     </Button>
                 </DockPanel>
                 <DockPanel Visibility="{Binding PitchSetting.Value.Hide, Converter={InverseBoolToVisibilityConverter}}">
-                    <CheckBox Name="PitchCheck"
-                          mah:CheckBoxHelper.CheckGlyphForegroundChecked="Orange"
-                          mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="Orange"
-                          mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="Orange"
-                          mah:CheckBoxHelper.CheckBackgroundStrokeChecked="Orange"
-                          mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="Orange"/>
-                    <Border BorderBrush="Orange"
-                        Visibility="{Binding PitchSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                    <Button Style="{StaticResource IconButton}"
+                    <CheckBox
+                        Name="PitchCheck"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeChecked="Orange"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="Orange"
+                        mah:CheckBoxHelper.CheckGlyphForegroundChecked="Orange"
+                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="Orange"
+                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="Orange" />
+                    <Border BorderBrush="Orange" Visibility="{Binding PitchSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <Button
+                        Height="35"
+                        Margin="0,0,0,2"
+                        Padding="5,0,0,0"
+                        HorizontalContentAlignment="Left"
                         Command="{Binding SelectCommand}"
                         CommandParameter="Pitch"
-                    Height="35" Margin="0,0,0,2" Padding="5,0,0,0" HorizontalContentAlignment="Left"
-                            ToolTip="{Binding PitchSetting.Value.Description}">
+                        Style="{StaticResource IconButton}"
+                        ToolTip="{Binding PitchSetting.Value.Description}">
                         <DockPanel>
-                            <icon:PackIconBoxIcons Kind="LogosYahoo" Margin="0,0,4,0"/>
-                            <TextBlock VerticalAlignment="Bottom" Text="{Binding PitchSetting.Value.Name}"/>
+                            <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="LogosYahoo" />
+                            <TextBlock VerticalAlignment="Bottom" Text="{Binding PitchSetting.Value.Name}" />
                         </DockPanel>
                     </Button>
                 </DockPanel>
                 <DockPanel Visibility="{Binding EmphasisSetting.Value.Hide, Converter={InverseBoolToVisibilityConverter}}">
-                    <CheckBox Name="EmphasisCheck"
-                          mah:CheckBoxHelper.CheckGlyphForegroundChecked="MediumOrchid"
-                          mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="MediumOrchid"
-                          mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="MediumOrchid"
-                          mah:CheckBoxHelper.CheckBackgroundStrokeChecked="MediumOrchid"
-                          mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="MediumOrchid"/>
-                    <Border BorderBrush="MediumOrchid"
-                        Visibility="{Binding EmphasisSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                    <Button Style="{StaticResource IconButton}"
+                    <CheckBox
+                        Name="EmphasisCheck"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeChecked="MediumOrchid"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="MediumOrchid"
+                        mah:CheckBoxHelper.CheckGlyphForegroundChecked="MediumOrchid"
+                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="MediumOrchid"
+                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="MediumOrchid" />
+                    <Border BorderBrush="MediumOrchid" Visibility="{Binding EmphasisSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <Button
+                        Height="35"
+                        Margin="0,0,0,2"
+                        Padding="5,0,0,0"
+                        HorizontalContentAlignment="Left"
                         Command="{Binding SelectCommand}"
                         CommandParameter="Emphasis"
-                    Height="35" Margin="0,0,0,2" Padding="5,0,0,0" HorizontalContentAlignment="Left"
-                            ToolTip="{Binding EmphasisSetting.Value.Description}">
+                        Style="{StaticResource IconButton}"
+                        ToolTip="{Binding EmphasisSetting.Value.Description}">
                         <DockPanel>
-                            <icon:PackIconBoxIcons Kind="RegularPulse" Margin="0,0,4,0"/>
-                            <TextBlock VerticalAlignment="Bottom" Text="{Binding EmphasisSetting.Value.Name}"/>
+                            <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="RegularPulse" />
+                            <TextBlock VerticalAlignment="Bottom" Text="{Binding EmphasisSetting.Value.Name}" />
                         </DockPanel>
                     </Button>
                 </DockPanel>
@@ -231,31 +293,37 @@
                 <ItemsControl ItemsSource="{Binding AdditionalSettings}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel/>
+                            <StackPanel />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <DockPanel Visibility="{Binding Hide, Converter={InverseBoolToVisibilityConverter}}">
-                                <CheckBox IsChecked="{Binding IsVisible.Value}"
-                                          mah:CheckBoxHelper.CheckGlyphForegroundChecked="{Binding Color}"
-                                          mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="{Binding Color}"
-                                          mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="{Binding Color}"
-                                          mah:CheckBoxHelper.CheckBackgroundStrokeChecked="{Binding Color}"
-                                          mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="{Binding Color}"/>
-                                <Border BorderBrush="{Binding Color}"
-                                        Width="5"
-                                        BorderThickness="5"
-                                        Margin="0,9,0,10"
-                                        Visibility="{Binding IsSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                                <Button Style="{StaticResource IconButton}"
-                                        Command="{Binding SelectCommand}"
-                                        CommandParameter="{Binding Key}"
-                                        Height="35" Margin="0,0,0,2" Padding="5,0,0,0" HorizontalContentAlignment="Left"
-                                        ToolTip="{Binding Description}">
+                                <CheckBox
+                                    mah:CheckBoxHelper.CheckBackgroundStrokeChecked="{Binding Color}"
+                                    mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="{Binding Color}"
+                                    mah:CheckBoxHelper.CheckGlyphForegroundChecked="{Binding Color}"
+                                    mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="{Binding Color}"
+                                    mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="{Binding Color}"
+                                    IsChecked="{Binding IsVisible.Value}" />
+                                <Border
+                                    Width="5"
+                                    Margin="0,9,0,10"
+                                    BorderBrush="{Binding Color}"
+                                    BorderThickness="5"
+                                    Visibility="{Binding IsSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                <Button
+                                    Height="35"
+                                    Margin="0,0,0,2"
+                                    Padding="5,0,0,0"
+                                    HorizontalContentAlignment="Left"
+                                    Command="{Binding SelectCommand}"
+                                    CommandParameter="{Binding Key}"
+                                    Style="{StaticResource IconButton}"
+                                    ToolTip="{Binding Description}">
                                     <DockPanel>
-                                        <icon:PackIconBoxIcons Kind="{Binding IconKind}" Margin="0,0,4,0"/>
-                                        <TextBlock VerticalAlignment="Bottom" Text="{Binding Name}"/>
+                                        <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="{Binding IconKind}" />
+                                        <TextBlock VerticalAlignment="Bottom" Text="{Binding Name}" />
                                     </DockPanel>
                                 </Button>
                             </DockPanel>
@@ -267,31 +335,35 @@
             </StackPanel>
         </ScrollViewer>
 
-        <!-- 編集グラフ -->
-        <ScrollViewer x:Name="scrollViewer"
-                      Grid.Row="1" Grid.Column="2"
-                      HorizontalScrollBarVisibility="Visible"
-                      VerticalScrollBarVisibility="Hidden">
-            <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
-                  MouseWheel="ScrollViewer_MouseWheel">
-                <Grid Background="DimGray" Height="15" VerticalAlignment="Top"/>
-                <graph:PhraseGraph AccentSelected="{Binding AccentSelected.Value}"
-                                   VolumeSelected="{Binding VolumeSelected.Value}"
-                                   SpeedSelected="{Binding SpeedSelected.Value}"
-                                   PitchSelected="{Binding PitchSelected.Value}"
-                                   EmphasisSelected="{Binding EmphasisSelected.Value}"
-                                   AccentVisible="{Binding IsChecked, ElementName=AccentCheck}"
-                                   VolumeVisible="{Binding IsChecked, ElementName=VolumeCheck}"
-                                   SpeedVisible="{Binding IsChecked, ElementName=SpeedCheck}"
-                                   PitchVisible="{Binding IsChecked, ElementName=PitchCheck}"
-                                   EmphasisVisible="{Binding IsChecked, ElementName=EmphasisCheck}"
-                                   Phrase="{Binding Phrase.Value}"
-                                   PlayPosition="{Binding PlayPosition.Value}"
-                                   EngineConfig="{Binding EngineConfig.Value}"
-                                   IsExtend="{Binding IsExtend.Value}"
-                                   UpdateCommand="{Binding UpdateCommand}"
-                                   Additionals="{Binding AdditionalSettings}"
-                                   />
+        <!--  編集グラフ  -->
+        <ScrollViewer
+            x:Name="scrollViewer"
+            Grid.Row="1"
+            Grid.Column="2"
+            HorizontalScrollBarVisibility="Visible"
+            VerticalScrollBarVisibility="Hidden">
+            <Grid Background="{DynamicResource MahApps.Brushes.ThemeBackground}" MouseWheel="ScrollViewer_MouseWheel">
+                <Grid
+                    Height="15"
+                    VerticalAlignment="Top"
+                    Background="DimGray" />
+                <graph:PhraseGraph
+                    AccentSelected="{Binding AccentSelected.Value}"
+                    AccentVisible="{Binding IsChecked, ElementName=AccentCheck}"
+                    Additionals="{Binding AdditionalSettings}"
+                    EmphasisSelected="{Binding EmphasisSelected.Value}"
+                    EmphasisVisible="{Binding IsChecked, ElementName=EmphasisCheck}"
+                    EngineConfig="{Binding EngineConfig.Value}"
+                    IsExtend="{Binding IsExtend.Value}"
+                    Phrase="{Binding Phrase.Value}"
+                    PitchSelected="{Binding PitchSelected.Value}"
+                    PitchVisible="{Binding IsChecked, ElementName=PitchCheck}"
+                    PlayPosition="{Binding PlayPosition.Value}"
+                    SpeedSelected="{Binding SpeedSelected.Value}"
+                    SpeedVisible="{Binding IsChecked, ElementName=SpeedCheck}"
+                    UpdateCommand="{Binding UpdateCommand}"
+                    VolumeSelected="{Binding VolumeSelected.Value}"
+                    VolumeVisible="{Binding IsChecked, ElementName=VolumeCheck}" />
             </Grid>
         </ScrollViewer>
 
