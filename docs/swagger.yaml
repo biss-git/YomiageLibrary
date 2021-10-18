@@ -1,0 +1,71 @@
+swagger: "2.0"
+info:
+  description: "これは ユニコエ に関するAPIです。ユニコエ を Windows上で起動することで、下記のAPIテストが実行できるようになります。"
+  version: "1.0.0"
+  title: "UniCoe API"
+  termsOfService: "https://github.com/biss-git/YomiageLibrary"
+  contact:
+    email: "kotonohashimai@gmail.com"
+  license:
+    name: "MIT License"
+    url: "https://github.com/biss-git/YomiageLibrary/blob/main/LICENSE"
+tags:
+- name: "server"
+  description: "ユニコエ に関する API"
+- name: "command"
+  description: "コマンド に関する API"
+paths:
+  /server:
+    get:
+      tags:
+      - "server"
+      summary: "ユニコエ サーバー情報"
+      description: "ローカルで実行されている ユニコエ のAPIバージョンなどを返します。"
+      responses:
+        200:
+          description: "成功時のレスポンス"
+          schema:
+            type: "object"
+            properties:
+              version:
+                type: "string"
+                example: "1.0.0.0"
+  
+  /command:
+    post:
+      tags:
+      - "command"
+      summary: "ユニコエへの指示"
+      description: "ボイスロイドに再生・保存・停止などの指示を送信する。"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "再生・保存・停止・起動・終了の指示内容を入力する。"
+        required: true
+        schema:
+          type: object
+          required:
+          - command
+          properties:
+            command:
+              type: string
+              example: "play | stop"
+            TalkText:
+              type: string
+              example: "再生したり、保存したりしたいテキスト。"
+      responses:
+        "200":
+          description: "成功時のレスポンス"
+          schema:
+            type: "object"
+            required:
+            - command
+
+
+              
+
+# host: "127.0.0.1:42503"
+host: "localhost:42503"
+basePath: "/api"
+schemes: [http]
+

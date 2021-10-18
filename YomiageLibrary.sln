@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yomiage.SDK", "Yomiage.SDK\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yomiage.Core", "Yomiage.Core\Yomiage.Core.csproj", "{6E009D2A-6F16-4179-81C6-D9A996E8CCB3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yomiage.API", "Yomiage.API\Yomiage.API.csproj", "{63BC5758-849C-4050-A071-ABDE2DB3A30A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yomiage.YukarinettePlugin", "Yomiage.YukarinettePlugin\Yomiage.YukarinettePlugin.csproj", "{648E7D6C-0E1C-4EA5-8252-DC01D066A6D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{6E009D2A-6F16-4179-81C6-D9A996E8CCB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E009D2A-6F16-4179-81C6-D9A996E8CCB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E009D2A-6F16-4179-81C6-D9A996E8CCB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63BC5758-849C-4050-A071-ABDE2DB3A30A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63BC5758-849C-4050-A071-ABDE2DB3A30A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63BC5758-849C-4050-A071-ABDE2DB3A30A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63BC5758-849C-4050-A071-ABDE2DB3A30A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{648E7D6C-0E1C-4EA5-8252-DC01D066A6D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{648E7D6C-0E1C-4EA5-8252-DC01D066A6D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{648E7D6C-0E1C-4EA5-8252-DC01D066A6D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{648E7D6C-0E1C-4EA5-8252-DC01D066A6D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

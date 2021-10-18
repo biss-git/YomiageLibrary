@@ -1,28 +1,20 @@
 ﻿using Microsoft.Win32;
-using NAudio.CoreAudioApi;
-using NAudio.Wave;
 using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Reactive.Bindings.Notifiers;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using Yomiage.Core.Models;
-using Yomiage.GUI.EventMessages;
 using Yomiage.GUI.Models;
 using Yomiage.GUI.Util;
-using Yomiage.SDK.Talk;
-using Yomiage.SDK.VoiceEffects;
 
 namespace Yomiage.GUI.ViewModels
 {

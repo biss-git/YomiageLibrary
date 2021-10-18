@@ -173,7 +173,7 @@ namespace Yomiage.GUI
 
         protected override Window CreateShell()
         {
-           return Container.Resolve<MainWindow>();
+            return Container.Resolve<MainWindow>();
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
@@ -216,6 +216,7 @@ namespace Yomiage.GUI
             containerRegistry.RegisterSingleton<ScriptService>();
             containerRegistry.RegisterSingleton<VoicePlayerService>();
             containerRegistry.RegisterSingleton<WordDictionaryService>();
+            containerRegistry.RegisterSingleton<ApiService>();
 
             containerRegistry.RegisterSingleton<TextService>();
 

@@ -21,6 +21,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Text.RegularExpressions;
 using System.Collections.Concurrent;
 using Yomiage.GUI.Dialog;
+using System.Windows;
 
 namespace Yomiage.GUI.Models
 {
@@ -120,7 +121,7 @@ namespace Yomiage.GUI.Models
             await Stop();
         }
 
-        public async Task Play(TalkScript[] scripts, Action<int> SubmitPlayIndex, VoicePreset preset = null)
+        public async Task Play(TalkScript[] scripts, Action<int> SubmitPlayIndex = null, VoicePreset preset = null)
         {
             if (this.IsPlaying.Value) { return; }
             this.IsPlaying.Value = true;
@@ -596,8 +597,11 @@ namespace Yomiage.GUI.Models
             await Task.Delay(100);
             this.mmDevice?.Dispose();
             this.wavPlayer?.Dispose();
-            this.IsPlaying.Value = false;
-            this.messageBroker.Publish(new StopEvent());
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                this.IsPlaying.Value = false;
+                this.messageBroker.Publish(new StopEvent());
+            });
         }
 
         private string FileNameWithNumber(string fileName, int num, string text, VoicePreset preset)

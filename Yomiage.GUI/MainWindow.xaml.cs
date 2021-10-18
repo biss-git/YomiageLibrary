@@ -18,6 +18,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Yomiage.API;
 using Yomiage.Core.Models;
 using Yomiage.GUI.EventMessages;
 using Yomiage.GUI.Models;
@@ -250,7 +251,7 @@ namespace Yomiage.GUI
             this.PhraseService.LoadEditors();
 
             var splash = Application.Current.Properties["Splash"];
-            if(splash is Splash window)
+            if (splash is Splash window)
             {
                 Task.Run(async () =>
                 {
@@ -258,7 +259,7 @@ namespace Yomiage.GUI
                     {
                         this.ConfigService.Init(window.SetProgress);
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
 
                     }
@@ -271,7 +272,7 @@ namespace Yomiage.GUI
                             PresetDocking.ActiveContent = this.UserTab;
                         }
                         this.IsEnabled = true;
-                        Data.Status.StatusText.Value = "正常起動";
+                        Data.Status.StatusText.Value = "正常起動　" + "API URL  " + $"http://localhost:{ServerInfo.ApiPort}/api";
                     });
                 });
             }
@@ -281,7 +282,7 @@ namespace Yomiage.GUI
         {
             this.ScriptService.SaveScripts();
             this.PhraseService.SaveEditors();
-            foreach(var p in this.voicePresetService.AllPresets)
+            foreach (var p in this.voicePresetService.AllPresets)
             {
                 p.ResetEffect();
             }

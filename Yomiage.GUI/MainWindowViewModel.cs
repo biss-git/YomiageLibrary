@@ -86,6 +86,7 @@ namespace Yomiage.GUI
             VoicePresetService voicePresetService,
             VoicePlayerService voicePlayerService,
             PauseDictionaryService pauseDictionaryService,
+            ApiService apiService, // apiサーバを立てるために呼ぶ
             IMessageBroker messageBroker,
             IDialogService dialogService) : base(dialogService)
         {
@@ -100,7 +101,7 @@ namespace Yomiage.GUI
             this.messageBroker = messageBroker;
             PhraseGraph.DialogService = dialogService;
 
-            StatusText = Data.Status.StatusText.ToReadOnlyReactivePropertySlim();
+            StatusText = Status.StatusText.ToReadOnlyReactivePropertySlim();
 
             TunerSpan = new ReactivePropertySlim<int>(5).AddTo(Disposables);
             CharacterSpan = new ReactivePropertySlim<int>(1).AddTo(Disposables);

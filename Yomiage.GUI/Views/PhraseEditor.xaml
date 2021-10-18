@@ -136,7 +136,7 @@
                     Style="{StaticResource IconButton}">
                     <DockPanel>
                         <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="RegularRefresh" />
-                        <TextBlock VerticalAlignment="Bottom">元に戻す</TextBlock>
+                        <TextBlock VerticalAlignment="Bottom">クリア</TextBlock>
                     </DockPanel>
                 </Button>
                 <Button Command="{Binding UndoCommand}" Style="{StaticResource IconButton}">

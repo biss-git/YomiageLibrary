@@ -40,6 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Yomiage.API\Yomiage.API.csproj" />
     <ProjectReference Include="..\Yomiage.Core\Yomiage.Core.csproj" />
   </ItemGroup>
 
