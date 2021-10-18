@@ -18,6 +18,9 @@
     <Compile Update="Dialog\MetroDialogWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Dialog\Views\ApiDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Dialog\Views\EngineListDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -165,6 +168,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Dialog\MetroDialogWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Dialog\Views\ApiDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Dialog\Views\EngineListDialog.xaml">

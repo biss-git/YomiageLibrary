@@ -200,6 +200,7 @@ namespace Yomiage.GUI
             containerRegistry.RegisterDialog<SettingsEngineDialog, SettingsEngineViewModel>();
             containerRegistry.RegisterDialog<SettingsLibraryDialog, SettingsLibraryViewModel>();
             containerRegistry.RegisterDialog<TextDialog, TextViewModel>();
+            containerRegistry.RegisterDialog<ApiDialog, ApiViewModel>();
 
             var settingService = new SettingService();
 
