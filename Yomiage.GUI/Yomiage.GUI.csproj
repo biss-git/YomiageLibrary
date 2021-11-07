@@ -9,6 +9,7 @@
     <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
     <AssemblyName>Yomiage.GUI</AssemblyName>
     <RootNamespace>Yomiage.GUI</RootNamespace>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

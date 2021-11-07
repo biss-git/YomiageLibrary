@@ -13,7 +13,7 @@ namespace Yomiage.Core
         }
         public static Assembly GetLibNMeCab()
         {
-            return Assembly.GetAssembly(typeof(NMeCab.Core.MeCabDictionary));
+            return Assembly.GetAssembly(typeof(MeCab.MeCabTagger));
         }
 
     }

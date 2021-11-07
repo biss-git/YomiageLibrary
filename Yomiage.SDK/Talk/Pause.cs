@@ -23,7 +23,11 @@ namespace Yomiage.SDK.Talk
         [JsonIgnore]
         public PauseType Type { get; set; } = PauseType.None;
 
-        public string p {
+        /// <summary>
+        /// 
+        /// </summary>
+        public string P
+        {
             get
             {
                 switch (Type)
@@ -32,6 +36,8 @@ namespace Yomiage.SDK.Talk
                     case PauseType.Short: return "S";
                     case PauseType.Long: return "L";
                     case PauseType.Manual: return Span_ms.ToString();
+                    default:
+                        break;
                 }
                 return null;
             }
@@ -43,7 +49,7 @@ namespace Yomiage.SDK.Talk
                     case "": Type = PauseType.None; break;
                     case "S": Type = PauseType.Short; break;
                     case "L": Type = PauseType.Long; break;
-                    default :
+                    default:
                         Type = PauseType.Manual;
                         if (int.TryParse(value, out int span))
                         {

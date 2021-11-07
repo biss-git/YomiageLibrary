@@ -12,14 +12,13 @@ namespace Yomiage.GUI.Models
 {
     public class ApiService
     {
-
-        VoicePlayerService voicePlayer;
-        TextService textService;
-        SettingService settingService;
-        PhraseDictionaryService phraseDictionaryService;
-        WordDictionaryService wordDictionaryService;
-        PauseDictionaryService pauseDictionaryService;
-        PhraseService phraseService;
+        readonly VoicePlayerService voicePlayer;
+        readonly TextService textService;
+        readonly SettingService settingService;
+        readonly PhraseDictionaryService phraseDictionaryService;
+        readonly WordDictionaryService wordDictionaryService;
+        readonly PauseDictionaryService pauseDictionaryService;
+        readonly PhraseService phraseService;
         public ApiService(
             VoicePlayerService voicePlayerService,
             TextService textService,
@@ -30,7 +29,15 @@ namespace Yomiage.GUI.Models
             PauseDictionaryService pauseDictionaryService
             )
         {
-            ApiServer.Start();
+            {
+                var obj = Application.Current.Properties["AppConfig"];
+                var appConfig = new AppConfig();
+                if (obj is AppConfig config)
+                {
+                    appConfig = config;
+                }
+                ApiServer.Start(appConfig.PortNumber);
+            }
             CommandService.PlayVoice = PlayVoice;
             CommandService.StopAction = StopAction;
             this.voicePlayer = voicePlayerService;
@@ -48,16 +55,16 @@ namespace Yomiage.GUI.Models
             var scripts = this.textService.Parse(text, settingService.SplitByEnter, settingService.PromptStringEnable, settingService.PromptString, phraseDictionaryService.SearchDictionary, this.wordDictionaryService.WordDictionarys, this.pauseDictionaryService.PauseDictionary.ToList());
             Application.Current.Dispatcher.Invoke(() =>
             {
-                voicePlayer.Play(scripts, index =>
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        if (index < 0 || index >= scripts.Length) { return; }
-                        var script = scripts[index];
-                        if (!this.voicePlayer.IsPlaying.Value) { return; }
-                        this.phraseService.Send(script);
-                    });
-                });
+                _ = voicePlayer.Play(scripts, index =>
+                  {
+                      Application.Current.Dispatcher.Invoke(() =>
+                      {
+                          if (index < 0 || index >= scripts.Length) { return; }
+                          var script = scripts[index];
+                          if (!this.voicePlayer.IsPlaying.Value) { return; }
+                          this.phraseService.Send(script);
+                      });
+                  });
             });
             return true;
         }
@@ -66,7 +73,7 @@ namespace Yomiage.GUI.Models
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                voicePlayer.Stop();
+                _ = voicePlayer.Stop();
             });
         }
     }

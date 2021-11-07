@@ -43,12 +43,13 @@ namespace Yomiage.GUI.Dialog.ViewModels
             ComponentList.Add(new ComponentItem(AssemblyList.GetJPNKanaConv(), ""));
             ComponentList.Add(new ComponentItem(AssemblyList.GetLibNMeCab(), "https://licenses.nuget.org/LGPL-2.1-or-later"));
 
+            ComponentList.Add(new ComponentItem("OpenJtalkのアクセント辞書", null, "http://open-jtalk.sourceforge.net/"));
 
         }
 
         private void AuthorAction()
         {
-            ProcessStartInfo pi = new ProcessStartInfo()
+            ProcessStartInfo pi = new()
             {
                 FileName = "https://biss-git.github.io/Portfolio/",
                 UseShellExecute = true,
@@ -84,7 +85,7 @@ namespace Yomiage.GUI.Dialog.ViewModels
 
         private void ShowAction()
         {
-            ProcessStartInfo pi = new ProcessStartInfo()
+            ProcessStartInfo pi = new()
             {
                 FileName = Link,
                 UseShellExecute = true,

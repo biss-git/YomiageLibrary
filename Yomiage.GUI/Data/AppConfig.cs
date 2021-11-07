@@ -12,5 +12,6 @@ namespace Yomiage.GUI.Data
         public string LibraryDirectory { get; set; } = string.Empty;
         public bool AllowMultiProcess { get; set; } = true;
         public bool DocumentDirectoryMode { get; set; } = false;
+        public int PortNumber { get; set; } = 42503;
     }
 }

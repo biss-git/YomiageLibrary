@@ -28,11 +28,11 @@
                 </Style>
             </Polygon.Style>
         </Polygon>
-        <Ellipse x:Name="bigCircle" Width="20" Height="20" Fill="RoyalBlue"
+        <Ellipse x:Name="bigCircle" Width="20" Height="20" Fill="{StaticResource AccentBlue}"
                  Canvas.Left="-10" Canvas.Top="-10"/>
         <TextBlock Name="bigText" Width="20" TextAlignment="Center" FontSize="16" Text="P" Foreground="White"
                    Canvas.Left="-10" Canvas.Top="-10"/>
-        <Ellipse x:Name="littleCircle" Visibility="Collapsed" Width="16" Height="16" Fill="RoyalBlue"
+        <Ellipse x:Name="littleCircle" Visibility="Collapsed" Width="16" Height="16" Fill="{StaticResource AccentBlue}"
                  Canvas.Left="-8" Canvas.Top="-8"/>
         <TextBlock Name="littleText" Visibility="Collapsed" Width="14" TextAlignment="Center" FontSize="12" Text="P" Foreground="White"
                    Canvas.Left="-7" Canvas.Top="-7"/>

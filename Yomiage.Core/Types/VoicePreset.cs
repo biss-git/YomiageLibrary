@@ -19,7 +19,8 @@ namespace Yomiage.Core.Types
         public string Key;
         public PresetType Type;
         private string name;
-        public string Name {
+        public string Name
+        {
             get => name;
             set => SetProperty(ref name, value);
         }
@@ -67,7 +68,7 @@ namespace Yomiage.Core.Types
 
         public async Task<double[]> Play(TalkScript talkScript, MasterEffectValue masterEffectValue, Action<int> SetSamplingRate_Hz)
         {
-            if(!Engine.VoiceEngine.IsEnable || !Library.VoiceLibrary.IsEnable)
+            if (!Engine.VoiceEngine.IsEnable || !Library.VoiceLibrary.IsEnable)
             {
                 return new double[0];
             }
@@ -83,7 +84,7 @@ namespace Yomiage.Core.Types
                     JsonUtil.DeepClone(masterEffectValue),
                     SetSamplingRate_Hz);
             }
-            catch(Exception e)
+            catch (Exception)
             {
                 // ログ出す？ エラー投げる？　何もなかったことにする！
                 return null;
@@ -98,7 +99,7 @@ namespace Yomiage.Core.Types
             }
             var scripts = new List<TalkScript>();
             (int shortPause, int longPause) = GetPauseSpan(masterEffectValue);
-            foreach(var s in talkScripts)
+            foreach (var s in talkScripts)
             {
                 var script = JsonUtil.DeepClone(s);
                 script.Fill(Engine.EngineConfig, shortPause, longPause);
@@ -117,7 +118,7 @@ namespace Yomiage.Core.Types
                     saveWithText,
                     encoding);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // ログ出す？ エラー投げる？　何もなかったことにする！
             }
@@ -137,7 +138,7 @@ namespace Yomiage.Core.Types
 
         public void MakeSavedEffect()
         {
-            if(this.VoiceEffect.AdditionalEffect == null)
+            if (this.VoiceEffect.AdditionalEffect == null)
             {
                 this.VoiceEffect.AdditionalEffect = new Dictionary<string, double?>();
             }
@@ -153,7 +154,7 @@ namespace Yomiage.Core.Types
         }
         public void ResetEffect()
         {
-            if(VoiceEffectSaved == null) { return; }
+            if (VoiceEffectSaved == null) { return; }
             VoiceEffect = JsonUtil.DeepClone(VoiceEffectSaved);
             SubPreset = SubPresetSaved;
         }

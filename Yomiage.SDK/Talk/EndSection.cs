@@ -13,6 +13,9 @@ namespace Yomiage.SDK.Talk
     /// </summary>
     public class EndSection : VoiceEffectValueBase
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public override bool IsEndSection => true;
 
         /// <summary>
@@ -20,10 +23,14 @@ namespace Yomiage.SDK.Talk
         /// </summary>
         [JsonIgnore]
         public Pause Pause { get; set; } = new Pause();
-        public string p
+        /// <summary>
+        /// 
+        /// </summary>
+        [JsonPropertyName("p")]
+        public string P
         {
-            get => Pause.p;
-            set => Pause.p = value;
+            get => Pause.P;
+            set => Pause.P = value;
         }
         /// <summary>
         /// "！" , "？", "。", "♪", "" など
@@ -36,11 +43,11 @@ namespace Yomiage.SDK.Talk
         /// </summary>
         public void Fill(VoiceEffectValue section, VoiceEffectValue mora, EngineConfig config, int shortPause, int longPause)
         {
-            if(EndSymbol == null)
+            if (EndSymbol == null)
             {
                 EndSymbol = "";
             }
-            if(Volume == null)
+            if (Volume == null)
             {
                 Volume = (config.VolumeSetting.Type == "Mora") ? mora.Volume : section.Volume;
             }
@@ -79,14 +86,21 @@ namespace Yomiage.SDK.Talk
                     break;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="curve"></param>
+        /// <param name="config"></param>
         public void FillCurve(VoiceEffectValue curve, EngineConfig config)
         {
             config.AdditionalSettings?.ForEach(s =>
             {
-                if(s.Type != "Curve") { return; }
+                if (s.Type != "Curve") { return; }
                 var val = GetAdditionalValuesOrDefault(s.Key, s.DefaultValue);
-                var list = new List<double>(val);
-                list.Add(val.Last());
+                var list = new List<double>(val)
+                {
+                    val.Last()
+                };
                 SetAdditionalValues(s.Key, list.ToArray());
                 curve.SetAdditionalValues(s.Key, list.ToArray());
             });

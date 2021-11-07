@@ -15,6 +15,9 @@ namespace Yomiage.SDK.Talk
     /// </summary>
     public class Mora : VoiceEffectValueBase
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public override bool IsMora => true;
 
         /// <summary>
@@ -37,32 +40,35 @@ namespace Yomiage.SDK.Talk
         /// </summary>
         [JsonIgnore]
         public bool? Voiceless { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public string C
         {
             get
             {
-                return Character + 
+                return Character +
                     (Accent ? "A" : "_") +
-                    (Voiceless == true ? "D":
+                    (Voiceless == true ? "D" :
                      Voiceless == false ? "V" : "");
             }
             set
             {
-                switch(value.Substring(value.Length - 1))
+                switch (value[^1..])
                 {
                     case "D":
                         Voiceless = true;
                         Accent = "A" == value.Substring(value.Length - 2, 1);
-                        Character = value.Substring(0, value.Length - 2);
+                        Character = value[0..^2];
                         break;
                     case "V":
                         Voiceless = false;
                         Accent = "A" == value.Substring(value.Length - 2, 1);
-                        Character = value.Substring(0, value.Length - 2);
+                        Character = value[0..^2];
                         break;
                     default:
                         Accent = "A" == value.Substring(value.Length - 1, 1);
-                        Character = value.Substring(0, value.Length - 1);
+                        Character = value[0..^1];
                         break;
                 }
             }
@@ -94,14 +100,21 @@ namespace Yomiage.SDK.Talk
                 mora.SetAdditionalValue(s.Key, s.Value);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="curve"></param>
+        /// <param name="config"></param>
         public void FillCurve(VoiceEffectValue curve, EngineConfig config)
         {
             config.AdditionalSettings?.ForEach(s =>
             {
                 if (s.Type != "Curve") { return; }
                 var val = GetAdditionalValuesOrDefault(s.Key, s.DefaultValue);
-                var list = new List<double>(val);
-                list.Add(curve.GetAdditionalValuesOrDefault(s.Key, s.DefaultValue).First());
+                var list = new List<double>(val)
+                {
+                    curve.GetAdditionalValuesOrDefault(s.Key, s.DefaultValue).First()
+                };
                 SetAdditionalValues(s.Key, list.ToArray());
                 curve.SetAdditionalValues(s.Key, list.ToArray());
             });

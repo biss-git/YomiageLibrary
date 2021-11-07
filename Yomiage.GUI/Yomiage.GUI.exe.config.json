@@ -2,5 +2,6 @@
   "EngineDirectory": "C:\\Users\\kikuchi\\source\\repos\\UtaTalk",
   "LibraryDirectory": "C:\\Users\\kikuchi\\source\\repos\\UtaTalk",
   "AllowMultiProcess": true,
-  "DocumentDirectoryMode": false
+  "DocumentDirectoryMode": false,
+  "PortNumber": 42503
 }

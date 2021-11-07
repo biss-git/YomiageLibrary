@@ -93,7 +93,11 @@ namespace Yomiage.SDK.Talk
             });
             EndSection.RemoveUnnecessaryParameters(engineConfig);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="PromptString"></param>
+        /// <returns></returns>
         public string GetOriginalTextWithPresetName(string PromptString = "＞")
         {
             if (!string.IsNullOrWhiteSpace(PresetName))

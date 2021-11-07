@@ -13,7 +13,7 @@
             <Setter Property="Fill" Value="{DynamicResource AccentFillBrush}"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Fill" Value="Firebrick"/>
+                    <Setter Property="Fill" Value="{StaticResource AccentRed}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>

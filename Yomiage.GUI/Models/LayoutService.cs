@@ -41,17 +41,17 @@ namespace Yomiage.GUI.Models
         public LayoutService(SettingService settingService)
         {
             this.settingService = settingService;
-            PresetVisible.Value = settingService.settings.Default.PresetVisible;
-            TuningVisible.Value = settingService.settings.Default.TuningVisible;
-            CharacterVisible.Value = settingService.settings.Default.CharacterVisible;
-            IsCharacterMaximized.Value = settingService.settings.Default.IsCharacterMaximized;
-            IsLineNumberVisible.Value = settingService.settings.Default.IsLineNumberVisible;
+            PresetVisible.Value = settingService.Settings.Default.PresetVisible;
+            TuningVisible.Value = settingService.Settings.Default.TuningVisible;
+            CharacterVisible.Value = settingService.Settings.Default.CharacterVisible;
+            IsCharacterMaximized.Value = settingService.Settings.Default.IsCharacterMaximized;
+            IsLineNumberVisible.Value = settingService.Settings.Default.IsLineNumberVisible;
 
-            PresetVisible.Subscribe(value => { settingService.settings.Default.PresetVisible = value; Save(); });
-            TuningVisible.Subscribe(value => { settingService.settings.Default.TuningVisible = value; Save(); });
-            CharacterVisible.Subscribe(value => { settingService.settings.Default.CharacterVisible = value; Save(); });
-            IsCharacterMaximized.Subscribe(value => { settingService.settings.Default.IsCharacterMaximized = value; Save(); });
-            IsLineNumberVisible.Subscribe(value => { settingService.settings.Default.IsLineNumberVisible = value; Save(); });
+            PresetVisible.Subscribe(value => { settingService.Settings.Default.PresetVisible = value; Save(); });
+            TuningVisible.Subscribe(value => { settingService.Settings.Default.TuningVisible = value; Save(); });
+            CharacterVisible.Subscribe(value => { settingService.Settings.Default.CharacterVisible = value; Save(); });
+            IsCharacterMaximized.Subscribe(value => { settingService.Settings.Default.IsCharacterMaximized = value; Save(); });
+            IsLineNumberVisible.Subscribe(value => { settingService.Settings.Default.IsLineNumberVisible = value; Save(); });
         }
 
         private void Save()

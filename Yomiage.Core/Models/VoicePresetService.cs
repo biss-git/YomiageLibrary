@@ -26,7 +26,7 @@ namespace Yomiage.Core.Models
         public IFilteredReadOnlyObservableCollection<VoicePreset> UserPreset { get; }
 
 
-        public VoicePresetService(IMessageBroker messageBroker)
+        public VoicePresetService()
         {
             AllPresets = new ReadOnlyObservableCollection<VoicePreset>(presets);
             StandardPreset = AllPresets.ToFilteredReadOnlyObservableCollection(p => p.Type == PresetType.Standard).AddTo(disposables);
@@ -48,12 +48,13 @@ namespace Yomiage.Core.Models
 
         public void Copy(VoicePreset preset, string name = null, bool select = true)
         {
-            if(preset == null) { return; }
+            if (preset == null) { return; }
             if (string.IsNullOrWhiteSpace(name))
             {
                 name = preset.Name + " - コピー";
             }
-            var newPreset = new VoicePreset(preset.Engine, preset.Library) {
+            var newPreset = new VoicePreset(preset.Engine, preset.Library)
+            {
                 Name = name,
                 Type = PresetType.User,
                 VoiceEffect = JsonUtil.DeepClone(preset.VoiceEffect),
@@ -68,7 +69,7 @@ namespace Yomiage.Core.Models
 
         public void Remove(VoicePreset preset)
         {
-            if( presets.Contains(preset))
+            if (presets.Contains(preset))
             {
                 presets.Remove(preset);
             }
@@ -76,9 +77,10 @@ namespace Yomiage.Core.Models
 
         public void RemoveUserPresets()
         {
-            for(int i=presets.Count-1; i>=0; i--)
+            for (int i = presets.Count - 1; i >= 0; i--)
             {
-                if (presets[i].Type == PresetType.User) {
+                if (presets[i].Type == PresetType.User)
+                {
                     Remove(presets[i]);
                 }
             }

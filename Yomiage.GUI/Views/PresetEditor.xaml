@@ -17,7 +17,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <GridSplitter Grid.Column="1" Width="4"/>
-        
+
         <!-- プリセット名 -->
         <DockPanel Grid.Column="0" Margin="3">
             <!-- ボタン -->
@@ -196,7 +196,7 @@
                                    TickFrequency="{Binding VolumeConfig.Value.Tick}"
                                    StringFormat="{Binding VolumeConfig.Value.Format}"
                                    SmallChange="{Binding VolumeConfig.Value.Small}"
-                                   Foreground="Firebrick"
+                                   Foreground="{StaticResource AccentRed}"
                                    Visibility="{Binding VolumeConfig.Value.Hide, Converter={InverseBoolToVisibilityConverter}}"
                                    Width="75"/>
 
@@ -211,7 +211,7 @@
                                    TickFrequency="{Binding SpeedConfig.Value.Tick}"
                                    StringFormat="{Binding SpeedConfig.Value.Format}"
                                    SmallChange="{Binding SpeedConfig.Value.Small}"
-                                   Foreground="ForestGreen"
+                                   Foreground="{StaticResource AccentGreen}"
                                    Visibility="{Binding SpeedConfig.Value.Hide, Converter={InverseBoolToVisibilityConverter}}"
                                    Width="75"/>
 
@@ -226,7 +226,7 @@
                                    TickFrequency="{Binding PitchConfig.Value.Tick}"
                                    StringFormat="{Binding PitchConfig.Value.Format}"
                                    SmallChange="{Binding PitchConfig.Value.Small}"
-                                   Foreground="Orange"
+                                   Foreground="{StaticResource AccentYellow}"
                                    Visibility="{Binding PitchConfig.Value.Hide, Converter={InverseBoolToVisibilityConverter}}"
                                    Width="75"/>
 
@@ -241,7 +241,7 @@
                                    TickFrequency="{Binding EmphasisConfig.Value.Tick}"
                                    StringFormat="{Binding EmphasisConfig.Value.Format}"
                                    SmallChange="{Binding EmphasisConfig.Value.Small}"
-                                   Foreground="MediumOrchid"
+                                   Foreground="{StaticResource AccentPink}"
                                    Visibility="{Binding EmphasisConfig.Value.Hide, Converter={InverseBoolToVisibilityConverter}}"
                                    Width="75"/>
                         <ItemsControl ItemsSource="{Binding AdditionalSettings}">
@@ -307,7 +307,7 @@
                                    StringFormat="0"
                                    SmallChange="1"
                                    IsEnabled="{Binding IsChecked, ElementName=PauseEnable}"
-                                   Foreground="RoyalBlue"/>
+                                   Foreground="{StaticResource AccentBlue}"/>
 
                     <cont:MySlider Grid.Row="2" Grid.Column="1"
                                    Title="長ポーズ" Unit="[ﾐﾘ秒]"
@@ -318,9 +318,9 @@
                                    TickFrequency="10" StringFormat="0"
                                    SmallChange="1"
                                    IsEnabled="{Binding IsChecked, ElementName=PauseEnable}"
-                                   Foreground="RoyalBlue"/>
+                                   Foreground="{StaticResource AccentBlue}"/>
                 </Grid>
-                
+
             </StackPanel>
         </ScrollViewer>
 

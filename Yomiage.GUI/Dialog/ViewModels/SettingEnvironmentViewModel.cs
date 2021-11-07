@@ -22,8 +22,8 @@ namespace Yomiage.GUI.Dialog.ViewModels
 
         public ReactivePropertySlim<int> ThemeIndex { get; set; }
         public SettingService SettingService { get; }
-        public List<string> fonts { get; }
-        public List<string> outputDevices { get; }
+        public List<string> Fonts { get; }
+        public List<string> OutputDevices { get; }
 
         public SettingEnvironmentViewModel(SettingService settingService)
         {
@@ -62,17 +62,17 @@ namespace Yomiage.GUI.Dialog.ViewModels
                 };
             }).AddTo(Disposables);
 
-            this.fonts = new InstalledFontCollection().Families.Select(ff => ff.Name).ToList();
+            this.Fonts = new InstalledFontCollection().Families.Select(ff => ff.Name).ToList();
 
             {
                 // 出力デバイスの検索
-                List<string> deviceList = new List<string>();
+                List<string> deviceList = new();
                 for (int i = 0; i < WaveOut.DeviceCount; i++)
                 {
                     var capabilities = WaveOut.GetCapabilities(i);
                     deviceList.Add(capabilities.ProductName);
                 }
-                this.outputDevices = deviceList;
+                this.OutputDevices = deviceList;
             }
         }
 

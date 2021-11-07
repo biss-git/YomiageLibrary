@@ -14,8 +14,14 @@ namespace Yomiage.SDK.VoiceEffects
     /// </summary>
     public abstract class VoiceEffectValueBase : IFixAble
     {
+        /// <summary>
+        /// 
+        /// </summary>
         [JsonIgnore]
         public virtual bool IsMora => false;
+        /// <summary>
+        /// 
+        /// </summary>
         [JsonIgnore]
         public virtual bool IsEndSection => false;
 
@@ -44,13 +50,16 @@ namespace Yomiage.SDK.VoiceEffects
         /// </summary>
         [JsonIgnore]
         public Dictionary<string, double?> AdditionalEffect { get; set; } = new Dictionary<string, double?>();
+        /// <summary>
+        /// 
+        /// </summary>
         [JsonPropertyName("A")]
         public Dictionary<string, double?> AdditionalEffectIO
         {
             get
             {
-                if(AdditionalEffect == null) { return null; }
-                if(AdditionalEffect.Any(pair => pair.Value != null))
+                if (AdditionalEffect == null) { return null; }
+                if (AdditionalEffect.Any(pair => pair.Value != null))
                 {
                     return AdditionalEffect;
                 }
@@ -58,24 +67,32 @@ namespace Yomiage.SDK.VoiceEffects
             }
             set
             {
-                if(value != null)
+                if (value != null)
                 {
                     AdditionalEffect = value;
                 }
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         [JsonIgnore]
         public Dictionary<string, double[]> AdditionalEffects { get; set; } = new Dictionary<string, double[]>();
+        /// <summary>
+        /// 
+        /// </summary>
         [JsonPropertyName("As")]
-        public Dictionary<string, string> AdditionalEffectsString {
+        public Dictionary<string, string> AdditionalEffectsString
+        {
             get
             {
-                if(AdditionalEffects == null || AdditionalEffects.Count == 0) { return null; }
+                if (AdditionalEffects == null || AdditionalEffects.Count == 0) { return null; }
                 var dict = new Dictionary<string, string>();
-                foreach(var i in AdditionalEffects)
+                foreach (var i in AdditionalEffects)
                 {
                     var base64 = ToBase64(i.Value);
-                    if (!string.IsNullOrWhiteSpace(base64)){
+                    if (!string.IsNullOrWhiteSpace(base64))
+                    {
                         dict.Add(i.Key, base64);
                     }
                 }
@@ -97,7 +114,12 @@ namespace Yomiage.SDK.VoiceEffects
             }
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
         public double GetAdditionalValueOrDefault(string key, double defaultValue = 0)
         {
             if (AdditionalEffect != null &&
@@ -105,13 +127,18 @@ namespace Yomiage.SDK.VoiceEffects
                 AdditionalEffect.ContainsKey(key))
             {
                 var val = AdditionalEffect[key];
-                if(val != null)
+                if (val != null)
                 {
                     return (double)val;
                 }
             }
             return defaultValue;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public double? GetAdditionalValue(string key)
         {
             if (AdditionalEffect != null &&
@@ -122,6 +149,11 @@ namespace Yomiage.SDK.VoiceEffects
             }
             return null;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
         public void SetAdditionalValue(string key, double? value)
         {
             if (AdditionalEffect != null &&
@@ -134,6 +166,12 @@ namespace Yomiage.SDK.VoiceEffects
                 AdditionalEffect[key] = value;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
         public double[] GetAdditionalValuesOrAdd(string key, double defaultValue = 0)
         {
             if (AdditionalEffects != null &&
@@ -152,6 +190,12 @@ namespace Yomiage.SDK.VoiceEffects
             }
             return Enumerable.Repeat(defaultValue, 10).ToArray();
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
         public double[] GetAdditionalValuesOrDefault(string key, double defaultValue = 0)
         {
             if (AdditionalEffects != null &&
@@ -169,6 +213,11 @@ namespace Yomiage.SDK.VoiceEffects
             }
             return Enumerable.Repeat(defaultValue, 10).ToArray();
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public double[] GetAdditionalValues(string key)
         {
             if (AdditionalEffects != null &&
@@ -179,6 +228,11 @@ namespace Yomiage.SDK.VoiceEffects
             }
             return null;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
         public void SetAdditionalValues(string key, double? value)
         {
             if (value == null)
@@ -195,6 +249,11 @@ namespace Yomiage.SDK.VoiceEffects
                 }
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="values"></param>
         public void SetAdditionalValues(string key, double[] values)
         {
             if (AdditionalEffects != null &&
@@ -210,7 +269,9 @@ namespace Yomiage.SDK.VoiceEffects
                 }
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         public void Fix()
         {
         }
@@ -218,7 +279,7 @@ namespace Yomiage.SDK.VoiceEffects
 
         private static string ToBase64(double[] values)
         {
-            if(values == null || values.Length != 10) { return null; }
+            if (values == null || values.Length != 10) { return null; }
             byte[] bytes = new byte[40];
             Buffer.BlockCopy(values.Select(v => (float)v).ToArray(), 0, bytes, 0, bytes.Length);
             string base64 = Convert.ToBase64String(bytes);
@@ -228,7 +289,7 @@ namespace Yomiage.SDK.VoiceEffects
         {
             if (string.IsNullOrWhiteSpace(base64)) { return null; }
             byte[] bytes = Convert.FromBase64String(base64);
-            if(bytes.Length != 40) { return null; }
+            if (bytes.Length != 40) { return null; }
             var values = new float[10];
             Buffer.BlockCopy(bytes, 0, values, 0, bytes.Length);
             return values.Select(v => (double)v).ToArray();

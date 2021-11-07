@@ -36,8 +36,10 @@ namespace Yomiage.GUI.Graph
                 if (value == true)
                 {
                     var circle = new FrameworkElementFactory(typeof(CircleActive));
-                    var template = new ControlTemplate(typeof(Thumb));
-                    template.VisualTree = circle;
+                    var template = new ControlTemplate(typeof(Thumb))
+                    {
+                        VisualTree = circle
+                    };
                     this.Template = template;
                     this.Cursor = Cursors.Hand;
                     this.menu.Visibility = Visibility.Visible;
@@ -45,8 +47,10 @@ namespace Yomiage.GUI.Graph
                 else
                 {
                     var circle = new FrameworkElementFactory(typeof(Circle));
-                    var template = new ControlTemplate(typeof(Thumb));
-                    template.VisualTree = circle;
+                    var template = new ControlTemplate(typeof(Thumb))
+                    {
+                        VisualTree = circle
+                    };
                     this.Template = template;
                     this.menu.Visibility = Visibility.Collapsed;
                 }
@@ -55,20 +59,9 @@ namespace Yomiage.GUI.Graph
         }
 
         public TalkScript Phrase;
-        private Mora mora;
-        public Mora Mora
-        {
-            get
-            {
-                return mora;
-            }
-            set
-            {
-                mora = value;
-            }
-        }
+        public Mora Mora { get; init; }
 
-        public Action<Mora, string> Action;
+        public Action<Mora, string> Action { get; init; }
 
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -78,16 +71,16 @@ namespace Yomiage.GUI.Graph
                 switch (item.Header.ToString())
                 {
                     case "無声化する":
-                        this.mora.Voiceless = true;
+                        this.Mora.Voiceless = true;
                         break;
                     case "無声化しない":
-                        this.mora.Voiceless = false;
+                        this.Mora.Voiceless = false;
                         break;
                     case "無声化を指定しない":
-                        this.mora.Voiceless = null;
+                        this.Mora.Voiceless = null;
                         break;
                 };
-                Action(this.mora, item.Header.ToString());
+                Action(this.Mora, item.Header.ToString());
             }
         }
 
@@ -97,9 +90,9 @@ namespace Yomiage.GUI.Graph
             this.yomi.IsEnabled = true;
             this.join.IsEnabled = CanJoin();
             this.split.IsEnabled = CanSplit();
-            this.d.IsEnabled = (mora.Voiceless != true);
-            this.v.IsEnabled = (mora.Voiceless != false);
-            this.dv.IsEnabled = (mora.Voiceless != null);
+            this.d.IsEnabled = (Mora.Voiceless != true);
+            this.v.IsEnabled = (Mora.Voiceless != false);
+            this.dv.IsEnabled = (Mora.Voiceless != null);
             this.removeMora.IsEnabled = this.Phrase.MoraCount > 1;
             this.removeSection.IsEnabled = this.Phrase.Sections.Count > 1;
         }
@@ -107,10 +100,10 @@ namespace Yomiage.GUI.Graph
         {
             foreach (var section in this.Phrase.Sections)
             {
-                if (section.Moras.Contains(mora))
+                if (section.Moras.Contains(Mora))
                 {
                     var sectionIndex = this.Phrase.Sections.IndexOf(section);
-                    var moraIndex = section.Moras.IndexOf(mora);
+                    var moraIndex = section.Moras.IndexOf(Mora);
                     if (sectionIndex > 0 &&
                         moraIndex == 0)
                     {
@@ -125,10 +118,10 @@ namespace Yomiage.GUI.Graph
         {
             foreach (var section in this.Phrase.Sections)
             {
-                if (section.Moras.Contains(mora))
+                if (section.Moras.Contains(Mora))
                 {
-                    var sectionIndex = this.Phrase.Sections.IndexOf(section);
-                    var moraIndex = section.Moras.IndexOf(mora);
+                    // var sectionIndex = this.Phrase.Sections.IndexOf(section);
+                    var moraIndex = section.Moras.IndexOf(Mora);
                     if (moraIndex > 0)
                     {
                         return true;

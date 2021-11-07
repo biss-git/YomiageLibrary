@@ -11,6 +11,7 @@
                  MinHeight="200"
                  MinWidth="300"
                  SizeToContent="WidthAndHeight"
+                 KeyDown="MetroWindow_KeyDown"
         Title="{Binding Title}"
         TitleBarHeight="22">
     <i:Interaction.Behaviors>

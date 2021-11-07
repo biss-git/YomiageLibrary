@@ -28,8 +28,8 @@ namespace Yomiage.GUI.Dialog.ViewModels
         public ReadOnlyReactiveCollection<Engine> Engines { get; }
         public ReactivePropertySlim<Engine> SelectedEngine { get; }
 
-        ConfigService ConfigService;
-        IDialogService dialogService;
+        readonly ConfigService ConfigService;
+        readonly IDialogService dialogService;
 
         public EngineListViewModel(
             ConfigService configService,
@@ -75,7 +75,7 @@ namespace Yomiage.GUI.Dialog.ViewModels
 
         private void RemoveAction()
         {
-            ProcessStartInfo pi = new ProcessStartInfo()
+            ProcessStartInfo pi = new()
             {
                 FileName = "https://sites.google.com/view/unicoe/%E3%83%81%E3%83%A5%E3%83%BC%E3%83%88%E3%83%AA%E3%82%A2%E3%83%AB/%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3%E3%83%A9%E3%82%A4%E3%83%96%E3%83%A9%E3%83%AA%E3%82%92%E5%89%8A%E9%99%A4%E3%81%99%E3%82%8B",
                 UseShellExecute = true,
@@ -90,8 +90,10 @@ namespace Yomiage.GUI.Dialog.ViewModels
 
         private void SettingAction(Engine engine)
         {
-            IDialogParameters parameters = new DialogParameters();
-            parameters.Add("Engine", engine);
+            IDialogParameters parameters = new DialogParameters
+            {
+                { "Engine", engine }
+            };
             this.dialogService.ShowDialog("SettingsEngineDialog", parameters, result => { });
         }
     }

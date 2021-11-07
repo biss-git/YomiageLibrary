@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Yomiage.GUI.Graph"
+             x:Name="MainControl"
              mc:Ignorable="d" 
              SizeChanged="Grid_SizeChanged"
              d:DesignHeight="450" d:DesignWidth="800">
@@ -34,7 +35,7 @@
             <Line Name="defaultLine" X2="1000" StrokeThickness="1" Stroke="Gray"/>
             <Label Name="unitText" Canvas.Bottom="10" Foreground="Gray">min000</Label>
 
-            <Line Name="positionBar" Canvas.Left="50" Y2="4000" Stroke="{DynamicResource MahApps.Brushes.Accent}" StrokeThickness="3"/>
+            <Line Name="positionBar" Canvas.Left="50" Y2="{Binding ActualHeight, ElementName=MainControl}" Stroke="{DynamicResource MahApps.Brushes.Accent}" StrokeThickness="3"/>
 
         </Canvas>
         <!-- バックグラウンド、選択はされていないが表示されるパラメータ -->

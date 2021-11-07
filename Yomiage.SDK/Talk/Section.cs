@@ -18,10 +18,14 @@ namespace Yomiage.SDK.Talk
         /// </summary>
         [JsonIgnore]
         public Pause Pause { get; set; } = new Pause();
-        public string p
+        /// <summary>
+        /// 
+        /// </summary>
+        [JsonPropertyName("p")]
+        public string P
         {
-            get => Pause.p;
-            set => Pause.p = value;
+            get => Pause.P;
+            set => Pause.P = value;
         }
         /// <summary>
         /// アクセント句のモーラ情報
@@ -69,6 +73,11 @@ namespace Yomiage.SDK.Talk
                     break;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="curve"></param>
+        /// <param name="config"></param>
         public void FillCurve(VoiceEffectValue curve, EngineConfig config)
         {
             for (int i = Moras.Count - 1; i >= 0; i--)
@@ -79,15 +88,20 @@ namespace Yomiage.SDK.Talk
             {
                 if (s.Type != "Curve") { return; }
                 var val = GetAdditionalValuesOrDefault(s.Key, s.DefaultValue);
-                var list = new List<double>(val);
-                list.Add(curve.GetAdditionalValuesOrDefault(s.Key, s.DefaultValue).First());
+                var list = new List<double>(val)
+                {
+                    curve.GetAdditionalValuesOrDefault(s.Key, s.DefaultValue).First()
+                };
                 SetAdditionalValues(s.Key, list.ToArray());
                 curve.SetAdditionalValues(s.Key, list.ToArray());
             });
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public string GetYomi()
         {
             return string.Join("", Moras.Select(m => m.Character));

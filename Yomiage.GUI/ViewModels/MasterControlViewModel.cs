@@ -27,6 +27,7 @@ namespace Yomiage.GUI.ViewModels
         public ReactivePropertySlim<PauseSet> Selected { get; } = new();
 
         public ReactiveCommand<string> PauseCharacterCommand { get; }
+        public ReactiveCommand<string> ClearCommand { get; }
 
         PauseDictionaryService pauseDictionaryService;
 
@@ -39,6 +40,7 @@ namespace Yomiage.GUI.ViewModels
             this.pauseDictionaryService = pauseDictionaryService;
 
             PauseCharacterCommand = new ReactiveCommand<string>().WithSubscribe(PauseCharacterAction).AddTo(Disposables);
+            ClearCommand = new ReactiveCommand<string>().WithSubscribe(ClearAction).AddTo(Disposables);
 
             settingService.ExpandEffectRange.Subscribe(SetRange).AddTo(Disposables);
 
@@ -62,12 +64,34 @@ namespace Yomiage.GUI.ViewModels
                     pauseDictionaryService.Create();
                     break;
                 case "Edit":
-                    if(Selected.Value == null) { return; }
+                    if (Selected.Value == null) { return; }
                     pauseDictionaryService.Edit(Selected.Value.key);
                     break;
                 case "Remove":
                     if (Selected.Value == null) { return; }
                     pauseDictionaryService.Remove(Selected.Value.key);
+                    break;
+            }
+        }
+
+        private void ClearAction(string param)
+        {
+            switch (param)
+            {
+                case "Effect":
+                    this.SettingService.MasterVolume.Value = 1;
+                    this.SettingService.MasterSpeed.Value = 1;
+                    this.SettingService.MasterPitch.Value = 1;
+                    this.SettingService.MasterEmphasis.Value = 1;
+                    this.SettingService.SaveMaster();
+                    break;
+                case "Pause":
+                    this.SettingService.MasterShortPause.Value = 150;
+                    this.SettingService.MasterLongPause.Value = 370;
+                    this.SettingService.MasterEndPause.Value = 800;
+                    this.SettingService.SaveMaster();
+                    break;
+                default:
                     break;
             }
         }

@@ -120,6 +120,9 @@
     <Compile Update="Graph\SquareGraph.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Graph\UpDown.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Splash.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -270,6 +273,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Graph\SquareGraph.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Graph\UpDown.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Splash.xaml">

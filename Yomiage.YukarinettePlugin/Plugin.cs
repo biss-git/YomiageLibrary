@@ -6,12 +6,13 @@ using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace Yomiage.YukarinettePlugin
 {
     public class Plugin : Yukarinette.IYukarinetteInterface
     {
-        SettingsValues settings = new SettingsValues();
+        private readonly SettingsValues settings = new SettingsValues();
         HttpClient client;
 
         string settingsFilePath;
@@ -47,6 +48,15 @@ namespace Yomiage.YukarinettePlugin
                     settings.PortNo = portNo;
                 }
             }
+
+            try
+            {
+                this.IconIMage = new BitmapImage(new Uri(@"pack://application:,,,/Yomiage.YukarinettePlugin;component/icon.png"));
+            }
+            catch (Exception)
+            {
+
+            }
         }
 
         /// <summary>
@@ -60,7 +70,7 @@ namespace Yomiage.YukarinettePlugin
             {
                 File.WriteAllText(settingsFilePath, text);
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }
@@ -98,8 +108,10 @@ namespace Yomiage.YukarinettePlugin
         /// </summary>
         public override void Setting()
         {
-            var settingsWindow = new SettingsWindow();
-            settingsWindow.SelectedPortNo = settings.PortNo;
+            var settingsWindow = new SettingsWindow
+            {
+                SelectedPortNo = settings.PortNo
+            };
             settingsWindow.ShowDialog();
             if (settingsWindow.ResultIsOk)
             {

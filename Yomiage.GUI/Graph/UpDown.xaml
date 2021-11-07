@@ -1,0 +1,60 @@
+﻿<UserControl
+    x:Class="Yomiage.GUI.Graph.UpDown"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:iconPack="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:local="clr-namespace:Yomiage.GUI.Graph"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="10"
+    d:DesignWidth="10"
+    mc:Ignorable="d">
+    <Canvas>
+        <iconPack:PackIconBoxIcons
+            x:Name="up"
+            Canvas.Left="-11"
+            Canvas.Top="-25"
+            Width="22"
+            Height="50"
+            Padding="5"
+            Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
+            Kind="SolidUpArrow"
+            MouseDown="Up_MouseDown"
+            MouseEnter="Up_MouseEnter"
+            MouseLeave="Up_MouseLeave">
+            <iconPack:PackIconBoxIcons.Style>
+                <Style TargetType="iconPack:PackIconBoxIcons">
+                    <Setter Property="Opacity" Value="0" />
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Opacity" Value="1" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </iconPack:PackIconBoxIcons.Style>
+        </iconPack:PackIconBoxIcons>
+        <iconPack:PackIconBoxIcons
+            x:Name="down"
+            Canvas.Left="-11"
+            Canvas.Top="-25"
+            Width="22"
+            Height="50"
+            Padding="5"
+            Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
+            Kind="SolidDownArrow"
+            MouseDown="Up_MouseDown"
+            MouseEnter="Up_MouseEnter"
+            MouseLeave="Up_MouseLeave">
+            <iconPack:PackIconBoxIcons.Style>
+                <Style TargetType="iconPack:PackIconBoxIcons">
+                    <Setter Property="Opacity" Value="0" />
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Opacity" Value="1" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </iconPack:PackIconBoxIcons.Style>
+        </iconPack:PackIconBoxIcons>
+    </Canvas>
+</UserControl>

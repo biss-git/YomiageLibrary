@@ -1,9 +1,7 @@
-﻿using Microsoft.International.Converters;
-using NMeCab.Specialized;
+﻿using MeCab;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using Yomiage.Core.Types;
 using Yomiage.Core.Utility;
@@ -11,9 +9,9 @@ using Yomiage.SDK.Talk;
 
 namespace Yomiage.Core.Models
 {
-    public class TextService
+    public class TextService : IDisposable
     {
-        private string[] splitChar = new string[]
+        private readonly string[] splitChar = new string[]
         {
             "。",
             "！",
@@ -23,7 +21,7 @@ namespace Yomiage.Core.Models
             "♪",
         };
 
-        private string[] ignoreList = new string[]
+        private readonly string[] ignoreList = new string[]
         {
             "。",
             "！",
@@ -34,7 +32,7 @@ namespace Yomiage.Core.Models
             "、"
         };
 
-        private string[] ltChar = new string[]
+        private readonly string[] ltChar = new string[]
         {
             "ァ",
             "ィ",
@@ -45,11 +43,28 @@ namespace Yomiage.Core.Models
             "ュ",
             "ョ",
         };
-
-        VoicePresetService voicePresetService;
+        readonly MeCabTagger tagger;
+        readonly VoicePresetService voicePresetService;
         public TextService(VoicePresetService voicePresetService)
         {
             this.voicePresetService = voicePresetService;
+            try
+            {
+                var param = new MeCabParam();
+                param.DicDir = System.IO.Path.Combine(param.DicDir, "AccentDic");
+                tagger = MeCabTagger.Create(param);
+            }
+            catch (Exception)
+            {
+                try
+                {
+                    tagger = MeCabTagger.Create();
+                }
+                catch (Exception)
+                {
+
+                }
+            }
         }
 
         public TalkScript[] Parse(
@@ -97,12 +112,12 @@ namespace Yomiage.Core.Models
                     if (c.Contains("\n"))
                     {
                         var i = c.LastIndexOf("\n");
-                        c = c.Substring(i + 1);
+                        c = c[(i + 1)..];
                     }
-                    if( this.voicePresetService.AllPresets.Any(p => p.Name == c))
+                    if (this.voicePresetService.AllPresets.Any(p => p.Name == c))
                     {
                         character = c;
-                        tt = t.Substring(index + PromptString.Length);
+                        tt = t[(index + PromptString.Length)..];
                         preset = voicePresetService.AllPresets.First(p => p.Name == c);
                     }
                 }
@@ -119,8 +134,10 @@ namespace Yomiage.Core.Models
                     }
                 }
 
-                List<TextPart> textParts = new List<TextPart>();
-                textParts.Add(new TextPart() { Text = tt });
+                List<TextPart> textParts = new List<TextPart>
+                {
+                    new TextPart() { Text = tt }
+                };
                 MakeScriptByWordDictionary(textParts, WordDictionarys);
                 MakeScriptByPauseDictionary(textParts, PauseDictionary);
                 MakeScriptByIPA(textParts);
@@ -227,6 +244,12 @@ namespace Yomiage.Core.Models
             }
         }
 
+        /// <summary>
+        /// 単語辞書かポーズ辞書で一致するものが見つかった場合に置き換える
+        /// </summary>
+        /// <param name="textParts">分割されたテキストリスト</param>
+        /// <param name="j">textPartsのどこに適用するかのインデックス</param>
+        /// <param name="newPart">置き換えたいTextPart</param>
         private void ReplacePart(List<TextPart> textParts, ref int j, TextPart newPart)
         {
             var part = textParts[j];
@@ -248,7 +271,7 @@ namespace Yomiage.Core.Models
                 if (index > 0)
                 {
                     // 中央一致　
-                    var newPart2 = new TextPart() { Text = part.Text.Substring(index + newPart.Text.Length) };
+                    var newPart2 = new TextPart() { Text = part.Text[(index + newPart.Text.Length)..] };
                     textParts.Insert(j + 1, newPart2);
                     textParts.Insert(j + 1, newPart);
                     part.Text = part.Text.Substring(0, index);
@@ -257,7 +280,7 @@ namespace Yomiage.Core.Models
                 else if (index == 0)
                 {
                     // 前方一致　
-                    part.Text = part.Text.Substring(newPart.Text.Length);
+                    part.Text = part.Text[newPart.Text.Length..];
                     textParts.Insert(j, newPart);
                 }
             }
@@ -281,19 +304,21 @@ namespace Yomiage.Core.Models
             {
                 OriginalText = text,
             };
-            using (var tagger = MeCabIpaDicTagger.Create()) // Taggerインスタンスを生成
             {
-                var nodes = tagger.Parse(text); // 形態素解析を実行
+                var nodes = tagger.ParseToNodes(text).ToArray(); // 形態素解析を実行
                 bool pauseFlag = false;
                 var caPronounciation = string.Empty;
+                bool conbineFlag;
                 foreach (var node in nodes) // 形態素ノード配列を順に処理
                 {
+                    if (node.Feature == null) { continue; }
+                    var features = node.Feature.Split(',');
                     var section = new Section()
                     {
                         Pause = new Pause(),
                         Moras = new List<Mora>(),
                     };
-                    var pronounciation = node.Pronounciation;
+                    var pronounciation = features.Length > 8 ? features[8] : "";
                     if (node.Surface == "、") { pauseFlag = true; } // "、"を長ポーズとして扱うためのフラグを立てる
                     if (ignoreList.Contains(pronounciation)) { continue; }
                     if (string.IsNullOrWhiteSpace(pronounciation))
@@ -306,24 +331,30 @@ namespace Yomiage.Core.Models
                     }
 
                     {
+                        conbineFlag = false;
                         // 次の node が小文字で始まる場合はつなげる。
                         if (!string.IsNullOrWhiteSpace(caPronounciation))
                         {
                             pronounciation = caPronounciation + pronounciation;
                             caPronounciation = null;
+                            conbineFlag = true;
                         }
                         var index = Array.IndexOf(nodes, node);
                         if (index + 1 < nodes.Length)
                         {
-                            var np = nodes[index + 1].Pronounciation;
-                            var ns = YomiDictionary.SurfaceToYomi(nodes[index + 1].Surface);
-                            if (np.Length > 0 &&
-                                ltChar.Contains(np.Substring(0, 1)) ||
-                                np.Length == 0 &&
-                                ltChar.Contains(ns.Substring(0, 1)))
+                            var nextFeatures = nodes[index + 1].Feature?.Split(',');
+                            if (nextFeatures != null)
                             {
-                                caPronounciation = pronounciation;
-                                continue;
+                                var np = nextFeatures.Length > 8 ? nextFeatures[8] : "";
+                                var ns = YomiDictionary.SurfaceToYomi(nodes[index + 1].Surface);
+                                if (np.Length > 0 &&
+                                    ltChar.Contains(np.Substring(0, 1)) ||
+                                    np.Length == 0 &&
+                                    ltChar.Contains(ns.Substring(0, 1)))
+                                {
+                                    caPronounciation = pronounciation;
+                                    continue;
+                                }
                             }
                         }
                     }
@@ -333,12 +364,45 @@ namespace Yomiage.Core.Models
                     if (moras.Count == 0) { continue; }
                     section.Moras = moras
                         .Select(c => new Mora() { Character = c, Accent = true }).ToList();
-                    section.Moras[0].Accent = false; // アクセント辞書が無い場合はとりあえずのアクセントで
+                    // アクセント辞書が無い場合はとりあえずのアクセントで
+                    section.Moras[0].Accent = false;
+                    if (section.Moras.Count > 1 &&
+                        !conbineFlag && // 結合した時はアクセントはつけない
+                        features.Length > 9 && // 辞書にアクセントがあるか確認
+                        features[9].Length > 1 &&
+                        int.TryParse(features[9].Substring(0, 1), out var position) && // アクセント位置を取得
+                        position > 0)
+                    {
+                        for (int i = 0; i < section.Moras.Count; i++)
+                        {
+                            section.Moras[i].Accent = (i == position - 1) || (0 < i && i < position);
+                        }
+                    }
+
                     if (pauseFlag)
                     {
                         section.Pause.Type = PauseType.Long;
                         pauseFlag = false;
                     }
+
+                    if (section.Pause.Type == PauseType.None && // ポーズが無いこと
+                        script.Sections.Count > 0 && // ２つ目以降のアクセント句であること
+                        node.Prev != null)
+                    {
+                        // アクセント結合処理
+                        var preSection = script.Sections.Last();
+                        var type1 = node.Prev.Feature?.Split(',').First();
+                        var type2 = features[0];
+                        if (type1 == "動詞" && type2 == "助動詞" ||
+                            type1 == "名詞" && type2 == "名詞")
+                        {
+                            preSection.Moras.ForEach(m => m.Accent = (m != preSection.Moras.First()));
+                            section.Moras.ForEach(m => m.Accent = (m == section.Moras.First()));
+                            preSection.Moras.AddRange(section.Moras);
+                            continue;
+                        }
+                    }
+
                     script.Sections.Add(section);
                 }
                 if (text.Contains("。"))
@@ -365,7 +429,20 @@ namespace Yomiage.Core.Models
                 var s2 = script.Sections[i + 1];
                 if (s2.Pause.Type == PauseType.None && s2.Moras.Count == 1)
                 {
+                    s2.Moras.First().Accent = s1.Moras.Last().Accent;
                     s1.Moras.Add(s2.Moras[0]);
+                    script.Sections.Remove(s2);
+                    i -= 1;
+                }
+            }
+            for (int i = 0; i < script.Sections.Count - 1; i++)
+            {
+                // Accent が true で終わって true ではじまるときはつなげる
+                var s1 = script.Sections[i];
+                var s2 = script.Sections[i + 1];
+                if (s2.Pause.Type == PauseType.None && s1.Moras.Last().Accent && s2.Moras.First().Accent)
+                {
+                    s1.Moras.AddRange(s2.Moras);
                     script.Sections.Remove(s2);
                     i -= 1;
                 }
@@ -388,8 +465,10 @@ namespace Yomiage.Core.Models
             return result.ToArray();
         }
 
-
-
+        public void Dispose()
+        {
+            tagger.Dispose();
+        }
 
         class TextPart
         {

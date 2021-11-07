@@ -33,8 +33,13 @@ namespace Yomiage.GUI.Graph
     /// </summary>
     public partial class PhraseGraph : UserControl
     {
+        private readonly Brush redBrush;
+        private readonly Brush greenBrush;
+        private readonly Brush yellowBrush;
+        private readonly Brush pinkBrush;
+
         // 無理やりダイアログサービスを使う。
-        public static IDialogService DialogService;
+        private static IDialogService dialogService;
 
         #region DependencyProperty
         public static readonly DependencyProperty AccentSelectedProperty =
@@ -393,42 +398,56 @@ namespace Yomiage.GUI.Graph
         #endregion
 
 
-        private List<UIElement> MoraPoints = new();
-        private List<Button> MoraButtons = new();
+        private readonly List<UIElement> MoraPoints = new();
+        private readonly List<Button> MoraButtons = new();
 
-        private List<Polyline> AccentLines = new();
-        private List<MoraPoint> AccentPoints = new();
-        Dictionary<MoraPoint, (Mora, Yomiage.SDK.Talk.Section)> moraDict = new();
-        private Polyline PreAccentLine = new Polyline();
-        private List<MoraPoint> PreAccentPoints = new();
-        private List<PauseGraph> PausePoints = new();
+        private readonly List<Polyline> AccentLines = new();
+        private readonly List<MoraPoint> AccentPoints = new();
+        private readonly List<UpDown> UpDownPoints = new();
+        private readonly Dictionary<MoraPoint, (Mora, Yomiage.SDK.Talk.Section)> moraDict = new();
+        private Polyline PreAccentLine = new();
+        private readonly List<MoraPoint> PreAccentPoints = new();
+        private readonly List<PauseGraph> PausePoints = new();
 
-        private List<Polyline> VolumeLines = new();
-        private List<PointGraph> VolumePoints = new();
+        private readonly List<Polyline> VolumeLines = new();
+        private readonly List<PointGraph> VolumePoints = new();
 
-        private List<Polyline> SpeedLines = new();
-        private List<PointGraph> SpeedPoints = new();
+        private readonly List<Polyline> SpeedLines = new();
+        private readonly List<PointGraph> SpeedPoints = new();
 
-        private List<Polyline> PitchLines = new();
-        private List<PointGraph> PitchPoints = new();
+        private readonly List<Polyline> PitchLines = new();
+        private readonly List<PointGraph> PitchPoints = new();
 
-        private List<Polyline> EmphasisLines = new();
-        private List<PointGraph> EmphasisPoints = new();
+        private readonly List<Polyline> EmphasisLines = new();
+        private readonly List<PointGraph> EmphasisPoints = new();
 
-        private Dictionary<string, List<Polyline>> SettingsLines = new();
-        private Dictionary<string, List<PointGraph>> SettingsPoints = new();
+        private readonly Dictionary<string, List<Polyline>> SettingsLines = new();
+        private readonly Dictionary<string, List<PointGraph>> SettingsPoints = new();
 
-        private List<Polyline> PreValueLines = new();
-        private PreValue PreValueText = new();
+        private readonly List<Polyline> PreValueLines = new();
+        private readonly PreValue PreValueText = new();
+
 
         private Brush SelectedBrush
         {
             get
             {
-                if (VolumeSelected) { return Brushes.Firebrick; }
-                if (SpeedSelected) { return Brushes.ForestGreen; }
-                if (PitchSelected) { return Brushes.Orange; }
-                if (EmphasisSelected) { return Brushes.MediumOrchid; }
+                if (VolumeSelected)
+                {
+                    return redBrush;
+                }
+                if (SpeedSelected)
+                {
+                    return greenBrush;
+                }
+                if (PitchSelected)
+                {
+                    return yellowBrush;
+                }
+                if (EmphasisSelected)
+                {
+                    return pinkBrush;
+                }
                 return Brushes.Gray;
             }
         }
@@ -515,6 +534,9 @@ namespace Yomiage.GUI.Graph
                 return null;
             }
         }
+
+        public static IDialogService DialogService { get => dialogService; set => dialogService = value; }
+
         private double? GetEffectVolume(VoiceEffectValueBase item) => item.Volume;
         private double? GetEffectSpeed(VoiceEffectValueBase item) => item.Speed;
         private double? GetEffectPitch(VoiceEffectValueBase item) => item.Pitch;
@@ -527,20 +549,45 @@ namespace Yomiage.GUI.Graph
                 IsExtend ? setting.MaxExtend : setting.Max);
         }
 
-        private double w_offset = 40;
-        private double w1 = 25;
-        private double h1 = 30;
-        private double h2 = 35;
-        private double hr1 = 0.25;
-        private double hr2 = 0.75;
-        private double hr3 = 0.5;
-        private double ar = 7;
+        private readonly double w_offset = 40;
+        private readonly double w1 = 25;
+        private readonly double h1 = 30;
+        private readonly double h2 = 35;
+        private readonly double hr1 = 0.25;
+        private readonly double hr2 = 0.75;
+        private readonly double hr3 = 0.5;
+        private readonly double ar = 7;
 
         private double AccentVerticalChange;//縦幅用
 
         public PhraseGraph()
         {
             InitializeComponent();
+
+            {
+                if (Application.Current.Resources["AccentRed"] is Brush brush)
+                {
+                    redBrush = brush;
+                }
+            }
+            {
+                if (Application.Current.Resources["AccentGreen"] is Brush brush)
+                {
+                    greenBrush = brush;
+                }
+            }
+            {
+                if (Application.Current.Resources["AccentYellow"] is Brush brush)
+                {
+                    yellowBrush = brush;
+                }
+            }
+            {
+                if (Application.Current.Resources["AccentPink"] is Brush brush)
+                {
+                    pinkBrush = brush;
+                }
+            }
         }
 
 
@@ -666,7 +713,7 @@ namespace Yomiage.GUI.Graph
                 moraCount += 1;
                 foreach (var mora in section.Moras)
                 {
-                    MoraGraph point = new MoraGraph()
+                    MoraGraph point = new()
                     {
                         Height = this.grid.ActualHeight,
                         Mora = mora,
@@ -681,7 +728,7 @@ namespace Yomiage.GUI.Graph
                 }
             }
             moraCount += 1;
-            EndMoraGraph end = new EndMoraGraph()
+            EndMoraGraph end = new()
             {
                 Height = this.grid.ActualHeight,
                 End = this.Phrase.EndSection,
@@ -709,7 +756,7 @@ namespace Yomiage.GUI.Graph
             int moraCount = 0;
             foreach (var section in this.Phrase.Sections)
             {
-                Button button = new Button() { MinWidth = 2 * w1 };
+                Button button = new() { MinWidth = 2 * w1 };
                 var p = position;
                 button.Click += (s, e) => { this.PlayPosition = p; };
                 Canvas.SetLeft(button, w_offset + moraCount * w1 - w1);
@@ -737,6 +784,9 @@ namespace Yomiage.GUI.Graph
                 case "長音を追加": AddMora(mora); break;
                 case "アクセントを削除": RemoveMora(mora); break;
                 case "アクセント句を削除": RemoveSection(mora); break;
+                case "MouseEnter": AccentMouseEnter(mora); return;
+                case "MouseLeave": AccentMouseLeave(mora); return;
+                case "ToggleAccent": AccentToggle(mora); return;
             }
             if (command.Contains("無声化"))
             {
@@ -785,6 +835,42 @@ namespace Yomiage.GUI.Graph
                     break;
                 }
             }
+        }
+        private void AccentMouseLeave(Mora mora)
+        {
+            if (mora is null)
+            {
+                return;
+            }
+
+            Remove_PreAccent();
+        }
+        private void AccentMouseEnter(Mora mora)
+        {
+            if (mora == null) { return; }
+            if (mora.Accent)
+            {
+                AccentVerticalChange = +(hr2 - hr1) * this.GraphHeight * 0.2;
+            }
+            else
+            {
+                AccentVerticalChange = -(hr2 - hr1) * this.GraphHeight * 0.2;
+            }
+            Remove_PreAccent();
+            Draw_PreAccent(AccentPoints.OfType<MoraPoint>().FirstOrDefault(x => x.Mora == mora));
+        }
+        private void AccentToggle(Mora mora)
+        {
+            var section = this.Phrase.Sections.FirstOrDefault(x => x.Moras.Contains(mora));
+            double h = (hr2 - hr1) * this.GraphHeight;
+            bool[] accent = CalcMoras(section, mora, AccentVerticalChange, h);
+            for (int i = 0; i < accent.Length; i++)
+            {
+                section.Moras[i].Accent = accent[i];
+            }
+            Draw_Accent();
+            Remove_PreAccent();
+            UpdateCommand.Execute("AccentChanged");
         }
         private void AccentJoin(Mora mora)
         {
@@ -883,6 +969,7 @@ namespace Yomiage.GUI.Graph
         {
             Remove_Elements(AccentLines);
             Remove_Elements(AccentPoints);
+            Remove_Elements(UpDownPoints);
         }
         private void Draw_Accent_Main()
         {
@@ -904,31 +991,46 @@ namespace Yomiage.GUI.Graph
             foreach (var section in this.Phrase.Sections)
             {
                 moraCount += 1;
-                Polyline line = new Polyline() { Stroke = Brushes.DarkGray };
+                Polyline line = new() { Stroke = Brushes.DarkGray };
                 foreach (var mora in section.Moras)
                 {
                     line.Points.Add(new Point(w_offset + moraCount * w1, mora.Accent ? high : low));
 
-                    MoraPoint point = new MoraPoint()
                     {
-                        Width = 2 * ar,
-                        Height = 2 * ar,
-                        Active = graph == this.graph,
-                        Mora = mora,
-                        Phrase = this.Phrase,
-                    };
-                    if (point.Active == true)
-                    {
-                        moraDict.Add(point, (mora, section));
-                        point.DragDelta += Accent_DragDelta;
-                        point.DragCompleted += Accent_DragCompleted;
-                        point.Action = MoraContextAction;
+                        MoraPoint point = new()
+                        {
+                            Width = 2 * ar,
+                            Height = 2 * ar,
+                            Active = graph == this.graph,
+                            Mora = mora,
+                            Phrase = this.Phrase,
+                            Action = MoraContextAction,
+                        };
+                        if (point.Active == true)
+                        {
+                            moraDict.Add(point, (mora, section));
+                            point.DragDelta += Accent_DragDelta;
+                            point.DragCompleted += Accent_DragCompleted;
+                            //point.Action = MoraContextAction;
+                        }
+                        Canvas.SetLeft(point, w_offset + moraCount * w1 - ar);
+                        Canvas.SetTop(point, (mora.Accent ? high : low) - ar);
+                        Panel.SetZIndex(point, -1);
+                        graph.Children.Add(point);
+                        AccentPoints.Add(point);
                     }
-                    Canvas.SetLeft(point, w_offset + moraCount * w1 - ar);
-                    Canvas.SetTop(point, (mora.Accent ? high : low) - ar);
-                    Panel.SetZIndex(point, -1);
-                    graph.Children.Add(point);
-                    AccentPoints.Add(point);
+
+                    {
+                        UpDown upDown = new(mora)
+                        {
+                            Action = MoraContextAction,
+                        };
+                        Canvas.SetLeft(upDown, w_offset + moraCount * w1);
+                        Canvas.SetTop(upDown, (high + low) / 2);
+                        Panel.SetZIndex(upDown, -2);
+                        graph.Children.Add(upDown);
+                        UpDownPoints.Add(upDown);
+                    }
 
                     moraCount += 1;
                 }
@@ -991,7 +1093,7 @@ namespace Yomiage.GUI.Graph
                     foreach (var a in accent)
                     {
                         PreAccentLine.Points.Add(new Point(w_offset + moraCount * w1, a ? high : low));
-                        MoraPoint p = new MoraPoint() { Width = 2 * ar, Height = 2 * ar };
+                        MoraPoint p = new() { Width = 2 * ar, Height = 2 * ar };
                         Canvas.SetLeft(p, w_offset + moraCount * w1 - ar);
                         Canvas.SetTop(p, (a ? high : low) - ar);
                         Panel.SetZIndex(p, -2);
@@ -1007,16 +1109,16 @@ namespace Yomiage.GUI.Graph
             }
         }
 
-        private bool[] CalcMoras(Yomiage.SDK.Talk.Section section, Mora mora, double change, double h)
+        private static bool[] CalcMoras(SDK.Talk.Section section, Mora mora, double change, double h)
         {
             bool[] result = section.Moras.Select(m => m.Accent).ToArray();
             int index = section.Moras.IndexOf(mora);
             if (mora.Accent)
             {
                 // hight のとき
-                if (AccentVerticalChange < 0.1 * h) { return result; }
+                if (change < 0.1 * h) { return result; }
                 if (index > 0 && section.Moras[index - 1].Accent ||
-                    AccentVerticalChange > 0.5 * h)
+                    change > 0.5 * h)
                 {
                     for (int i = index; i < section.Moras.Count; i++)
                     {
@@ -1028,8 +1130,8 @@ namespace Yomiage.GUI.Graph
             else
             {
                 // low のとき
-                if (AccentVerticalChange > -0.1 * h) { return result; }
-                bool all = (AccentVerticalChange < -0.5 * h);
+                if (change > -0.1 * h) { return result; }
+                bool all = (change < -0.5 * h);
                 for (int i = 0; i < index; i++)
                 {
                     if (!section.Moras[i].Accent) { continue; }
@@ -1080,7 +1182,7 @@ namespace Yomiage.GUI.Graph
             {
                 // if (section.Pause.Type != PauseType.None)
                 {
-                    PauseGraph point = new PauseGraph(h)
+                    PauseGraph point = new(h)
                     {
                         Pause = section.Pause,
                         Action = PauseContextAction,
@@ -1094,7 +1196,7 @@ namespace Yomiage.GUI.Graph
             }
             //if (this.Phrase.EndSection.Pause.Type != PauseType.None)
             {
-                PauseGraph point = new PauseGraph(h)
+                PauseGraph point = new(h)
                 {
                     Pause = this.Phrase.EndSection.Pause,
                     Action = PauseContextAction,
@@ -1113,9 +1215,11 @@ namespace Yomiage.GUI.Graph
             {
                 try
                 {
-                    IDialogParameters param = new DialogParameters();
-                    param.Add("pause", pause);
-                    param.Add("config", EngineConfig);
+                    IDialogParameters param = new DialogParameters
+                    {
+                        { "pause", pause },
+                        { "config", EngineConfig }
+                    };
                     DialogService.ShowDialog(
                         "PauseEditDialog",
                         param,
@@ -1123,7 +1227,7 @@ namespace Yomiage.GUI.Graph
                         {
                         });
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
 
                 }
@@ -1202,14 +1306,15 @@ namespace Yomiage.GUI.Graph
         private void SetCurve(double x1_index, double y1_rate, double x2_index, double y2_rate, EffectSetting setting)
         {
             if (x1_index == x2_index) { return; }
-            (double min, double def, double max) = GetMinDefMax(setting);
 
-            Func<VoiceEffectValueBase, double[]> getValues = (VoiceEffectValueBase item) =>
+            (double min, _, double max) = GetMinDefMax(setting);
+
+            double[] getValues(VoiceEffectValueBase item)
             {
                 return item.GetAdditionalValuesOrAdd(setting.Key, setting.DefaultValue);
-            };
+            }
             int moraCount = 0;
-            Action<double[]> setValues = (double[] values) =>
+            void setValues(double[] values)
             {
                 for (int i = 0; i < values.Length; i++)
                 {
@@ -1220,7 +1325,7 @@ namespace Yomiage.GUI.Graph
                         values[i] = (1 - rate) * max + rate * min;
                     }
                 }
-            };
+            }
             foreach (var section in this.Phrase.Sections)
             {
                 if (moraCount > 0)
@@ -1290,11 +1395,7 @@ namespace Yomiage.GUI.Graph
                 value = textValue;
             }
 
-            var setValue = SetEffectSelectedValue;
-            if (setValue != null)
-            {
-                setValue(index.Item3, value);
-            }
+            SetEffectSelectedValue?.Invoke(index.Item3, value);
             Draw_SelectedValues();
             this.UpdateCommand.Execute("ValueChanged_MouseDown");
         }
@@ -1380,7 +1481,7 @@ namespace Yomiage.GUI.Graph
             double?[] values = Get_VolumeValues();
 
             (double min, double def, double max) = GetMinDefMax(this.EngineConfig.VolumeSetting);
-            Draw_Values(graph, values, min, def, max, format, rule, VolumeLines, VolumePoints, Brushes.Firebrick, 3);
+            Draw_Values(graph, values, min, def, max, format, rule, VolumeLines, VolumePoints, redBrush, 3);
         }
         #endregion
 
@@ -1403,7 +1504,7 @@ namespace Yomiage.GUI.Graph
             double?[] values = Get_SpeedValues();
 
             (double min, double def, double max) = GetMinDefMax(this.EngineConfig.SpeedSetting);
-            Draw_Values(graph, values, min, def, max, format, rule, SpeedLines, SpeedPoints, Brushes.ForestGreen, 3);
+            Draw_Values(graph, values, min, def, max, format, rule, SpeedLines, SpeedPoints, greenBrush, 3);
         }
         #endregion
 
@@ -1426,7 +1527,7 @@ namespace Yomiage.GUI.Graph
             double?[] values = Get_PitchValues();
 
             (double min, double def, double max) = GetMinDefMax(this.EngineConfig.PitchSetting);
-            Draw_Values(graph, values, min, def, max, format, rule, PitchLines, PitchPoints, Brushes.Orange, 3);
+            Draw_Values(graph, values, min, def, max, format, rule, PitchLines, PitchPoints, yellowBrush, 3);
         }
         #endregion
 
@@ -1449,7 +1550,7 @@ namespace Yomiage.GUI.Graph
             double?[] values = Get_EmphasisValues();
 
             (double min, double def, double max) = GetMinDefMax(this.EngineConfig.EmphasisSetting);
-            Draw_Values(graph, values, min, def, max, format, rule, EmphasisLines, EmphasisPoints, Brushes.MediumOrchid, 3);
+            Draw_Values(graph, values, min, def, max, format, rule, EmphasisLines, EmphasisPoints, pinkBrush, 3);
         }
         #endregion
 
@@ -1563,7 +1664,7 @@ namespace Yomiage.GUI.Graph
 
             Draw_Values(this.graph, values, min, def, max, format, rule, PreValueLines, null, brush, 1);
 
-            PreValueText.Text = valueTipText((double)values[index.Item2], format, rule);
+            PreValueText.Text = ValueTipText((double)values[index.Item2], format, rule);
             Canvas.SetLeft(PreValueText, w_offset + index.Item2 * w1);
             Canvas.SetTop(PreValueText, h1 + rate * GraphHeight);
             this.graph.Children.Add(PreValueText);
@@ -1588,16 +1689,16 @@ namespace Yomiage.GUI.Graph
                     moraCount += 1;
                 }
             }
-            values[values.Length - 1] = getValue(this.Phrase.EndSection);
+            values[^1] = getValue(this.Phrase.EndSection);
             return values;
         }
         private double[] Get_Curves(PhraseSettingConfig setting)
         {
             var values = new List<double>();
-            Func<VoiceEffectValueBase, double[]> getValues = (VoiceEffectValueBase item) =>
+            double[] getValues(VoiceEffectValueBase item)
             {
                 return item.GetAdditionalValuesOrDefault(setting.Key, setting.Setting.DefaultValue);
-            };
+            }
             bool firstFlag = true;
             foreach (var section in this.Phrase.Sections)
             {
@@ -1643,7 +1744,7 @@ namespace Yomiage.GUI.Graph
             double h = GraphHeight;
             double rate = (def - min) / (max - min);
 
-            Polyline line = new Polyline() { Stroke = brush, StrokeThickness = thickness };
+            Polyline line = new() { Stroke = brush, StrokeThickness = thickness };
             line.Points.Add(new Point(w_offset + w1, Math.Round(h1 + (1 - rate) * h)));
             for (int i = 0; i < values.Length; i++)
             {
@@ -1668,9 +1769,9 @@ namespace Yomiage.GUI.Graph
 
                     if (points != null)
                     {
-                        PointGraph point = new PointGraph()
+                        PointGraph point = new()
                         {
-                            Text = valueTipText((double)values[i], format, rule),
+                            Text = ValueTipText((double)values[i], format, rule),
                         };
                         Canvas.SetLeft(point, w_offset + i * w1);
                         Canvas.SetTop(point, Math.Round(h1 + (1 - rate) * h));
@@ -1688,17 +1789,14 @@ namespace Yomiage.GUI.Graph
             double min, double def, double max,
             List<Polyline> lines, Brush brush, int thickness)
         {
+            if (double.IsNaN(def)) { return; }
             double h = GraphHeight;
-            double x = w_offset + w1;
-            double rate = (def - min) / (max - min);
+            double x; // = w_offset + w1;
+            double rate; // = (def - min) / (max - min);
 
-            Polyline line = new Polyline() { Stroke = brush, StrokeThickness = thickness };
+            Polyline line = new() { Stroke = brush, StrokeThickness = thickness };
             for (int i = 0; i < values.Length; i++)
             {
-                if (values[i] == null)
-                {
-                    values[i] = def;
-                }
                 x = w_offset + w1 + i / 10.0 * w1;
                 rate = ((double)values[i] - min) / (max - min);
                 rate = Math.Max(0, Math.Min(rate, 1));
@@ -1710,7 +1808,7 @@ namespace Yomiage.GUI.Graph
             lines.Add(line);
         }
 
-        private string valueTipText(double value, string format, Dictionary<double, string> rule)
+        private static string ValueTipText(double value, string format, Dictionary<double, string> rule)
         {
             if (Math.Abs(value) < 0.0000000000001) { value = 0; }
             var valueText = value.ToString(format);

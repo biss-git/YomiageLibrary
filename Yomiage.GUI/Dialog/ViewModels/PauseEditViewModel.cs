@@ -22,7 +22,7 @@ namespace Yomiage.GUI.Dialog.ViewModels
 
         public PauseEditViewModel()
         {
-            KeyDownCommand = new ReactiveCommand<string>().WithSubscribe(key=>
+            KeyDownCommand = new ReactiveCommand<string>().WithSubscribe(key =>
             {
                 switch (key)
                 {
@@ -56,7 +56,7 @@ namespace Yomiage.GUI.Dialog.ViewModels
                     Min.Value = Math.Min(config.ShortPauseSetting.Min, config.LongPauseSetting.Min);
                     Max.Value = Math.Max(config.ShortPauseSetting.Max, config.LongPauseSetting.Max);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
 
                 }

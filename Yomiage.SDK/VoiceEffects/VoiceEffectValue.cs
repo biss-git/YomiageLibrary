@@ -25,7 +25,14 @@ namespace Yomiage.SDK.VoiceEffects
         /// </summary>
         public double LongPause { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public VoiceEffectValue() { }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="config"></param>
         public VoiceEffectValue(EngineConfig config)
         {
             Volume = config.VolumeSetting.DefaultValue;
@@ -34,7 +41,7 @@ namespace Yomiage.SDK.VoiceEffects
             Emphasis = config.EmphasisSetting.DefaultValue;
             config.AdditionalSettings?.ForEach(s =>
             {
-                if(s.Type == "Curve")
+                if (s.Type == "Curve")
                 {
                     AdditionalEffects.Add(s.Key, Enumerable.Repeat(s.DefaultValue, 11).ToArray());
                 }

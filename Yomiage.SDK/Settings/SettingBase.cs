@@ -50,6 +50,9 @@ namespace Yomiage.SDK.Settings
         public abstract void Fix();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public interface ISetting : IFixAble
     {
         /// <summary>

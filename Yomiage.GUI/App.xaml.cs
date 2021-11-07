@@ -45,7 +45,7 @@ namespace Yomiage.GUI
                         }
                     }
                 }
-                catch (Exception error)
+                catch (Exception)
                 {
                     // ここはログに出せない
                 }
@@ -71,7 +71,7 @@ namespace Yomiage.GUI
             splash.Show();
             this.Properties["Splash"] = splash;
 
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); // Shift-JIS
 
 
             AppLog.Init();

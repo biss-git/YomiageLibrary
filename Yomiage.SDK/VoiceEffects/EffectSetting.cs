@@ -98,7 +98,7 @@ namespace Yomiage.SDK.VoiceEffects
             MaxExtend = Math.Max(Max, MaxExtend);
             Value = DefaultValue.Clamp(MinExtend, MaxExtend);
             DefaultValue = DefaultValue.Clamp(Min, Max);
-            if(SmallStep <= 0)
+            if (SmallStep <= 0)
             {
                 SmallStep = (Max - Min) / 100;
             }
@@ -108,6 +108,7 @@ namespace Yomiage.SDK.VoiceEffects
         /// Mora か Section かが Type と一致しているかを確認します。
         /// </summary>
         /// <param name="isMora"></param>
+        /// <param name="isEndSection"></param>
         /// <returns>
         /// true: isMora が Type と一致している
         /// false: isMora が Type と一致していない

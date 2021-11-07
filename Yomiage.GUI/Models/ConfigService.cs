@@ -32,20 +32,17 @@ namespace Yomiage.GUI.Models
         public readonly string PauseDirectory;
         public readonly string PresetDirectory;
         public readonly string WordDirectory;
-
-        VoiceEngineService voiceEngineService;
-        VoiceLibraryService voiceLibraryService;
-        VoicePresetService voicePresetService;
-        SettingService settingService;
-
-        AppConfig appConfig;
+        private readonly VoiceEngineService voiceEngineService;
+        private readonly VoiceLibraryService voiceLibraryService;
+        private readonly VoicePresetService voicePresetService;
+        private readonly SettingService settingService;
+        private readonly AppConfig appConfig;
 
         public ConfigService(
             SettingService settingService,
             VoiceEngineService voiceEngineService,
             VoiceLibraryService voiceLibraryService,
-            VoicePresetService voicePresetService
-            )
+            VoicePresetService voicePresetService)
         {
             this.voiceEngineService = voiceEngineService;
             this.voiceLibraryService = voiceLibraryService;
@@ -88,7 +85,7 @@ namespace Yomiage.GUI.Models
             CreateDirectory(WordDirectory);
         }
 
-        private void CreateDirectory(string directory)
+        private static void CreateDirectory(string directory)
         {
             if (!Directory.Exists(directory))
             {
@@ -146,11 +143,8 @@ namespace Yomiage.GUI.Models
             var count = 0;
             foreach (var f in files)
             {
-                if(submitState != null)
-                {
-                    submitState(Title + $" ( {count + 1} / {files.Count} )\n{f}",
-                        ((double)(loadCount - 1) / (directoryNum + 1)) + (double)count / files.Count / (directoryNum + 1));
-                }
+                submitState?.Invoke(Title + $" ( {count + 1} / {files.Count} )\n{f}",
+                    ((double)(loadCount - 1) / (directoryNum + 1)) + (double)count / files.Count / (directoryNum + 1));
                 count += 1;
                 try
                 {
@@ -168,7 +162,7 @@ namespace Yomiage.GUI.Models
                             {
                                 settings = JsonUtil.Deserialize<EngineSettings>(settingsPath);
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
 
                             }
@@ -208,11 +202,8 @@ namespace Yomiage.GUI.Models
             var count = 0;
             foreach (var f in files)
             {
-                if (submitState != null)
-                {
-                    submitState(Title + $" ( {count + 1} / {files.Count} )\n{f}",
-                        ((double)(loadCount - 1) / (directoryNum + 1)) + (double)count / files.Count / (directoryNum + 1));
-                }
+                submitState?.Invoke(Title + $" ( {count + 1} / {files.Count} )\n{f}",
+                    ((double)(loadCount - 1) / (directoryNum + 1)) + (double)count / files.Count / (directoryNum + 1));
                 count += 1;
                 try
                 {
@@ -230,7 +221,7 @@ namespace Yomiage.GUI.Models
                             {
                                 settings = JsonUtil.Deserialize<LibrarySettings>(settingsPath);
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
 
                             }
@@ -259,7 +250,7 @@ namespace Yomiage.GUI.Models
                         voiceLibraryService.Add(new Library(directory, dllDirectory, voiceLibrary, config, settings, characterConfig));
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
 
                 }

@@ -25,7 +25,7 @@ using System.Windows;
 
 namespace Yomiage.GUI.Models
 {
-    public class VoicePlayerService
+    public class VoicePlayerService : IDisposable
     {
         private IWavePlayer wavPlayer;
         private MMDevice mmDevice;
@@ -43,14 +43,14 @@ namespace Yomiage.GUI.Models
         public ReactiveProperty<bool> IsPlaying { get; } = new ReactiveProperty<bool>(false);
         public ReactiveProperty<bool> CanPlay { get; }
 
-        private VoicePresetService voicePresetService;
-        private VoiceEngineService voiceEngineService;
-        private TextService textService;
-        private SettingService settingService;
-        PhraseDictionaryService phraseDictionaryService;
-        WordDictionaryService wordDictionaryService;
-        PauseDictionaryService pauseDictionaryService;
-        IMessageBroker messageBroker;
+        private readonly VoicePresetService voicePresetService;
+        private readonly VoiceEngineService voiceEngineService;
+        private readonly TextService textService;
+        private readonly SettingService settingService;
+        private readonly PhraseDictionaryService phraseDictionaryService;
+        private readonly WordDictionaryService wordDictionaryService;
+        private readonly PauseDictionaryService pauseDictionaryService;
+        private readonly IMessageBroker messageBroker;
         public VoicePlayerService(
             SettingService settingService,
             VoicePresetService voicePresetService,
@@ -81,11 +81,13 @@ namespace Yomiage.GUI.Models
             var buffer = new ConcurrentQueue<double[]>();
             var list = await GetVoiceBuffer(script, preset, fs);
             list?.ForEach(l => buffer.Enqueue(l));
-            if (buffer.Count == 0) { return; }
+            if (buffer.IsEmpty) { return; }
 
             var bufferedWaveProvider = new BufferedWaveProvider(new WaveFormat(fs, 16, 1)); //16bit１チャンネルの音源を想定
-            var wavProvider = new VolumeWaveProvider16(bufferedWaveProvider);  //ボリューム調整をするために上のBufferedWaveProviderをデコレータっぽく包む
-            wavProvider.Volume = 1f;
+            var wavProvider = new VolumeWaveProvider16(bufferedWaveProvider)
+            {
+                Volume = 1f
+            };  //ボリューム調整をするために上のBufferedWaveProviderをデコレータっぽく包む
             this.mmDevice?.Dispose();
             this.mmDevice = new MMDeviceEnumerator()
                 .GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);  //再生デバイスと出力先を設定
@@ -94,7 +96,7 @@ namespace Yomiage.GUI.Models
             this.wavPlayer.Play();
             var tempWave = new List<double>();
             while (this.wavPlayer.PlaybackState != PlaybackState.Stopped &&
-                  (bufferedWaveProvider.BufferedBytes > 0 || buffer.Count > 0))
+                  (bufferedWaveProvider.BufferedBytes > 0 || !buffer.IsEmpty))
             {
                 if (bufferedWaveProvider.BufferedBytes < bytesLimit)
                 {
@@ -131,8 +133,10 @@ namespace Yomiage.GUI.Models
             var buffer = new ConcurrentQueue<double[]>();
 
             var bufferedWaveProvider = new BufferedWaveProvider(new WaveFormat(fs, 16, 1)); //16bit１チャンネルの音源を想定
-            var wavProvider = new VolumeWaveProvider16(bufferedWaveProvider);  //ボリューム調整をするために上のBufferedWaveProviderをデコレータっぽく包む
-            wavProvider.Volume = 1f;
+            var wavProvider = new VolumeWaveProvider16(bufferedWaveProvider)
+            {
+                Volume = 1f
+            };  //ボリューム調整をするために上のBufferedWaveProviderをデコレータっぽく包む
             this.mmDevice?.Dispose();
             this.mmDevice = new MMDeviceEnumerator()
                 .GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);  //再生デバイスと出力先を設定
@@ -147,7 +151,7 @@ namespace Yomiage.GUI.Models
             VoicePreset presetNext = null;
             Task<List<double[]>> synthesize = null;
             while (this.wavPlayer.PlaybackState != PlaybackState.Stopped &&
-                  (bufferedWaveProvider.BufferedBytes > 0 || buffer.Count > 0 || scriptIndex < scripts.Length))
+                  (bufferedWaveProvider.BufferedBytes > 0 || !buffer.IsEmpty || scriptIndex < scripts.Length))
             {
                 if (synthesize == null && nextBuffer == null && scriptIndex < scripts.Length)
                 {
@@ -170,11 +174,8 @@ namespace Yomiage.GUI.Models
                     // 再生中の音声が少なくなったら次の音声を流し込む
                     nextBuffer.ForEach(l => buffer.Enqueue(l));
                     nextBuffer = null;
-                    if (SubmitPlayIndex != null)
-                    {
-                        // 台本のほうに現在の再生位置を送る
-                        SubmitPlayIndex(scriptIndex - 1);
-                    }
+                    // 台本のほうに現在の再生位置を送る
+                    SubmitPlayIndex?.Invoke(scriptIndex - 1);
                     presetNow = presetNext;
                     await Task.Delay(500);
                 }
@@ -240,14 +241,12 @@ namespace Yomiage.GUI.Models
             var reSampledWave = new List<double>();
             SaveWav(wave, "original.wav", fs);
             {
-                MediaFoundationReader reader = new MediaFoundationReader("original.wav");
-                WaveFormat format = new WaveFormat(target_fs, 16, 1);
-                MediaType mediaType = new MediaType(format);
+                MediaFoundationReader reader = new("original.wav");
+                WaveFormat format = new(target_fs, 16, 1);
+                MediaType mediaType = new(format);
 
-                using (MediaFoundationEncoder encoder = new MediaFoundationEncoder(mediaType))
-                {
-                    encoder.Encode("resampled.wav", reader);
-                }
+                using MediaFoundationEncoder encoder = new(mediaType);
+                encoder.Encode("resampled.wav", reader);
             }
             {
                 using var reader = new WaveFileReader("resampled.wav");
@@ -305,7 +304,7 @@ namespace Yomiage.GUI.Models
             this.wavPlayer.Init(wavProvider); //出力に入力を接続
         }
 
-        private double[] GetPart(List<double> wave, int position)
+        private static double[] GetPart(List<double> wave, int position)
         {
             var part = new double[2048];
             var start = Math.Max(position, 0);
@@ -323,7 +322,7 @@ namespace Yomiage.GUI.Models
             waitDialog.CancelAction = () =>
             {
                 stopFlag = true;
-                this.Stop();
+                _ = Stop();
             };
 
             await Task.Delay(30);
@@ -499,7 +498,7 @@ namespace Yomiage.GUI.Models
             }
             Convert(tempPath, filePath);
         }
-        private void SaveText(string filePath, string text, string encoding)
+        private static void SaveText(string filePath, string text, string encoding)
         {
             Encoding enc = Encoding.UTF8;
             if (encoding.Contains("UTF-16 LE")) { enc = Encoding.Unicode; }
@@ -538,17 +537,17 @@ namespace Yomiage.GUI.Models
                 ConvertWav(inputPath, outputPath, settingService.OutputFormatWav);
             }
         }
-        private void ConvertWav(string inputPath, string outputPath, string format)
+        private static void ConvertWav(string inputPath, string outputPath, string format)
         {
             WaveFormat waveFormat;
             waveFormat = new WaveFormat(GetFs(format), GetBit(format), 1);
 
             using var reader = new MediaFoundationReader(inputPath);
-            MediaType mediaType = new MediaType(waveFormat);
+            MediaType mediaType = new(waveFormat);
             using var encoder = new MediaFoundationEncoder(mediaType);
             encoder.Encode(outputPath, reader);
         }
-        private int GetFs(string format)
+        private static int GetFs(string format)
         {
             if (string.IsNullOrWhiteSpace(format)) { return 44100; }
             if (format.Contains("48000Hz")) { return 48000; }
@@ -559,7 +558,7 @@ namespace Yomiage.GUI.Models
             if (format.Contains("8000Hz")) { return 8000; }
             return 44100;
         }
-        private int GetBit(string format)
+        private static int GetBit(string format)
         {
             if (!string.IsNullOrWhiteSpace(format) && format.Contains("8bit"))
             {
@@ -570,7 +569,7 @@ namespace Yomiage.GUI.Models
                 return 16;
             }
         }
-        private void ConvertMp3(string inputPath, string outputPath, string format)
+        private static void ConvertMp3(string inputPath, string outputPath, string format)
         {
             int bps = 128000;
             if (format.Contains("96 kbps")) { bps = 96000; }
@@ -578,7 +577,7 @@ namespace Yomiage.GUI.Models
             using var reader = new MediaFoundationReader(inputPath);
             MediaFoundationEncoder.EncodeToMp3(reader, outputPath, bps);
         }
-        private void ConvertWma(string inputPath, string outputPath, string format)
+        private static void ConvertWma(string inputPath, string outputPath, string format)
         {
             int bps = 48000;
             if (format.Contains("32 kbps")) { bps = 32000; }
@@ -617,7 +616,7 @@ namespace Yomiage.GUI.Models
                 var Matches = new Regex(@"\{([^\{\}]*)\}").Matches(name).Select(m => m.Value).Distinct().OrderBy(m => m.Length).ToList();
                 foreach (var match in Matches)
                 {
-                    var symbol = match.Substring(1, match.Length - 2);
+                    var symbol = match[1..^1];
                     switch (match)
                     {
                         case "{VoicePreset}":
@@ -677,6 +676,11 @@ namespace Yomiage.GUI.Models
                 filePath = filePath.Replace(i.ToString(), "");
             }
             return filePath;
+        }
+
+        public void Dispose()
+        {
+            textService.Dispose();
         }
     }
 }

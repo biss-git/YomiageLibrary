@@ -27,5 +27,13 @@ namespace Yomiage.GUI.Dialog
         }
 
         public IDialogResult Result { get; set; }
+
+        private void MetroWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                this.Close();
+            }
+        }
     }
 }

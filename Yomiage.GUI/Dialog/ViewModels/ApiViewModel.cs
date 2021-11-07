@@ -19,7 +19,7 @@ namespace Yomiage.GUI.Dialog.ViewModels
 
         public ApiViewModel()
         {
-            UrlText.Value = $"http://localhost:{ServerInfo.ApiPort}/api/command";
+            UrlText.Value = $"http://localhost:{ServerInfo.ApiPort}/api";
             OpenCommand = new ReactiveCommand().WithSubscribe(OpenAction).AddTo(Disposables);
         }
 

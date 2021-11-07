@@ -19,14 +19,15 @@ namespace Yomiage.GUI.Models
     {
         private string lastFileNeme = "user.ypdic";
         public Dictionary<string, PhraseDictionary> PhraseDictionarys { get; set; } = new Dictionary<string, PhraseDictionary>();
-        PhraseService phraseService;
-        SettingService settingService;
-        ConfigService configService;
-        TextService textService;
-        WordDictionaryService wordDictionaryService;
-        PauseDictionaryService pauseDictionaryService;
 
-        IMessageBroker messageBroker;
+        private readonly PhraseService phraseService;
+        private readonly SettingService settingService;
+        private readonly ConfigService configService;
+        private readonly TextService textService;
+        private readonly WordDictionaryService wordDictionaryService;
+        private readonly PauseDictionaryService pauseDictionaryService;
+
+        private readonly IMessageBroker messageBroker;
         public PhraseDictionaryService(
             SettingService settingService,
             ConfigService configService,
@@ -144,10 +145,10 @@ namespace Yomiage.GUI.Models
         public void Edit(string key, string engineId, string libraryId)
         {
             var phrase = GetDictionary(key, engineId, libraryId);
-            if(phrase == null)
+            if (phrase == null)
             {
                 var scripts = this.textService.Parse(key, false, false, "", SearchDictionary, this.wordDictionaryService.WordDictionarys, this.pauseDictionaryService.PauseDictionary.ToList());
-                if(scripts.Length == 0)
+                if (scripts.Length == 0)
                 {
                     return;
                 }
@@ -160,7 +161,7 @@ namespace Yomiage.GUI.Models
 
         public bool LoadDictionary(string fileName = null)
         {
-            if(fileName == null)
+            if (fileName == null)
             {
                 CheckDictionaryPath();
                 fileName = settingService.PhraseDictionaryPath;
@@ -199,7 +200,7 @@ namespace Yomiage.GUI.Models
                 JsonUtil.Serialize(this.PhraseDictionarys, fileName);
                 this.lastFileNeme = fileName;
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }

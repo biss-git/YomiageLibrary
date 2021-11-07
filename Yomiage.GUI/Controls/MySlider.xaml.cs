@@ -106,20 +106,6 @@ namespace Yomiage.GUI.Controls
         }
 
 
-        public static readonly DependencyProperty IsEnabledProperty =
-            DependencyProperty.Register(
-                "IsEnable",
-                typeof(bool),
-                typeof(MySlider),
-                new PropertyMetadata(true));
-
-        public bool IsEnabled
-        {
-            get { return (bool)GetValue(IsEnabledProperty); }
-            set { SetValue(IsEnabledProperty, value); }
-        }
-
-
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register(
                 "Title",
@@ -130,7 +116,7 @@ namespace Yomiage.GUI.Controls
         public string Title
         {
             get { return (string)GetValue(TitleProperty); }
-            set { SetValue(TitleProperty, value);  }
+            set { SetValue(TitleProperty, value); }
         }
 
 
@@ -161,25 +147,9 @@ namespace Yomiage.GUI.Controls
             set { SetValue(UnitProperty, value); }
         }
 
-
-        public static readonly DependencyProperty ForegroundProperty =
-            DependencyProperty.Register(
-                "Foreground",
-                typeof(Brush),
-                typeof(MySlider),
-                new PropertyMetadata(null));
-
-        public Brush Foreground
-        {
-            get { return (Brush)GetValue(ForegroundProperty); }
-            set { SetValue(ForegroundProperty, value); }
-        }
-
-
         public MySlider()
         {
             InitializeComponent();
-
         }
 
         private void Button_Default(object sender, RoutedEventArgs e)

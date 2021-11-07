@@ -17,9 +17,10 @@ namespace Yomiage.GUI.Models
     {
         private string lastFileNeme = "user.ywdic";
         public Dictionary<string, WordSet> WordDictionarys { get; set; } = new(); // なんでこれ最後に s がついているんでしょうね。
-        SettingService settingService;
-        ConfigService configService;
-        IMessageBroker messageBroker;
+
+        private readonly SettingService settingService;
+        private readonly ConfigService configService;
+        private readonly IMessageBroker messageBroker;
 
         public WordDictionaryService(
             SettingService settingService,
@@ -40,7 +41,7 @@ namespace Yomiage.GUI.Models
             script.OriginalText = null;
             var jsonText = script.GetPhraseJsonText_toSave();
 
-            Add(key, new WordSet() { JsonText = jsonText, Priority = priority, Yomi = script.GetYomi()});
+            Add(key, new WordSet() { JsonText = jsonText, Priority = priority, Yomi = script.GetYomi() });
 
             script.OriginalText = key;
             SaveDictionary(this.lastFileNeme);
@@ -122,7 +123,7 @@ namespace Yomiage.GUI.Models
                 JsonUtil.Serialize(this.WordDictionarys, fileName);
                 this.lastFileNeme = fileName;
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }
@@ -136,11 +137,11 @@ namespace Yomiage.GUI.Models
         public bool? IsRegisterd(string key, TalkScript phrase = null)
         {
             if (string.IsNullOrWhiteSpace(key)) { return false; }
-            if(!WordDictionarys.TryGetValue(key, out WordSet word))
+            if (!WordDictionarys.TryGetValue(key, out WordSet word))
             {
                 return false;
             }
-            if(phrase != null && phrase.GetPhraseJsonText_toSave() == word.JsonText)
+            if (phrase != null && phrase.GetPhraseJsonText_toSave() == word.JsonText)
             {
                 return true;
             }

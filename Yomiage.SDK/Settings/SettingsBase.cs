@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Yomiage.SDK.Settings
 {
@@ -83,13 +81,18 @@ namespace Yomiage.SDK.Settings
         {
             return Keys().Contains(key);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="setting"></param>
+        /// <returns></returns>
         public bool TryGetSetting(string key, out T setting)
         {
-            setting = default(T);
+            setting = default;
             if (!ContainsKey(key)) { return false; }
             setting = this[key];
-            if(setting == null) { return false; }
+            if (setting == null) { return false; }
             return true;
         }
         /// <summary>

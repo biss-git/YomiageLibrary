@@ -6,8 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="JPNKanaConv" Version="1.0.0" />
-    <PackageReference Include="LibNMeCab" Version="0.10.2" />
-    <PackageReference Include="LibNMeCab.IpaDicBin" Version="0.10.0" />
+    <PackageReference Include="MeCab.DotNet" Version="0.0.40" />
     <PackageReference Include="Prism.Core" Version="8.0.0.1909" />
     <PackageReference Include="ReactiveProperty" Version="7.10.0" />
   </ItemGroup>

@@ -115,7 +115,7 @@
                             Command="ApplicationCommands.Close"
                             Header="終了" />
                     </MenuItem>
-                    <MenuItem Header=" テキスト">
+                    <MenuItem Header=" テキスト" Visibility="Collapsed">
                         <MenuItem
                             Margin="0,6,0,0"
                             Command="{Binding ScriptCommand}"
@@ -137,7 +137,7 @@
                         <Separator/>
                         <MenuItem Header="単語の編集" Margin="0,0,0,6"/>-->
                     </MenuItem>
-                    <MenuItem Header=" マスター">
+                    <MenuItem Header=" マスター" Visibility="Collapsed">
                         <MenuItem
                             Margin="0,6,0,0"
                             Command="{Binding MasterCommand}"
@@ -150,7 +150,7 @@
                             CommandParameter="CreatePause"
                             Header="記号ポーズを新規登録" />
                     </MenuItem>
-                    <MenuItem Header=" ボイス">
+                    <MenuItem Header=" ボイス" Visibility="Collapsed">
                         <MenuItem
                             Margin="0,6,0,0"
                             Command="{Binding OpenDialogCommand}"
@@ -165,14 +165,14 @@
                         <!--<Separator/>
                         <MenuItem Header="標準プリセットを全て初期化" Margin="0,0,0,6"/>-->
                     </MenuItem>
-                    <MenuItem Header=" フレーズ">
+                    <MenuItem Header=" フレーズ" Visibility="Collapsed">
                         <MenuItem
                             Margin="0,6,0,6"
                             Command="{Binding OpenDialogCommand}"
                             CommandParameter="PhraseListDialog"
                             Header="フレーズ一覧" />
                     </MenuItem>
-                    <MenuItem Header=" 単語">
+                    <MenuItem Header=" 単語" Visibility="Collapsed">
                         <MenuItem
                             Margin="0,6,0,6"
                             Command="{Binding OpenDialogCommand}"
@@ -443,6 +443,7 @@
                 Grid.Row="2"
                 Grid.Column="0"
                 Grid.ColumnSpan="{Binding TunerSpan.Value}"
+                FontSize="16"
                 d:Grid.ColumnSpan="5"
                 ActiveContentChanged="TuningDocking_ActiveContentChanged">
                 <LayoutRoot>
@@ -465,6 +466,7 @@
                                 CanClose="False"
                                 ContentId="phrase">
                                 <DockingManager
+                                    FontSize="12"
                                     x:Name="TuneTab3"
                                     ActiveContent="{Binding PhraseService.ActiveEditor.Value, Mode=TwoWay, Converter={StaticResource ActivePhraseEditorConverter}}"
                                     DocumentsSource="{Binding PhraseService.Editors}">

@@ -7,17 +7,18 @@ namespace Yomiage.API
     public static class ApiServer
     {
         private static HttpListener listener;
-        private static ControllerMapper mapper = new ControllerMapper();
+        private static readonly ControllerMapper mapper = new ControllerMapper();
 
 
 
         /// <summary>
         /// APIサービスを起動する
         /// </summary>
-        public static void Start()
+        public static void Start(int portNumber)
         {
             if (listener?.IsListening == true) { return; }
-            for (int i = 42503; i < 42600; i++)
+            portNumber = Math.Clamp(portNumber, 10000, 60000);
+            for (int i = portNumber; i < portNumber + 100; i++)
             {
 
                 listener = new HttpListener();
@@ -36,7 +37,7 @@ namespace Yomiage.API
                 }
             }
 
-            Task.Run(tick);
+            Task.Run(Tick);
         }
 
         public static void Stop()
@@ -50,7 +51,7 @@ namespace Yomiage.API
             }
         }
 
-        private static void tick()
+        private static void Tick()
         {
             while (listener?.IsListening == true)
             {
@@ -102,7 +103,7 @@ namespace Yomiage.API
                         res.Close();
                     }
                 }
-                catch (Exception clsEx)
+                catch (Exception)
                 {
                     // log.Error(clsEx.ToString());
                 }

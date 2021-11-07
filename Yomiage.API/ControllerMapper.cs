@@ -30,7 +30,6 @@ namespace Yomiage.API
         {
             StreamReader reader = null;
             StreamWriter writer = null;
-            string reqBody = null;
             string resBoby = null;
 
             try
@@ -41,12 +40,11 @@ namespace Yomiage.API
 
                 reader = new StreamReader(req.InputStream);
                 writer = new StreamWriter(res.OutputStream);
-                reqBody = reader.ReadToEnd();
+                string reqBody = reader.ReadToEnd();
 
-                LogStart(req, reqBody);
                 resBoby = await ExecuteController(req, res, reqBody);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 /* ～エラー処理～ */
             }
@@ -65,31 +63,12 @@ namespace Yomiage.API
                     {
                         writer.Close();
                     }
-                    LogEnd(res, resBoby);
                 }
-                catch (Exception clsEx)
+                catch (Exception)
                 {
                     // log.Error(clsEx.ToString());
                 }
             }
-        }
-
-        /// <summary>
-        /// リクエストログを出力する
-        /// </summary>
-        /// <param name="req">リクエスト情報</param>
-        /// <param name="body">リクエストボディ文字列</param>
-        private void LogStart(HttpListenerRequest req, string body)
-        {
-        }
-
-        /// <summary>
-        /// レスポンスログを出力する
-        /// </summary>
-        /// <param name="res">レスポンス情報</param>
-        /// <param name="body">レスポンスボディ文字列</param>
-        private void LogEnd(HttpListenerResponse res, string body)
-        {
         }
 
         /// <summary>
@@ -114,25 +93,32 @@ namespace Yomiage.API
                         res.StatusCode = 405;
                         return "";
                     case "POST":
-                        Dictionary<string, string> command = JsonSerializer.Deserialize<Dictionary<string, string>>(reqBody);
-                        if (command.ContainsKey("command"))
+                        try
                         {
-                            if (command["command"] == "play" &&
-                                command.ContainsKey("TalkText") &&
+                            var command = JsonSerializer.Deserialize<UnicoeCommand>(reqBody);
+                            if (command.command == "play" &&
                                 CommandService.PlayVoice != null)
                             {
-                                var result = CommandService.PlayVoice(command["TalkText"]);
-                                if (result)
+                                await Task.Delay(100); // ちょっと待たないと上手く再生できないときがある。
+                                command.success = CommandService.PlayVoice(command.TalkText);
+                                if (command.success == true)
                                 {
-                                    res.StatusCode = 400;
+                                    res.StatusCode = 200;
                                 }
+                                return JsonSerializer.Serialize(command);
                             }
-                            if (command["command"] == "stop" &&
+                            if (command.command == "stop" &&
                                 CommandService.StopAction != null)
                             {
                                 CommandService.StopAction();
-                                res.StatusCode = 400;
+                                command.success = true;
+                                res.StatusCode = 200;
+                                return JsonSerializer.Serialize(command);
                             }
+                        }
+                        catch (Exception)
+                        {
+
                         }
                         return "";
                     case "OPTIONS":

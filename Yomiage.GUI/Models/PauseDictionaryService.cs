@@ -18,10 +18,11 @@ namespace Yomiage.GUI.Models
     {
         private string dictionaryPath = "user.ysdic";
 
-        public ReactiveCollection<PauseSet> PauseDictionary { get; set; } = new (); // Dictionary なのに Dictionary じゃないけど、まあいいか。
-        SettingService settingService;
-        ConfigService configService;
-        IDialogService dialogService;
+        public ReactiveCollection<PauseSet> PauseDictionary { get; set; } = new(); // Dictionary なのに Dictionary じゃないけど、まあいいか。
+
+        private readonly SettingService settingService;
+        private readonly ConfigService configService;
+        private readonly IDialogService dialogService;
 
         public PauseDictionaryService(
             SettingService settingService,
@@ -37,8 +38,9 @@ namespace Yomiage.GUI.Models
 
         public void Create()
         {
-            this.dialogService.ShowDialog("PauseCharacterDialog", result => {
-                if(result.Result != ButtonResult.OK) { return; }
+            this.dialogService.ShowDialog("PauseCharacterDialog", result =>
+            {
+                if (result.Result != ButtonResult.OK) { return; }
                 if (!result.Parameters.TryGetValue("key", out string key) || key == null) { return; }
                 if (!result.Parameters.TryGetValue("span_ms", out int span_ms)) { return; }
                 Add(key, span_ms);
@@ -46,14 +48,17 @@ namespace Yomiage.GUI.Models
         }
         public void Edit(string key)
         {
-            IDialogParameters param = new DialogParameters();
-            param.Add("key", key);
+            IDialogParameters param = new DialogParameters
+            {
+                { "key", key }
+            };
             var pair = PauseDictionary.FirstOrDefault(p => p.key == key);
             if (pair != null)
             {
                 param.Add("span_ms", pair.span_ms);
             }
-            this.dialogService.ShowDialog("PauseCharacterDialog", param, result => {
+            this.dialogService.ShowDialog("PauseCharacterDialog", param, result =>
+            {
                 if (result.Result != ButtonResult.OK) { return; }
                 if (!result.Parameters.TryGetValue("key", out string newKey) || newKey == null) { return; }
                 if (!result.Parameters.TryGetValue("span_ms", out int span_ms)) { return; }
@@ -76,7 +81,7 @@ namespace Yomiage.GUI.Models
         {
             if (string.IsNullOrEmpty(key)) { return; }
             var pair = PauseDictionary.FirstOrDefault(p => p.key == key);
-            if(pair == null) { return; }
+            if (pair == null) { return; }
             PauseDictionary.Remove(pair);
             SaveDictionary(dictionaryPath);
         }
@@ -84,7 +89,7 @@ namespace Yomiage.GUI.Models
 
         public bool LoadDictionary(string fileName = null)
         {
-            if(fileName == null)
+            if (fileName == null)
             {
                 CheckDictionaryPath();
                 fileName = settingService.PauseDictionaryPath;
@@ -123,7 +128,7 @@ namespace Yomiage.GUI.Models
                 JsonUtil.Serialize(this.PauseDictionary, fileName);
                 this.dictionaryPath = fileName;
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }

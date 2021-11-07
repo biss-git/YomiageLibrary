@@ -42,6 +42,8 @@ namespace Yomiage.GUI.Graph
             }
         }
 
+        bool? canJoin;
+        bool? canSplit;
 
         public TalkScript Phrase;
         private Mora mora;
@@ -68,7 +70,7 @@ namespace Yomiage.GUI.Graph
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if(sender is MenuItem item && Action != null)
+            if (sender is MenuItem item && Action != null)
             {
                 Action(this.mora, item.Header.ToString());
             }
@@ -77,9 +79,10 @@ namespace Yomiage.GUI.Graph
         private void OnMouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton != MouseButton.Right) { return; }
+            CheckCanJoinSplit();
             this.yomi.IsEnabled = true;
-            this.join.IsEnabled = CanJoin();
-            this.split.IsEnabled = CanSplit();
+            this.join.IsEnabled = canJoin == true;
+            this.split.IsEnabled = canSplit == true;
             this.d.IsEnabled = (mora.Voiceless != true);
             this.v.IsEnabled = (mora.Voiceless != false);
             this.dv.IsEnabled = (mora.Voiceless != null);
@@ -110,7 +113,7 @@ namespace Yomiage.GUI.Graph
             {
                 if (section.Moras.Contains(mora))
                 {
-                    var sectionIndex = this.Phrase.Sections.IndexOf(section);
+                    // var sectionIndex = this.Phrase.Sections.IndexOf(section);
                     var moraIndex = section.Moras.IndexOf(mora);
                     if (moraIndex > 0)
                     {
@@ -122,7 +125,7 @@ namespace Yomiage.GUI.Graph
             return false;
         }
 
-        private void moraText_MouseDown(object sender, MouseButtonEventArgs e)
+        private void MoraText_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton != MouseButton.Left) { return; }
             string command = this.mora.Voiceless switch
@@ -133,5 +136,35 @@ namespace Yomiage.GUI.Graph
             };
             Action(this.mora, command);
         }
+
+        private void SplitIcon_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Action(this.mora, "アクセント句を分割");
+        }
+
+        private void JoinIcon_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Action(this.mora, "アクセント句を結合");
+        }
+
+        private void Icon_MouseEnter(object sender, MouseEventArgs e)
+        {
+            CheckCanJoinSplit();
+            this.joinIcon.Visibility = canJoin == true ? Visibility.Visible : Visibility.Collapsed;
+            this.splitIcon.Visibility = canSplit == true ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void CheckCanJoinSplit()
+        {
+            if (canJoin == null)
+            {
+                canJoin = CanJoin();
+            }
+            if (canSplit == null)
+            {
+                canSplit = CanSplit();
+            }
+        }
+
     }
 }

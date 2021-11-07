@@ -60,7 +60,7 @@ namespace Yomiage.Core.Utility
         /// <returns></returns>
         public static string GetPronunce(string text)
         {
-            foreach(var pair in Numbers)
+            foreach (var pair in Numbers)
             {
                 if (text.Contains(pair.Key))
                 {
@@ -153,14 +153,14 @@ namespace Yomiage.Core.Utility
         public static List<string> TextToMoras(string text)
         {
             var moras = new List<string>();
-            while(text.Length > 0)
+            while (text.Length > 0)
             {
                 if (text.Length > 1 &&
                     LittleChar.Contains(text[1]) &&
-                    Mora2List.Contains(text.Substring(0,2)))
+                    Mora2List.Contains(text.Substring(0, 2)))
                 {
                     moras.Add(text.Substring(0, 2));
-                    text = text.Substring(2);
+                    text = text[2..];
                     continue;
                 }
 
@@ -169,7 +169,7 @@ namespace Yomiage.Core.Utility
                 {
                     moras.Add(c);
                 }
-                text = text.Substring(1);
+                text = text[1..];
             }
             return moras;
         }

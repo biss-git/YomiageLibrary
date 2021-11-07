@@ -20,9 +20,9 @@ namespace Yomiage.GUI.ViewModels
 {
     public class MainTextViewModel : ViewModelBase
     {
-        private ScriptService ScriptService;
-        private VoicePlayerService voicePlayerService;
-        private TextService textService;
+        private readonly ScriptService ScriptService;
+        private readonly VoicePlayerService voicePlayerService;
+        private readonly TextService textService;
 
         public ReactivePropertySlim<string> Title { get; }
         public ReactivePropertySlim<string> TitleWithDirty { get; }
@@ -41,17 +41,18 @@ namespace Yomiage.GUI.ViewModels
         public AsyncReactiveCommand PlayCommand { get; }
         public AsyncReactiveCommand StopCommand { get; }
         public AsyncReactiveCommand SaveCommand { get; }
+        public ReactiveCommand NewTabCommand { get; }
 
         public Func<string> GetSelectedText;
         public Func<string> GetCursorText;
 
         public ReactiveProperty<FlowDocument> Document { get; }
-        private PhraseService phraseService;
-        private PhraseDictionaryService phraseDictionaryService;
+        private readonly PhraseService phraseService;
+        private readonly PhraseDictionaryService phraseDictionaryService;
         public SettingService SettingService { get; }
-        private WordDictionaryService wordDictionaryService;
-        private VoicePresetService voicePresetService;
-        PauseDictionaryService pauseDictionaryService;
+        private readonly WordDictionaryService wordDictionaryService;
+        private readonly VoicePresetService voicePresetService;
+        readonly PauseDictionaryService pauseDictionaryService;
 
         public MainTextViewModel(
             IDialogService _dialogService,
@@ -64,8 +65,8 @@ namespace Yomiage.GUI.ViewModels
             LayoutService layoutService,
             WordDictionaryService wordDictionaryService,
             TextService textService,
-            PauseDictionaryService pauseDictionaryService,
-            IMessageBroker messageBroker) : base(_dialogService)
+            PauseDictionaryService pauseDictionaryService)
+            : base(_dialogService)
         {
             this.ScriptService = scriptService;
             this.voicePresetService = voicePresetService;
@@ -92,6 +93,7 @@ namespace Yomiage.GUI.ViewModels
             PlayCommand = this.voicePlayerService.CanPlay.ToAsyncReactiveCommand().WithSubscribe(PlayAction).AddTo(Disposables);
             StopCommand = new AsyncReactiveCommand().WithSubscribe(voicePlayerService.Stop).AddTo(Disposables);
             SaveCommand = this.voicePlayerService.CanPlay.ToAsyncReactiveCommand().WithSubscribe(SaveAction).AddTo(Disposables);
+            NewTabCommand = new ReactiveCommand().WithSubscribe(NewTabAction).AddTo(Disposables);
 
             this.IsDirty = Observable.Merge(
                 this.Content.ChangedAsObservable())
@@ -106,14 +108,14 @@ namespace Yomiage.GUI.ViewModels
         /// </summary>
         /// <param name="innerText"></param>
         /// <returns></returns>
-        private FlowDocument CreateFlowDoc(string innerText)
+        private static FlowDocument CreateFlowDoc(string innerText)
         {
             var paragraph = new Paragraph();
             paragraph.Inlines.Add(new Run(innerText));
             return new FlowDocument(paragraph);
         }
 
-        private FlowDocument CreateFlowDoc_Select(string text1, string text2_selected, string text3)
+        private static FlowDocument CreateFlowDoc_Select(string text1, string text2_selected, string text3)
         {
             var paragraph = new Paragraph();
             paragraph.Inlines.Add(new Run(text1));
@@ -212,7 +214,7 @@ namespace Yomiage.GUI.ViewModels
             }
             var scripts = this.textService.Parse(text, SettingService.SplitByEnter, SettingService.PromptStringEnable, SettingService.PromptString, phraseDictionaryService.SearchDictionary, this.wordDictionaryService.WordDictionarys, this.pauseDictionaryService.PauseDictionary.ToList());
 
-            Action<int> SubmitPlayIndex = async (int index) =>
+            async void SubmitPlayIndex(int index)
             {
                 string text1 = "";
                 string text3 = "";
@@ -246,7 +248,7 @@ namespace Yomiage.GUI.ViewModels
                     Document.Value = CreateFlowDoc_Select(text1, script.GetOriginalTextWithPresetName(SettingService.PromptString), text3);
                     this.phraseService.Send(script);
                 });
-            };
+            }
 
             await this.voicePlayerService.Play(scripts, SubmitPlayIndex);
             Document.Value = CreateFlowDoc(Content.Value);
@@ -384,7 +386,7 @@ namespace Yomiage.GUI.ViewModels
                 var index = line.IndexOf(promptString);
                 if (line.Length > index + 1)
                 {
-                    line = line.Substring(index + 1);
+                    line = line[(index + 1)..];
                 }
             }
             return line;
@@ -393,6 +395,11 @@ namespace Yomiage.GUI.ViewModels
         public void WordAction(string word)
         {
             this.wordDictionaryService.Send(word);
+        }
+
+        private void NewTabAction()
+        {
+            this.ScriptService.AddNew();
         }
     }
 

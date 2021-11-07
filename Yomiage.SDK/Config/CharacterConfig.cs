@@ -36,6 +36,9 @@ namespace Yomiage.SDK.Config
         /// </summary>
         public string LightBackGroundColor { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Fix()
         {
             Type = Type.Fix();
@@ -45,7 +48,9 @@ namespace Yomiage.SDK.Config
         }
     }
 
-
+    /// <summary>
+    /// 
+    /// </summary>
     public class BasicFormat : IFixAble
     {
         /// <summary>
@@ -70,6 +75,9 @@ namespace Yomiage.SDK.Config
         /// </summary>
         public string Sleep2 { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Fix()
         {
             Base = Base.Fix();

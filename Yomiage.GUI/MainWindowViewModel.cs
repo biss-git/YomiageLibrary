@@ -1,33 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
+using Prism.DryIoc;
 using Prism.Ioc;
-using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Reactive.Bindings.Notifiers;
-using Yomiage.Core.Types;
+using System;
+using System.Diagnostics;
+using System.Windows;
 using Yomiage.Core.Models;
-using Yomiage.GUI.Dialog.Views;
+using Yomiage.Core.Types;
+using Yomiage.GUI.Data;
 using Yomiage.GUI.EventMessages;
 using Yomiage.GUI.Graph;
 using Yomiage.GUI.Models;
-using Yomiage.GUI.ViewModels;
-using Yomiage.SDK.Common;
-using Yomiage.SDK.Config;
-using Yomiage.SDK.Settings;
-using Yomiage.SDK.VoiceEffects;
-using Yomiage.GUI.Data;
-using System.Diagnostics;
 using Yomiage.GUI.Util;
+using Yomiage.GUI.ViewModels;
 
 namespace Yomiage.GUI
 {
@@ -68,13 +56,13 @@ namespace Yomiage.GUI
 
         public ScriptService ScriptService { get; }
         public PhraseService PhraseService { get; }
-        private SettingService SettingService;
-        private LayoutService LayoutService;
-        private VoicePresetService VoicePresetService;
-        private VoicePlayerService VoicePlayerService;
-        private ConfigService ConfigService;
-        IMessageBroker messageBroker;
-        PauseDictionaryService pauseDictionaryService;
+        private readonly SettingService SettingService;
+        private readonly LayoutService LayoutService;
+        private readonly VoicePresetService VoicePresetService;
+        // private readonly VoicePlayerService VoicePlayerService;
+        // private readonly ConfigService ConfigService;
+        readonly IMessageBroker messageBroker;
+        readonly PauseDictionaryService pauseDictionaryService;
 
 
         public MainWindowViewModel(
@@ -82,21 +70,25 @@ namespace Yomiage.GUI
             SettingService settingService,
             ScriptService scriptService,
             PhraseService phraseService,
-            ConfigService configService,
             VoicePresetService voicePresetService,
-            VoicePlayerService voicePlayerService,
+            //ConfigService configService,
+            //VoicePlayerService voicePlayerService,
+            //ApiService apiService, // apiサーバを立てるために呼ぶ
             PauseDictionaryService pauseDictionaryService,
-            ApiService apiService, // apiサーバを立てるために呼ぶ
             IMessageBroker messageBroker,
             IDialogService dialogService) : base(dialogService)
         {
+            if (Application.Current is PrismApplication app)
+            {
+                app.Container.Resolve<ApiService>();
+            }
             this.SettingService = settingService;
             this.LayoutService = layoutService;
             this.ScriptService = scriptService;
             this.PhraseService = phraseService;
             this.VoicePresetService = voicePresetService;
-            this.VoicePlayerService = voicePlayerService;
-            this.ConfigService = configService;
+            // this.VoicePlayerService = voicePlayerService;
+            // this.ConfigService = configService;
             this.pauseDictionaryService = pauseDictionaryService;
             this.messageBroker = messageBroker;
             PhraseGraph.DialogService = dialogService;
@@ -145,7 +137,7 @@ namespace Yomiage.GUI
 
         private void HelpAction()
         {
-            ProcessStartInfo pi = new ProcessStartInfo()
+            ProcessStartInfo pi = new()
             {
                 FileName = "https://sites.google.com/view/unicoe/%E3%83%9B%E3%83%BC%E3%83%A0",
                 UseShellExecute = true,

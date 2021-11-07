@@ -32,6 +32,13 @@
                 Command="{Binding RedoCommand}"
                 Header="進む"
                 InputGestureText="Ctrl+Y" />
+            <Separator/>
+            <MenuItem
+                Command="{Binding CopyCommand}"
+                Header="コピー"/>
+            <MenuItem
+                Command="{Binding PasteCommand}"
+                Header="貼り付け"/>
         </ContextMenu>
     </UserControl.ContextMenu>
     <Grid>
@@ -196,12 +203,12 @@
                 <DockPanel Visibility="{Binding VolumeSetting.Value.Hide, Converter={InverseBoolToVisibilityConverter}}">
                     <CheckBox
                         Name="VolumeCheck"
-                        mah:CheckBoxHelper.CheckBackgroundStrokeChecked="Firebrick"
-                        mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="Firebrick"
-                        mah:CheckBoxHelper.CheckGlyphForegroundChecked="Firebrick"
-                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="Firebrick"
-                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="Firebrick" />
-                    <Border BorderBrush="Firebrick" Visibility="{Binding VolumeSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        mah:CheckBoxHelper.CheckBackgroundStrokeChecked="{StaticResource AccentRed}"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="{StaticResource AccentRed}"
+                        mah:CheckBoxHelper.CheckGlyphForegroundChecked="{StaticResource AccentRed}"
+                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="{StaticResource AccentRed}"
+                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="{StaticResource AccentRed}" />
+                    <Border BorderBrush="{StaticResource AccentRed}" Visibility="{Binding VolumeSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     <Button
                         Height="35"
                         Margin="0,0,0,2"
@@ -220,12 +227,12 @@
                 <DockPanel Visibility="{Binding SpeedSetting.Value.Hide, Converter={InverseBoolToVisibilityConverter}}">
                     <CheckBox
                         Name="SpeedCheck"
-                        mah:CheckBoxHelper.CheckBackgroundStrokeChecked="ForestGreen"
-                        mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="ForestGreen"
-                        mah:CheckBoxHelper.CheckGlyphForegroundChecked="ForestGreen"
-                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="ForestGreen"
-                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="ForestGreen" />
-                    <Border BorderBrush="ForestGreen" Visibility="{Binding SpeedSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        mah:CheckBoxHelper.CheckBackgroundStrokeChecked="{StaticResource AccentGreen}"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="{StaticResource AccentGreen}"
+                        mah:CheckBoxHelper.CheckGlyphForegroundChecked="{StaticResource AccentGreen}"
+                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="{StaticResource AccentGreen}"
+                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="{StaticResource AccentGreen}" />
+                    <Border BorderBrush="{StaticResource AccentGreen}" Visibility="{Binding SpeedSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     <Button
                         Height="35"
                         Margin="0,0,0,2"
@@ -244,12 +251,12 @@
                 <DockPanel Visibility="{Binding PitchSetting.Value.Hide, Converter={InverseBoolToVisibilityConverter}}">
                     <CheckBox
                         Name="PitchCheck"
-                        mah:CheckBoxHelper.CheckBackgroundStrokeChecked="Orange"
-                        mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="Orange"
-                        mah:CheckBoxHelper.CheckGlyphForegroundChecked="Orange"
-                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="Orange"
-                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="Orange" />
-                    <Border BorderBrush="Orange" Visibility="{Binding PitchSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        mah:CheckBoxHelper.CheckBackgroundStrokeChecked="{StaticResource AccentYellow}"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="{StaticResource AccentYellow}"
+                        mah:CheckBoxHelper.CheckGlyphForegroundChecked="{StaticResource AccentYellow}"
+                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="{StaticResource AccentYellow}"
+                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="{StaticResource AccentYellow}" />
+                    <Border BorderBrush="{StaticResource AccentYellow}" Visibility="{Binding PitchSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     <Button
                         Height="35"
                         Margin="0,0,0,2"
@@ -268,12 +275,12 @@
                 <DockPanel Visibility="{Binding EmphasisSetting.Value.Hide, Converter={InverseBoolToVisibilityConverter}}">
                     <CheckBox
                         Name="EmphasisCheck"
-                        mah:CheckBoxHelper.CheckBackgroundStrokeChecked="MediumOrchid"
-                        mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="MediumOrchid"
-                        mah:CheckBoxHelper.CheckGlyphForegroundChecked="MediumOrchid"
-                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="MediumOrchid"
-                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="MediumOrchid" />
-                    <Border BorderBrush="MediumOrchid" Visibility="{Binding EmphasisSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        mah:CheckBoxHelper.CheckBackgroundStrokeChecked="{StaticResource AccentPink}"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="{StaticResource AccentPink}"
+                        mah:CheckBoxHelper.CheckGlyphForegroundChecked="{StaticResource AccentPink}"
+                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="{StaticResource AccentPink}"
+                        mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="{StaticResource AccentPink}" />
+                    <Border BorderBrush="{StaticResource AccentPink}" Visibility="{Binding EmphasisSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     <Button
                         Height="35"
                         Margin="0,0,0,2"

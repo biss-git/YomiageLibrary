@@ -19,14 +19,14 @@ namespace Yomiage.GUI.Models
 {
     public class PhraseService : IDisposable
     {
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+        private readonly CompositeDisposable _disposables = new();
         public void Dispose() => _disposables.Dispose();
 
-        private readonly ObservableCollection<PhraseEditorViewModel> editors = new ObservableCollection<PhraseEditorViewModel>();
+        private readonly ObservableCollection<PhraseEditorViewModel> editors = new();
         public ReadOnlyObservableCollection<PhraseEditorViewModel> Editors { get; }
         public ReactivePropertySlim<PhraseEditorViewModel> ActiveEditor { get; } = new ReactivePropertySlim<PhraseEditorViewModel>();
 
-        private IContainerExtension container;
+        private readonly IContainerExtension container;
 
         public PhraseService(IContainerExtension container)
         {
@@ -38,7 +38,7 @@ namespace Yomiage.GUI.Models
         public void AddNew(TalkScript script = null)
         {
             var editor = container.Resolve<PhraseEditorViewModel>();
-            if(script != null)
+            if (script != null)
             {
                 editor.ClearUndoRedo();
                 editor.Phrase.Value = script;
@@ -54,9 +54,9 @@ namespace Yomiage.GUI.Models
         public void Send(TalkScript _script)
         {
             var script = JsonUtil.DeepClone(_script);
-            foreach(var editor in Editors)
+            foreach (var editor in Editors)
             {
-                if(!editor.IsDirty.Value && editor.Phrase.Value?.OriginalText == script.OriginalText)
+                if (!editor.IsDirty.Value && editor.Phrase.Value?.OriginalText == script.OriginalText)
                 {
                     // 内容が同じものがあれば送る
                     editor.ClearUndoRedo();
@@ -131,7 +131,7 @@ namespace Yomiage.GUI.Models
                             this.Add(editor);
                         }
                     }
-                    catch(Exception e)
+                    catch (Exception)
                     {
 
                     }

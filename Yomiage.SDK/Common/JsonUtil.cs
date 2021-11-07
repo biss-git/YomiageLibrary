@@ -21,7 +21,7 @@ namespace Yomiage.SDK.Common
         /// </summary>
         public static T DeepClone<T>(T obj) where T : class
         {
-            if(obj == null) { return default(T); }
+            if (obj == null) { return default; }
             var options = new JsonSerializerOptions
             {
                 WriteIndented = true,
@@ -30,7 +30,7 @@ namespace Yomiage.SDK.Common
             var jsonstr = JsonSerializer.Serialize(obj, options);
 
             var x = JsonSerializer.Deserialize<T>(jsonstr);
-            if(x is IFixAble xx)
+            if (x is IFixAble xx)
             {
                 xx.Fix();
             }
@@ -52,7 +52,15 @@ namespace Yomiage.SDK.Common
             var jsonstr = JsonSerializer.Serialize(obj, options);
             File.WriteAllText(fileName, jsonstr);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj"></param>
+        /// <param name="WriteIndented"></param>
+        /// <param name="IgnoreReadOnlyProperties"></param>
+        /// <param name="DefaultIgnoreCondition"></param>
+        /// <returns></returns>
         public static string SerializeToString<T>(T obj, bool WriteIndented = false, bool IgnoreReadOnlyProperties = true, JsonIgnoreCondition DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)
         {
             var options = new JsonSerializerOptions
@@ -70,7 +78,7 @@ namespace Yomiage.SDK.Common
         /// </summary>
         public static T Deserialize<T>(string fileName) where T : class
         {
-            if (string.IsNullOrWhiteSpace(fileName) || !File.Exists(fileName)) { return default(T); }
+            if (string.IsNullOrWhiteSpace(fileName) || !File.Exists(fileName)) { return default; }
             var jsonstr = File.ReadAllText(fileName);
             try
             {
@@ -81,13 +89,18 @@ namespace Yomiage.SDK.Common
                 }
                 return x;
             }
-            catch(Exception e)
+            catch (Exception)
             {
 
             }
             return null;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="jsonstr"></param>
+        /// <returns></returns>
         public static T DeserializeFromString<T>(string jsonstr) where T : class
         {
             try
@@ -99,7 +112,7 @@ namespace Yomiage.SDK.Common
                 }
                 return x;
             }
-            catch(Exception e)
+            catch (Exception)
             {
 
             }

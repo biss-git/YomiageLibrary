@@ -34,26 +34,26 @@ namespace Yomiage.GUI
         private double CharacterWidth;
         private double TuningHeight;
 
-        private string TuningLayoutPath = "tuningLayout.xml";
+        private readonly string TuningLayoutPath = "tuningLayout.xml";
         private MemoryStream defaultLayout;
 
-        private SettingService SettingService;
-        private ScriptService ScriptService;
-        private PhraseService PhraseService;
-        private ConfigService ConfigService;
-        private VoiceEngineService voiceEngineService;
-        private VoiceLibraryService voiceLibraryService;
-        private VoicePresetService voicePresetService;
-        private VoicePlayerService voicePlayerService;
-        private PhraseDictionaryService phraseDictionaryService;
-        private IMessageBroker messageBroker;
+        private readonly SettingService SettingService;
+        private readonly ScriptService ScriptService;
+        private readonly PhraseService PhraseService;
+        private readonly ConfigService ConfigService;
+        private readonly VoiceEngineService voiceEngineService;
+        private readonly VoiceLibraryService voiceLibraryService;
+        private readonly VoicePresetService voicePresetService;
+        private readonly VoicePlayerService voicePlayerService;
+        // private readonly PhraseDictionaryService phraseDictionaryService;
+        private readonly IMessageBroker messageBroker;
 
         public MainWindow(
             LayoutService layoutService,
             SettingService settingService,
             ScriptService scriptService,
             PhraseService phraseService,
-            PhraseDictionaryService phraseDictionaryService,
+            // PhraseDictionaryService phraseDictionaryService,
             ConfigService configService,
             VoiceEngineService voiceEngineService,
             VoiceLibraryService voiceLibraryService,
@@ -64,7 +64,7 @@ namespace Yomiage.GUI
             this.SettingService = settingService;
             this.ScriptService = scriptService;
             this.PhraseService = phraseService;
-            this.phraseDictionaryService = phraseDictionaryService;
+            // this.phraseDictionaryService = phraseDictionaryService;
             this.ConfigService = configService;
             this.voiceEngineService = voiceEngineService;
             this.voiceLibraryService = voiceLibraryService;
@@ -77,9 +77,9 @@ namespace Yomiage.GUI
             SetDefaultTuningLayout();
             LoadTuningLayout();
 
-            PresetWidth = settingService.settings.Default.PresetWidth;
-            CharacterWidth = settingService.settings.Default.CharacterWidth;
-            TuningHeight = settingService.settings.Default.TuningHeight;
+            PresetWidth = settingService.Settings.Default.PresetWidth;
+            CharacterWidth = settingService.Settings.Default.CharacterWidth;
+            TuningHeight = settingService.Settings.Default.TuningHeight;
 
             layoutService.PresetVisible.Subscribe(visible =>
             {
@@ -191,9 +191,9 @@ namespace Yomiage.GUI
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            this.SettingService.settings.Default.PresetWidth = this.Column1.Width.Value;
-            this.SettingService.settings.Default.CharacterWidth = this.Column5.Width.Value;
-            this.SettingService.settings.Default.TuningHeight = this.Row3.Height.Value;
+            this.SettingService.Settings.Default.PresetWidth = this.Column1.Width.Value;
+            this.SettingService.Settings.Default.CharacterWidth = this.Column5.Width.Value;
+            this.SettingService.Settings.Default.TuningHeight = this.Row3.Height.Value;
             this.SettingService.Save();
             SaveWindowBounds();
             SettingService.SaveMaster();
@@ -203,7 +203,7 @@ namespace Yomiage.GUI
 
         void SaveWindowBounds()
         {
-            var settings = this.SettingService.settings.Default;
+            var settings = this.SettingService.Settings.Default;
             settings.WindowMaximized = WindowState == WindowState.Maximized;
             settings.WindowLeft = Left;
             settings.WindowTop = Top;
@@ -217,7 +217,7 @@ namespace Yomiage.GUI
         /// </summary>
         void RecoverWindowBounds()
         {
-            var settings = this.SettingService.settings.Default;
+            var settings = this.SettingService.Settings.Default;
             // 左
             if (settings.WindowLeft >= 0 &&
                 (settings.WindowLeft + settings.WindowWidth) < SystemParameters.VirtualScreenWidth)
@@ -259,7 +259,7 @@ namespace Yomiage.GUI
                     {
                         this.ConfigService.Init(window.SetProgress);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
 
                     }
@@ -289,7 +289,7 @@ namespace Yomiage.GUI
             this.ConfigService.SavePresets();
             this.voiceEngineService.Dispose();
             this.voiceLibraryService.Dispose();
-            this.voicePlayerService.Stop();
+            this.voicePlayerService.Dispose();
             defaultLayout?.Dispose();
         }
 
@@ -325,7 +325,7 @@ namespace Yomiage.GUI
             try
             {
                 var serializer = new XmlLayoutSerializer(TuningDocking);
-                MemoryStream stream = new MemoryStream(); // これは実行中使う可能性があるのでここでは Dispose しない。でも終了時には Dispose を忘れないこと。
+                MemoryStream stream = new(); // これは実行中使う可能性があるのでここでは Dispose しない。でも終了時には Dispose を忘れないこと。
                 serializer.Serialize(stream);
                 defaultLayout = stream;
             }
