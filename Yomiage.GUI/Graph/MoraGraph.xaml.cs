@@ -42,6 +42,20 @@ namespace Yomiage.GUI.Graph
             }
         }
 
+        public bool IsActive
+        {
+            get => isActive;
+            set
+            {
+                if (isActive != value)
+                {
+                    isActive = value;
+                    line.StrokeThickness = value ? 5 : 1;
+                }
+            }
+        }
+        private bool isActive;
+
         bool? canJoin;
         bool? canSplit;
 
@@ -58,8 +72,12 @@ namespace Yomiage.GUI.Graph
                 Voiceless = value.Voiceless;
                 Char = value.Character;
                 mora = value;
+                //this.up.Visibility = mora.Accent ? Visibility.Collapsed : Visibility.Visible;
+                //this.down.Visibility = mora.Accent ? Visibility.Visible : Visibility.Collapsed;
             }
         }
+
+        public Yomiage.SDK.Talk.Section Section { get; set; }
 
         public Action<Mora, string> Action { get; set; }
 
@@ -91,19 +109,12 @@ namespace Yomiage.GUI.Graph
         }
         private bool CanJoin()
         {
-            foreach (var section in this.Phrase.Sections)
+            var sectionIndex = this.Phrase.Sections.IndexOf(Section);
+            var moraIndex = Section.Moras.IndexOf(mora);
+            if (sectionIndex > 0 &&
+                moraIndex == 0)
             {
-                if (section.Moras.Contains(mora))
-                {
-                    var sectionIndex = this.Phrase.Sections.IndexOf(section);
-                    var moraIndex = section.Moras.IndexOf(mora);
-                    if (sectionIndex > 0 &&
-                        moraIndex == 0)
-                    {
-                        return true;
-                    }
-                    break;
-                }
+                return true;
             }
             return false;
         }
@@ -135,15 +146,18 @@ namespace Yomiage.GUI.Graph
                 null => "_無声化する",
             };
             Action(this.mora, command);
+            this.Voiceless = Mora.Voiceless;
         }
 
         private void SplitIcon_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            if (e.ChangedButton != MouseButton.Left) { return; }
             Action(this.mora, "アクセント句を分割");
         }
 
         private void JoinIcon_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            if (e.ChangedButton != MouseButton.Left) { return; }
             Action(this.mora, "アクセント句を結合");
         }
 
@@ -166,5 +180,20 @@ namespace Yomiage.GUI.Graph
             }
         }
 
+        private void Up_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Action(Mora, "MouseEnter");
+        }
+
+        private void Up_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Action(Mora, "MouseLeave");
+        }
+
+        private void Up_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton != MouseButton.Left) { return; }
+            Action(Mora, "ToggleAccent");
+        }
     }
 }

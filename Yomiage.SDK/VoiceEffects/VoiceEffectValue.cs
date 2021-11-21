@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// <copyright file="VoiceEffectValue.cs" company="bisu">
+// © 2021 bisu
+// </copyright>
+
 using System.Linq;
-using System.Text;
 using Yomiage.SDK.Config;
-using Yomiage.SDK.Settings;
 
 namespace Yomiage.SDK.VoiceEffects
 {
@@ -13,26 +13,16 @@ namespace Yomiage.SDK.VoiceEffects
     public class VoiceEffectValue : VoiceEffectValueBase
     {
         /// <summary>
-        /// 短・長ポーズをボイス毎の設定を使うか
+        /// Initializes a new instance of the <see cref="VoiceEffectValue"/> class.
         /// </summary>
-        public bool PauseOverride { get; set; }
-        /// <summary>
-        /// 短ポーズの設定値
-        /// </summary>
-        public double ShortPause { get; set; }
-        /// <summary>
-        /// 長ポーズの設定値
-        /// </summary>
-        public double LongPause { get; set; }
+        public VoiceEffectValue()
+        {
+        }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="VoiceEffectValue"/> class.
         /// </summary>
-        public VoiceEffectValue() { }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="config"></param>
+        /// <param name="config">エンジンコンフィグ</param>
         public VoiceEffectValue(EngineConfig config)
         {
             Volume = config.VolumeSetting.DefaultValue;
@@ -52,5 +42,19 @@ namespace Yomiage.SDK.VoiceEffects
             });
         }
 
+        /// <summary>
+        /// 短・長ポーズをボイス毎の設定を使うか
+        /// </summary>
+        public bool PauseOverride { get; set; }
+
+        /// <summary>
+        /// 短ポーズの設定値
+        /// </summary>
+        public double ShortPause { get; set; }
+
+        /// <summary>
+        /// 長ポーズの設定値
+        /// </summary>
+        public double LongPause { get; set; }
     }
 }

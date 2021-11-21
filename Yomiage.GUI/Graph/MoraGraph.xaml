@@ -56,7 +56,10 @@
                     Header="アクセント句を削除" />
             </ContextMenu>
         </Canvas.ContextMenu>
+
+        <!--  縦線  -->
         <Line
+            x:Name="line"
             Canvas.Left="0"
             Canvas.Top="0"
             Opacity="0.15"
@@ -66,6 +69,51 @@
             X2="0"
             Y1="0"
             Y2="{Binding ActualHeight, ElementName=MoraControl}" />
+
+        <!--  アクセントを上げる下げるボタン  -->
+        <Grid
+            Canvas.Left="-11"
+            Width="22"
+            Height="{Binding ActualHeight, ElementName=MoraControl}">
+            <Grid
+                x:Name="upDown"
+                Margin="0,33,0,40"
+                Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
+                Cursor="Hand"
+                MouseDown="Up_MouseDown"
+                MouseEnter="Up_MouseEnter"
+                MouseLeave="Up_MouseLeave">
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="Opacity" Value="0" />
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="1" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <StackPanel VerticalAlignment="Center">
+                    <iconPack:PackIconBoxIcons
+                        Width="22"
+                        Height="16"
+                        Padding="5,0"
+                        Margin="0"
+                        Kind="SolidUpArrow" />
+
+                    <iconPack:PackIconBoxIcons
+                        x:Name="down"
+                        Width="22"
+                        Height="16"
+                        Padding="5,0"
+                        Margin="0"
+                        Kind="SolidDownArrow" />
+
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+        <!--  文字  -->
         <TextBlock
             Name="moraText"
             Canvas.Left="-12"
@@ -86,6 +134,8 @@
                 </Style>
             </TextBlock.Style>
         </TextBlock>
+
+        <!--  アクセントの分割ボタン  -->
         <iconPack:PackIconBoxIcons
             x:Name="splitIcon"
             Canvas.Left="-18"
@@ -93,6 +143,7 @@
             Width="14"
             Height="14"
             Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
+            Cursor="Hand"
             Kind="RegularCut"
             MouseDown="SplitIcon_MouseDown"
             MouseEnter="Icon_MouseEnter">
@@ -107,13 +158,16 @@
                 </Style>
             </iconPack:PackIconBoxIcons.Style>
         </iconPack:PackIconBoxIcons>
+
+        <!--  アクセントの結合ボタン  -->
         <iconPack:PackIconBoxIcons
             x:Name="joinIcon"
-            Canvas.Left="-30"
+            Canvas.Left="-34"
             Canvas.Bottom="26"
-            Width="14"
-            Height="14"
+            Width="18"
+            Height="18"
             Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
+            Cursor="Hand"
             Kind="RegularHorizontalCenter"
             MouseDown="JoinIcon_MouseDown"
             MouseEnter="Icon_MouseEnter">
@@ -128,6 +182,8 @@
                 </Style>
             </iconPack:PackIconBoxIcons.Style>
         </iconPack:PackIconBoxIcons>
+
+        <!--  有声の印  -->
         <Polyline
             Name="markV"
             Canvas.Left="-12"
@@ -137,6 +193,8 @@
             Stroke="{DynamicResource MahApps.Brushes.ThemeForeground}"
             StrokeThickness="1"
             Visibility="Collapsed" />
+
+        <!--  無声の印  -->
         <Polyline
             Name="markD"
             Canvas.Left="-12"

@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// <copyright file="IFixAble.cs" company="bisu">
+// © 2021 bisu
+// </copyright>
 
 namespace Yomiage.SDK.Common
 {
@@ -9,7 +9,7 @@ namespace Yomiage.SDK.Common
     /// JsonUtil でオブジェクトクローンしたり、
     /// json にしてファイルに保存したりするときに、
     /// 不正値をはじく処理を実行する。
-    /// 
+    ///
     /// Common という名前空間はなんかダサい。Utilとかのほうが良かったかも。
     /// </summary>
     public interface IFixAble

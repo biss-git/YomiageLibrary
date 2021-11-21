@@ -1,7 +1,9 @@
-﻿using System;
+﻿// <copyright file="TalkScript.cs" company="bisu">
+// © 2021 bisu
+// </copyright>
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
 using Yomiage.SDK.Common;
 using Yomiage.SDK.Config;
@@ -19,15 +21,24 @@ namespace Yomiage.SDK.Talk
         /// ユーザーが打ち込んだ文字列そのもの
         /// </summary>
         public string OriginalText { get; set; }
+
         /// <summary>
         /// ボイスプリセットタグで指定がある場合に一時的に使用される。
         /// </summary>
         [JsonIgnore]
         public string PresetName { get; set; }
+
+        /// <summary>
+        /// IFileConverter でローカル辞書を登録するとき登録先エンジン名を指定するために一時的に使用される。
+        /// </summary>
+        [JsonIgnore]
+        public string EngineName { get; set; }
+
         /// <summary>
         /// 複数のmoraとポーズからなるアクセント句のリスト。
         /// </summary>
         public List<Section> Sections { get; set; } = new List<Section>();
+
         /// <summary>
         /// 文末のポーズと音声効果。モーラは無いかわりに、？や！などの記号情報が入る。
         /// </summary>
@@ -43,11 +54,29 @@ namespace Yomiage.SDK.Talk
         }
 
         /// <summary>
+        /// GetPhraseJsonText_toSave() で作った保存用テキストから
+        /// 読み上げ指示情報　を復元する。
+        /// </summary>
+        /// <param name="jsonText">jsonテキスト</param>
+        /// <returns>復元した情報</returns>
+        public static TalkScript GetTalkScript_fromPhraseJsonText(string jsonText)
+        {
+            if (jsonText.Contains("\""))
+            {
+                return JsonUtil.DeserializeFromString<TalkScript>(jsonText);
+            }
+
+            return JsonUtil.DeserializeFromString<TalkScript>(jsonText.Replace("!", "\""));
+        }
+
+        /// <summary>
         /// 読み（全部カタカナ）を取得する。
         /// </summary>
+        /// <param name="withSpace">空白をセクションの間に入れるか</param>
+        /// <returns>読み</returns>
         public string GetYomi(bool withSpace = true)
         {
-            string yomi = "";
+            string yomi = string.Empty;
             this.Sections.ForEach(s =>
             {
                 s.Moras.ForEach(m =>
@@ -66,6 +95,9 @@ namespace Yomiage.SDK.Talk
         /// <summary>
         /// nullになっている部分を全て埋める
         /// </summary>
+        /// <param name="config">エンジンコンフィグ</param>
+        /// <param name="shortPause">短ポーズ</param>
+        /// <param name="longPause">長ポーズ</param>
         public void Fill(EngineConfig config, int shortPause, int longPause)
         {
             var section = new VoiceEffectValue(config);
@@ -83,7 +115,7 @@ namespace Yomiage.SDK.Talk
         /// <summary>
         /// 不要なパラメータを削除する。
         /// </summary>
-        /// <param name="engineConfig"></param>
+        /// <param name="engineConfig">エンジンコンフィグ</param>
         public void RemoveUnnecessaryParameters(EngineConfig engineConfig)
         {
             Sections.ForEach(s =>
@@ -93,23 +125,26 @@ namespace Yomiage.SDK.Talk
             });
             EndSection.RemoveUnnecessaryParameters(engineConfig);
         }
+
         /// <summary>
-        /// 
+        /// プリセット名付きのテキストを返す
         /// </summary>
-        /// <param name="PromptString"></param>
-        /// <returns></returns>
-        public string GetOriginalTextWithPresetName(string PromptString = "＞")
+        /// <param name="promptString">＞</param>
+        /// <returns>プリセット名付きのテキスト</returns>
+        public string GetOriginalTextWithPresetName(string promptString = "＞")
         {
             if (!string.IsNullOrWhiteSpace(PresetName))
             {
-                return PresetName + PromptString + OriginalText;
+                return PresetName + promptString + OriginalText;
             }
+
             return OriginalText;
         }
 
         /// <summary>
         /// Jsonに保存する用のテキストを取得する。
         /// </summary>
+        /// <returns>Jsonに保存する用のテキスト</returns>
         public string GetPhraseJsonText_toSave()
         {
             this.OriginalText = null;
@@ -119,21 +154,8 @@ namespace Yomiage.SDK.Talk
             {
                 return jsonText;
             }
+
             return jsonText.Replace("\"", "!");
         }
-
-        /// <summary>
-        /// GetPhraseJsonText_toSave() で作った保存用テキストから
-        /// 読み上げ指示情報　を復元する。
-        /// </summary>
-        public static TalkScript GetTalkScript_fromPhraseJsonText(string jsonText)
-        {
-            if (jsonText.Contains("\""))
-            {
-                return JsonUtil.DeserializeFromString<TalkScript>(jsonText);
-            }
-            return JsonUtil.DeserializeFromString<TalkScript>(jsonText.Replace("!", "\""));
-        }
-
     }
 }

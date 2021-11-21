@@ -23,6 +23,7 @@
     Loaded="MetroWindow_Loaded"
     MouseDown="MetroWindow_MouseDown"
     TitleBarHeight="24"
+    PreviewKeyDown="MetroWindow_PreviewKeyDown"
     mc:Ignorable="d">
     <mah:MetroWindow.Resources>
         <conv:ActiveScriptConverter x:Key="ActiveScriptConverter" />
@@ -209,14 +210,14 @@
                             Command="{Binding InitializeLayoutCommand}"
                             Header="ウィンドウの配置とレイアウトを初期化" />
                     </MenuItem>
-                    <MenuItem Header=" エンジン">
+                    <MenuItem Header=" エンジン" Visibility="Collapsed">
                         <MenuItem
                             Margin="0,6,0,6"
                             Command="{Binding OpenDialogCommand}"
                             CommandParameter="EngineListDialog"
                             Header="音声合成エンジン一覧" />
                     </MenuItem>
-                    <MenuItem Header=" ライブラリ">
+                    <MenuItem Header=" ライブラリ" Visibility="Collapsed">
                         <MenuItem
                             Margin="0,6,0,6"
                             Command="{Binding OpenDialogCommand}"
@@ -238,6 +239,15 @@
                         <!--<MenuItem Header="音声合成エンジン設定" Command="{Binding OpenDialogCommand}" CommandParameter="EngineListDialog"/>
                         <MenuItem Header="音声ライブラリ設定" Command="{Binding OpenDialogCommand}" CommandParameter="LibraryListDialog"/>
                         <Separator/>-->
+                        <MenuItem
+                            Command="{Binding OpenDialogCommand}"
+                            CommandParameter="EngineListDialog"
+                            Header="音声合成エンジン一覧" />
+                        <MenuItem
+                            Command="{Binding OpenDialogCommand}"
+                            CommandParameter="LibraryListDialog"
+                            Header="音声ライブラリ一覧" />
+                        <Separator/>
                         <MenuItem
                             Margin="0,0,0,6"
                             Command="{Binding InitializeSettingCommand}"

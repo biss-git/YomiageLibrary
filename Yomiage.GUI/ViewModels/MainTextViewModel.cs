@@ -1,8 +1,8 @@
-﻿using Microsoft.Win32;
+﻿using ImTools;
+using Microsoft.Win32;
 using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
-using Reactive.Bindings.Notifiers;
 using System;
 using System.IO;
 using System.Linq;
@@ -15,14 +15,18 @@ using System.Windows.Media;
 using Yomiage.Core.Models;
 using Yomiage.GUI.Models;
 using Yomiage.GUI.Util;
+using Yomiage.GUI.Views;
+using Yomiage.SDK.Talk;
 
 namespace Yomiage.GUI.ViewModels
 {
     public class MainTextViewModel : ViewModelBase
     {
         private readonly ScriptService ScriptService;
-        private readonly VoicePlayerService voicePlayerService;
+        public VoicePlayerService VoicePlayerService { get; }
         private readonly TextService textService;
+
+        public PhraseDictionaryServiceBase PhraseDictionary { get; private set; }
 
         public ReactivePropertySlim<string> Title { get; }
         public ReactivePropertySlim<string> TitleWithDirty { get; }
@@ -38,15 +42,16 @@ namespace Yomiage.GUI.ViewModels
 
         public ReactiveCommand CloseCommand { get; }
         public ReactiveCommand<string> ScriptCommand { get; }
-        public AsyncReactiveCommand PlayCommand { get; }
+        public ReactiveCommand PlayCommand { get; }
         public AsyncReactiveCommand StopCommand { get; }
         public AsyncReactiveCommand SaveCommand { get; }
         public ReactiveCommand NewTabCommand { get; }
+        public ReactiveCommand<KeyEventArgs> KeyDownCommand { get; }
 
-        public Func<string> GetSelectedText;
-        public Func<string> GetCursorText;
+        public MainText MainText;
 
-        public ReactiveProperty<FlowDocument> Document { get; }
+        public ReadOnlyReactivePropertySlim<FlowDocument> Document { get; }
+        //public ReactivePropertySlim<FlowDocument> Document_Playing { get; }
         private readonly PhraseService phraseService;
         private readonly PhraseDictionaryService phraseDictionaryService;
         public SettingService SettingService { get; }
@@ -70,7 +75,7 @@ namespace Yomiage.GUI.ViewModels
         {
             this.ScriptService = scriptService;
             this.voicePresetService = voicePresetService;
-            this.voicePlayerService = voicePlayerService;
+            this.VoicePlayerService = voicePlayerService;
             this.textService = textService;
             this.phraseService = phraseService;
             this.phraseDictionaryService = phraseDictionaryService;
@@ -81,19 +86,37 @@ namespace Yomiage.GUI.ViewModels
             Title = new ReactivePropertySlim<string>("新規").AddTo(Disposables);
             TitleWithDirty = new ReactivePropertySlim<string>().AddTo(Disposables);
             FilePath = new ReactivePropertySlim<string>(null).AddTo(Disposables);
+            FilePath.Subscribe(FileNameChanged).AddTo(Disposables);
             Visibility = new ReactivePropertySlim<Visibility>(System.Windows.Visibility.Visible).AddTo(Disposables);
             Content = new ReactiveProperty<string>("").AddTo(Disposables);
-            Document = Content.Select(text => CreateFlowDoc(text)).ToReactiveProperty().AddTo(Disposables);
+            Document = Content.Select(text => CreateFlowDoc(text)).ToReadOnlyReactivePropertySlim().AddTo(Disposables);
+            //Document_Playing = new ReactivePropertySlim<FlowDocument>().AddTo(Disposables);
             IsLineNumberVisible = layoutService.IsLineNumberVisible.ToReadOnlyReactivePropertySlim().AddTo(Disposables);
 
             Lines = new ReactivePropertySlim<string[]>(Enumerable.Range(1, 10).Select(x => x.ToString()).ToArray()).AddTo(Disposables);
 
             CloseCommand = new ReactiveCommand().WithSubscribe(CloseAction).AddTo(Disposables);
             ScriptCommand = new ReactiveCommand<string>().WithSubscribe(ScriptAction).AddTo(Disposables);
-            PlayCommand = this.voicePlayerService.CanPlay.ToAsyncReactiveCommand().WithSubscribe(PlayAction).AddTo(Disposables);
+            PlayCommand = new ReactiveCommand().WithSubscribe(() => PlayAction()).AddTo(Disposables);
             StopCommand = new AsyncReactiveCommand().WithSubscribe(voicePlayerService.Stop).AddTo(Disposables);
-            SaveCommand = this.voicePlayerService.CanPlay.ToAsyncReactiveCommand().WithSubscribe(SaveAction).AddTo(Disposables);
+            SaveCommand = this.VoicePlayerService.CanSave.ToAsyncReactiveCommand().WithSubscribe(SaveAction).AddTo(Disposables);
             NewTabCommand = new ReactiveCommand().WithSubscribe(NewTabAction).AddTo(Disposables);
+            KeyDownCommand = new ReactiveCommand<KeyEventArgs>().WithSubscribe(KeyDownAction).AddTo(Disposables);
+
+            this.VoicePlayerService.IsPlaying.Subscribe(playing =>
+            {
+                if (playing)
+                {
+                    if (MainText != null)
+                    {
+                        MainText.SetPlayingDocument(CreateFlowDoc(Content.Value));
+                    }
+                    //Application.Current.Dispatcher.Invoke(() =>
+                    //{
+                    //    Document_Playing.Value = CreateFlowDoc(Content.Value);
+                    //});
+                }
+            });
 
             this.IsDirty = Observable.Merge(
                 this.Content.ChangedAsObservable())
@@ -195,27 +218,86 @@ namespace Yomiage.GUI.ViewModels
 
 
 
-        private async Task PlayAction()
+        public async Task PlayAction(string playParam = null)
         {
             Content.Value = GetContent();
+
             var text = "";
-            if (Keyboard.Modifiers == ModifierKeys.Shift &&
-                GetCursorText != null)
+            var beforeText = "";
+            var afterText = "";
+            switch (playParam)
             {
-                text = GetCursorText();
+                case "CtrlLeft":
+                    if (MainText != null)
+                    {
+                        await VoicePlayerService.Stop();
+                        (beforeText, text, afterText) = MainText.CtrlLeft();
+                    }
+                    break;
+                case "CtrlRight":
+                    if (MainText != null)
+                    {
+                        await VoicePlayerService.Stop();
+                        (beforeText, text, afterText) = MainText.CtrlRight();
+                    }
+                    break;
+                default:
+                    if (this.VoicePlayerService.IsPlaying.Value)
+                    {
+                        await this.VoicePlayerService.Pause();
+                        return;
+                    }
+                    // 通常の再生
+                    if (Keyboard.Modifiers == ModifierKeys.Shift &&
+                        MainText != null)
+                    {
+                        // シフトが押されているとき
+                        (beforeText, text, afterText) = MainText.GetCursorText();
+                    }
+                    else if (MainText != null)
+                    {
+                        // 範囲選択されているとき
+                        (beforeText, text, afterText) = MainText.GetSelectedText();
+                    }
+                    break;
             }
-            else if (GetSelectedText != null)
+            if (string.IsNullOrWhiteSpace(text) && string.IsNullOrEmpty(beforeText) && string.IsNullOrEmpty(afterText))
             {
-                text = GetSelectedText();
-            }
-            if (string.IsNullOrWhiteSpace(text))
-            {
+                beforeText = "";
+                afterText = "";
                 text = Content.Value;
             }
-            var scripts = this.textService.Parse(text, SettingService.SplitByEnter, SettingService.PromptStringEnable, SettingService.PromptString, phraseDictionaryService.SearchDictionary, this.wordDictionaryService.WordDictionarys, this.pauseDictionaryService.PauseDictionary.ToList());
+            var scripts = this.textService.Parse(
+                text,
+                SettingService.SplitByEnter,
+                SettingService.PromptStringEnable,
+                SettingService.PromptString,
+                phraseDictionaryService.SearchDictionaryWithLocalDict,
+                this.wordDictionaryService.WordDictionarys,
+                this.pauseDictionaryService.PauseDictionary.ToList());
+
+            int calledIndex = -1;
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(200);
+                var script = scripts.FirstOrDefault(x => x.MoraCount > 0);
+                if (script != null)
+                {
+                    var index = scripts.IndexOf(script);
+                    SubmitPlayIndex(index);
+                }
+            });
 
             async void SubmitPlayIndex(int index)
             {
+                if (index <= calledIndex)
+                {
+                    return;
+                }
+
+                calledIndex = index;
+
                 string text1 = "";
                 string text3 = "";
                 bool beforeScript = true;
@@ -238,48 +320,68 @@ namespace Yomiage.GUI.ViewModels
                     }
                 }
 
+                text1 = beforeText + text1;
+                text3 = text3 + afterText;
+
                 if (index > 0)
                 {
-                    await Task.Delay(1000);
+                    await Task.Delay(800);
                 }
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    if (!this.voicePlayerService.IsPlaying.Value) { return; }
-                    Document.Value = CreateFlowDoc_Select(text1, script.GetOriginalTextWithPresetName(SettingService.PromptString), text3);
+                    if (!this.VoicePlayerService.IsPlaying.Value) { return; }
+                    MainText?.SetPlayingDocument(CreateFlowDoc_Select(text1, script.GetOriginalTextWithPresetName(SettingService.PromptString), text3));
+                    //Document_Playing.Value = CreateFlowDoc_Select(text1, script.GetOriginalTextWithPresetName(SettingService.PromptString), text3);
                     this.phraseService.Send(script);
                 });
             }
 
-            await this.voicePlayerService.Play(scripts, SubmitPlayIndex);
-            Document.Value = CreateFlowDoc(Content.Value);
+            await this.VoicePlayerService.Play(scripts, SubmitPlayIndex);
             this.ScriptService.SaveScripts();
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var a = this.MainText.rich.Focus();
+            });
         }
+
         private async Task SaveAction()
         {
             Content.Value = GetContent();
             var text = "";
             if (Keyboard.Modifiers == ModifierKeys.Shift &&
-                GetCursorText != null)
+                MainText != null)
             {
-                text = GetCursorText();
+                (_, text, _) = MainText.GetCursorText();
             }
-            else if (GetSelectedText != null)
+            else if (MainText != null)
             {
-                text = GetSelectedText();
+                (_, text, _) = MainText.GetSelectedText();
             }
             if (string.IsNullOrWhiteSpace(text))
             {
                 text = Content.Value;
             }
-            await this.voicePlayerService.Save(text);
-            //var script = this.textService.Parse(Content.Value, SettingService.SplitByEnter);
-            //await this.voicePlayerService.Save(script);
+            await this.VoicePlayerService.Save(text);
         }
 
 
         public bool Save()
         {
             Content.Value = GetContent();
+
+            if (!string.IsNullOrWhiteSpace(FilePath.Value))
+            {
+                try
+                {
+                    File.Create(FilePath.Value).Close();
+                }
+                catch (Exception)
+                {
+
+                }
+            }
+
             if (!File.Exists(FilePath.Value))
             {
                 return SaveAs();
@@ -401,7 +503,58 @@ namespace Yomiage.GUI.ViewModels
         {
             this.ScriptService.AddNew();
         }
+
+        private void FileNameChanged(string fileName)
+        {
+            if (!string.IsNullOrWhiteSpace(fileName))
+            {
+                if (Path.GetExtension(fileName) == ".txt")
+                {
+                    var dicPath = fileName + ".ypdic";
+                    if (!File.Exists(dicPath))
+                    {
+                        File.Create(dicPath).Close();
+                    }
+                    PhraseDictionary = new PhraseDictionaryServiceBase(dicPath);
+                }
+                else
+                {
+                    // txt 以外が来た場合は txt に直す
+                    fileName = Path.ChangeExtension(fileName, ".txt");
+                    FilePath.Value = fileName;
+                }
+            }
+            else
+            {
+                PhraseDictionary = null;
+            }
+        }
+
+        private void KeyDownAction(KeyEventArgs source)
+        {
+            if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift | ModifierKeys.Alt))
+            {
+                // Ctrl + Alt + Shift が押されているとき
+                switch (source.Key)
+                {
+                    case Key.S:
+                        this.SaveAction();
+                        break;
+                }
+            }
+        }
+
+        public void AddDict(TalkScript[] dict)
+        {
+            if (dict == null || PhraseDictionary == null)
+            {
+                return;
+            }
+
+            foreach (var d in dict)
+            {
+                PhraseDictionary.RegisterDictionary(d.OriginalText, d.EngineName, d);
+            }
+        }
     }
-
-
 }

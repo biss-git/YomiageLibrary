@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// <copyright file="Pause.cs" company="bisu">
+// © 2021 bisu
+// </copyright>
+
 using System.Text.Json.Serialization;
 
 namespace Yomiage.SDK.Talk
@@ -17,6 +18,7 @@ namespace Yomiage.SDK.Talk
         /// </summary>
         [JsonIgnore]
         public int Span_ms { get; set; }
+
         /// <summary>
         /// ポーズの種類
         /// </summary>
@@ -24,7 +26,7 @@ namespace Yomiage.SDK.Talk
         public PauseType Type { get; set; } = PauseType.None;
 
         /// <summary>
-        /// 
+        /// ポーズ（Json用）
         /// </summary>
         public string P
         {
@@ -39,8 +41,10 @@ namespace Yomiage.SDK.Talk
                     default:
                         break;
                 }
+
                 return null;
             }
+
             set
             {
                 switch (value)
@@ -55,32 +59,10 @@ namespace Yomiage.SDK.Talk
                         {
                             Span_ms = span;
                         }
+
                         break;
                 }
             }
         }
-    }
-
-    /// <summary>
-    /// ポーズの種類
-    /// </summary>
-    public enum PauseType
-    {
-        /// <summary>
-        /// ポーズ無し
-        /// </summary>
-        None,
-        /// <summary>
-        /// 指定された時間
-        /// </summary>
-        Manual,
-        /// <summary>
-        /// 短ポーズ
-        /// </summary>
-        Short,
-        /// <summary>
-        /// 長ポーズ
-        /// </summary>
-        Long,
     }
 }

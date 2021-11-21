@@ -1,0 +1,84 @@
+﻿<UserControl
+    x:Class="Yomiage.GUI.Graph.MoraPoint2"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Yomiage.GUI.Graph"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.ContextMenu>
+        <ContextMenu
+            Name="menu"
+            Padding="0,6,0,6"
+            Visibility="Collapsed">
+            <MenuItem
+                x:Name="yomi"
+                Click="MenuItem_Click"
+                Header="読み編集" />
+            <Separator />
+            <MenuItem
+                x:Name="join"
+                Click="MenuItem_Click"
+                Header="アクセント句を結合" />
+            <MenuItem
+                x:Name="split"
+                Click="MenuItem_Click"
+                Header="アクセント句を分割" />
+            <Separator />
+            <MenuItem Header="無声化">
+                <MenuItem
+                    x:Name="d"
+                    Click="MenuItem_Click"
+                    Header="無声化する" />
+                <MenuItem
+                    x:Name="v"
+                    Click="MenuItem_Click"
+                    Header="無声化しない" />
+                <MenuItem
+                    x:Name="dv"
+                    Click="MenuItem_Click"
+                    Header="無声化を指定しない" />
+            </MenuItem>
+            <Separator />
+            <MenuItem
+                x:Name="addMora"
+                Click="MenuItem_Click"
+                Header="長音を追加" />
+            <MenuItem
+                x:Name="removeMora"
+                Click="MenuItem_Click"
+                Header="アクセントを削除" />
+            <MenuItem
+                x:Name="removeSection"
+                Click="MenuItem_Click"
+                Header="アクセント句を削除" />
+        </ContextMenu>
+    </UserControl.ContextMenu>
+    <Grid>
+        <Ellipse
+            x:Name="outline"
+            Cursor="Hand"
+            Fill="{DynamicResource MahApps.Brushes.ThemeBackground}"
+            Stroke="{DynamicResource AccentFillBrush}"
+            StrokeThickness="2" />
+        <Ellipse
+            x:Name="fill"
+            Cursor="Hand"
+            Stroke="{DynamicResource MahApps.Brushes.ThemeBackground}"
+            StrokeThickness="1"
+            Visibility="Collapsed">
+            <Ellipse.Style>
+                <Style TargetType="Ellipse">
+                    <Setter Property="Fill" Value="{DynamicResource AccentFillBrush}" />
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Fill" Value="{StaticResource AccentRed}" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Ellipse.Style>
+        </Ellipse>
+    </Grid>
+</UserControl>

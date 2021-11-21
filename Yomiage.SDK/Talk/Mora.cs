@@ -1,7 +1,9 @@
-﻿using System;
+﻿// <copyright file="Mora.cs" company="bisu">
+// © 2021 bisu
+// </copyright>
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
 using Yomiage.SDK.Config;
 using Yomiage.SDK.VoiceEffects;
@@ -16,7 +18,7 @@ namespace Yomiage.SDK.Talk
     public class Mora : VoiceEffectValueBase
     {
         /// <summary>
-        /// 
+        /// モーラかどうか
         /// </summary>
         public override bool IsMora => true;
 
@@ -26,12 +28,14 @@ namespace Yomiage.SDK.Talk
         /// </summary>
         [JsonIgnore]
         public string Character { get; set; }
+
         /// <summary>
         /// アクセント
         /// true なら上、false なら下 (上とか下とかはGUI上の丸の位置のこと)
         /// </summary>
         [JsonIgnore]
         public bool Accent { get; set; }
+
         /// <summary>
         /// 無声化のこと。
         /// true : 無声音 の指定 ▽
@@ -40,8 +44,9 @@ namespace Yomiage.SDK.Talk
         /// </summary>
         [JsonIgnore]
         public bool? Voiceless { get; set; }
+
         /// <summary>
-        /// 
+        /// キャラクタ（Json用）
         /// </summary>
         public string C
         {
@@ -50,24 +55,25 @@ namespace Yomiage.SDK.Talk
                 return Character +
                     (Accent ? "A" : "_") +
                     (Voiceless == true ? "D" :
-                     Voiceless == false ? "V" : "");
+                     Voiceless == false ? "V" : string.Empty);
             }
+
             set
             {
                 switch (value[^1..])
                 {
                     case "D":
                         Voiceless = true;
-                        Accent = "A" == value.Substring(value.Length - 2, 1);
+                        Accent = value.Substring(value.Length - 2, 1) == "A";
                         Character = value[0..^2];
                         break;
                     case "V":
                         Voiceless = false;
-                        Accent = "A" == value.Substring(value.Length - 2, 1);
+                        Accent = value.Substring(value.Length - 2, 1) == "A";
                         Character = value[0..^2];
                         break;
                     default:
-                        Accent = "A" == value.Substring(value.Length - 1, 1);
+                        Accent = value.Substring(value.Length - 1, 1) == "A";
                         Character = value[0..^1];
                         break;
                 }
@@ -77,6 +83,7 @@ namespace Yomiage.SDK.Talk
         /// <summary>
         /// nullになっている部分を全て埋める
         /// </summary>
+        /// <param name="mora">nullのときに埋める値</param>
         public void Fill(VoiceEffectValue mora)
         {
             Volume ??= mora.Volume;
@@ -95,25 +102,31 @@ namespace Yomiage.SDK.Talk
                     SetAdditionalValue(s.Key, s.Value);
                 }
             }
+
             foreach (var s in AdditionalEffect)
             {
                 mora.SetAdditionalValue(s.Key, s.Value);
             }
         }
+
         /// <summary>
-        /// 
+        /// Curve 値を埋める
         /// </summary>
-        /// <param name="curve"></param>
-        /// <param name="config"></param>
+        /// <param name="curve">Curve を埋めるための値</param>
+        /// <param name="config">エンジンコンフィグ</param>
         public void FillCurve(VoiceEffectValue curve, EngineConfig config)
         {
             config.AdditionalSettings?.ForEach(s =>
             {
-                if (s.Type != "Curve") { return; }
+                if (s.Type != "Curve")
+                {
+                    return;
+                }
+
                 var val = GetAdditionalValuesOrDefault(s.Key, s.DefaultValue);
                 var list = new List<double>(val)
                 {
-                    curve.GetAdditionalValuesOrDefault(s.Key, s.DefaultValue).First()
+                    curve.GetAdditionalValuesOrDefault(s.Key, s.DefaultValue).First(),
                 };
                 SetAdditionalValues(s.Key, list.ToArray());
                 curve.SetAdditionalValues(s.Key, list.ToArray());

@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// <copyright file="VoiceConfig.cs" company="bisu">
+// © 2021 bisu
+// </copyright>
 
 using Yomiage.SDK.VoiceEffects;
 
@@ -12,14 +12,6 @@ namespace Yomiage.SDK
     public class VoiceConfig
     {
         /// <summary>
-        /// 音声ライブラリー
-        /// </summary>
-        public IVoiceLibrary Library { get; }
-        /// <summary>
-        /// 音声効果
-        /// </summary>
-        public VoiceEffectValue VoiceEffect { get; }
-        /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="library"> 音声ライブラリ </param>
@@ -29,5 +21,15 @@ namespace Yomiage.SDK
             this.Library = library;
             this.VoiceEffect = voiceEffect;
         }
+
+        /// <summary>
+        /// 音声ライブラリー
+        /// </summary>
+        public IVoiceLibrary Library { get; }
+
+        /// <summary>
+        /// 音声効果
+        /// </summary>
+        public VoiceEffectValue VoiceEffect { get; }
     }
 }

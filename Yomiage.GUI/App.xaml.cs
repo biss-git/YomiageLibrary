@@ -95,9 +95,16 @@ namespace Yomiage.GUI
             // Add custom theme resource dictionaries
             // You should replace SampleApp with your application name
             // and the correct place where your custom theme lives
-            var dark = ThemeManager.Current.AddLibraryTheme(
+            var darkAkane = ThemeManager.Current.AddLibraryTheme(
                 new LibraryTheme(
                     new Uri("pack://application:,,,/Yomiage.GUI;component/Themes/Dark.Akane.xaml"),
+                    MahAppsLibraryThemeProvider.DefaultInstance
+                    )
+                );
+
+            var dark = ThemeManager.Current.AddLibraryTheme(
+                new LibraryTheme(
+                    new Uri("pack://application:,,,/Yomiage.GUI;component/Themes/Dark.Aoi.xaml"),
                     MahAppsLibraryThemeProvider.DefaultInstance
                     )
                 );

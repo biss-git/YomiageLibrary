@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿// <copyright file="BoolSetting.cs" company="bisu">
+// © 2021 bisu
+// </copyright>
 
 namespace Yomiage.SDK.Settings
 {
@@ -14,6 +13,7 @@ namespace Yomiage.SDK.Settings
         /// 設定値
         /// </summary>
         public bool Value { get; set; }
+
         /// <summary>
         /// 初期値
         /// </summary>
@@ -26,6 +26,7 @@ namespace Yomiage.SDK.Settings
         {
             Value = DefaultValue;
         }
+
         /// <summary>
         /// 不正な値をはじく
         /// </summary>

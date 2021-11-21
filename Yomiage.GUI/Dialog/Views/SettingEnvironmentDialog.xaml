@@ -128,13 +128,14 @@
                                     <sys:String>システム</sys:String>
                                     <sys:String>ライト</sys:String>
                                     <sys:String>ダーク</sys:String>
+                                    <sys:String>あかねダーク</sys:String>
                                     <sys:String>ずんだライト</sys:String>
                                     <sys:String>ゆかりダーク</sys:String>
                                     <sys:String>あかりダーク</sys:String>
                                     <sys:String>きりたんぽライト</sys:String>
                                     <sys:String>マキライト</sys:String>
-                                    <sys:String>モノクロライト</sys:String>
-                                    <sys:String>モノクロダーク</sys:String>
+                                    <sys:String>arial ライト</sys:String>
+                                    <sys:String>myriad ダーク</sys:String>
                                 </ComboBox.Items>
                             </ComboBox>
                         </StackPanel>

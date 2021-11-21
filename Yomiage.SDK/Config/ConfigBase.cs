@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿// <copyright file="ConfigBase.cs" company="bisu">
+// © 2021 bisu
+// </copyright>
+
 using System.Linq;
-using System.Text;
 using Yomiage.SDK.Settings;
 using Yomiage.SDK.VoiceEffects;
 
@@ -20,15 +20,18 @@ namespace Yomiage.SDK.Config
         /// これは他の開発者とも重複しないようになるべくユニークな名前にすること。
         /// </summary>
         public string Key { get; set; } = string.Empty;
+
         /// <summary>
         /// 表示上の名前。
         /// 被っても大丈夫だけど、わかりずらいので、なるべくユニークな名前にすること。
         /// </summary>
         public string Name { get; set; } = string.Empty;
+
         /// <summary>
         /// 簡単な説明文。
         /// </summary>
         public string Description { get; set; } = string.Empty;
+
         /// <summary>
         /// 音声ライブラリのフォーマット。
         /// このフォーマット名が一致する音声ライブラリとエンジンがセットで利用される。
@@ -36,6 +39,7 @@ namespace Yomiage.SDK.Config
         /// または他の開発者のフォーマットに倣う場合は同じにしておく。
         /// </summary>
         public string[] LibraryFormat { get; set; } = { };
+
         /// <summary>
         /// 対応OS
         /// まあ今のところ Windows10 しか対応できないですが。
@@ -46,14 +50,17 @@ namespace Yomiage.SDK.Config
         /// 音声ライブラリまたは音声合成エンジンのdllの.config.jsonからの相対パス
         /// </summary>
         public string AssmblyName { get; set; } = string.Empty;
+
         /// <summary>
         /// 音声ライブラリまたは音声合成エンジンのモジュール名
         /// </summary>
         public string ModuleName { get; set; } = string.Empty;
+
         /// <summary>
         /// 音声ライブラリまたは音声合成エンジンのクラス名
         /// </summary>
         public string TypeName { get; set; } = string.Empty;
+
         /// <summary>
         /// 対応言語
         /// まあ今のところ Japanese しか対応できないですが。
@@ -66,18 +73,22 @@ namespace Yomiage.SDK.Config
         /// 音量の設定
         /// </summary>
         public EffectSetting VolumeSetting { get; set; } = new EffectSetting();
+
         /// <summary>
         /// 話速の設定
         /// </summary>
         public EffectSetting SpeedSetting { get; set; } = new EffectSetting();
+
         /// <summary>
         /// 高さの設定
         /// </summary>
         public EffectSetting PitchSetting { get; set; } = new EffectSetting();
+
         /// <summary>
         /// 抑揚の設定
         /// </summary>
         public EffectSetting EmphasisSetting { get; set; } = new EffectSetting();
+
         /// <summary>
         /// 追加の設定
         /// </summary>
@@ -104,6 +115,5 @@ namespace Yomiage.SDK.Config
             EmphasisSetting?.Fix();
             AdditionalSettings?.Fix();
         }
-
     }
 }

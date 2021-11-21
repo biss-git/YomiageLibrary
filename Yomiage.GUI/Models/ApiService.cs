@@ -52,7 +52,14 @@ namespace Yomiage.GUI.Models
         private bool PlayVoice(string text)
         {
             if (voicePlayer.IsPlaying.Value) { return false; }
-            var scripts = this.textService.Parse(text, settingService.SplitByEnter, settingService.PromptStringEnable, settingService.PromptString, phraseDictionaryService.SearchDictionary, this.wordDictionaryService.WordDictionarys, this.pauseDictionaryService.PauseDictionary.ToList());
+            var scripts = this.textService.Parse(
+                text,
+                settingService.SplitByEnter,
+                settingService.PromptStringEnable,
+                settingService.PromptString,
+                phraseDictionaryService.SearchDictionary,
+                this.wordDictionaryService.WordDictionarys,
+                this.pauseDictionaryService.PauseDictionary.ToList());
             Application.Current.Dispatcher.Invoke(() =>
             {
                 _ = voicePlayer.Play(scripts, index =>

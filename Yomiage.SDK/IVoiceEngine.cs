@@ -1,9 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// <copyright file="IVoiceEngine.cs" company="bisu">
+// © 2021 bisu
+// </copyright>
+
+using System;
 using System.Text;
 using System.Threading.Tasks;
-
 using Yomiage.SDK.Config;
+using Yomiage.SDK.FileConverter;
 using Yomiage.SDK.Settings;
 using Yomiage.SDK.Talk;
 using Yomiage.SDK.VoiceEffects;
@@ -16,15 +19,22 @@ namespace Yomiage.SDK
     public interface IVoiceEngine : IVoiceBase
     {
         /// <summary>
+        /// ファイル開く設定
+        /// </summary>
+        IFileConverter FileConverter { get; }
+
+        /// <summary>
         /// 音声ライブラリのコンフィグ
         /// GUIからは変えられないシステム的な設定値
         /// </summary>
-        EngineConfig Config { get;}
+        EngineConfig Config { get; }
+
         /// <summary>
         /// エンジンのセッティング
         /// GUIから変更可能な設定値
         /// </summary>
         EngineSettings Settings { get; set; }
+
         /// <summary>
         /// 初期化処理
         /// </summary>
@@ -32,6 +42,7 @@ namespace Yomiage.SDK
         /// <param name="dllDirectory"> ライブラリdllのディレクトリ </param>
         /// <param name="config"> エンジンのコンフィグ、GUIからは変えられないシステム的な設定値 </param>
         void Initialize(string configDirectory, string dllDirectory, EngineConfig config);
+
         /// <summary>
         /// 音声の合成処理
         /// 再生ボタンや保存ボタンを押されたときに呼ばれる。
@@ -43,6 +54,7 @@ namespace Yomiage.SDK
         /// <param name="setSamplingRate_Hz"> サンプリング周波数を教えてほしい </param>
         /// <returns> 音声波形 </returns>
         Task<double[]> Play(VoiceConfig mainVoice, VoiceConfig subVoice, TalkScript talkScript, MasterEffectValue masterEffect, Action<int> setSamplingRate_Hz);
+
         /// <summary>
         /// 音声の保存処理
         /// 基本的には実装しなくてよい。
@@ -60,6 +72,7 @@ namespace Yomiage.SDK
         /// <param name="encoding"> テキストのエンコード情報 </param>
         /// <returns> 音声波形 </returns>
         Task Save(VoiceConfig mainVoice, VoiceConfig subVoice, TalkScript[] talkScripts, MasterEffectValue masterEffect, string filePath, int startPause, int endPause, bool saveWithText, Encoding encoding);
+
         /// <summary>
         /// 音声生成の中断処理
         /// </summary>

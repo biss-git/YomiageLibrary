@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Yomiage.SDK.Config;
 using Yomiage.SDK.Talk;
 
@@ -17,17 +18,17 @@ namespace Yomiage.GUI.Dialog.ViewModels
         public ReactivePropertySlim<int> Min { get; } = new ReactivePropertySlim<int>(-300);
         public ReactivePropertySlim<int> Max { get; } = new ReactivePropertySlim<int>(30000);
         public ReactivePropertySlim<int> Span_ms { get; } = new ReactivePropertySlim<int>(0);
-        public ReactiveCommand<string> KeyDownCommand { get; }
+        public ReactiveCommand<KeyEventArgs> KeyDownCommand { get; }
         private Pause pause;
 
         public PauseEditViewModel()
         {
-            KeyDownCommand = new ReactiveCommand<string>().WithSubscribe(key =>
+            KeyDownCommand = new ReactiveCommand<KeyEventArgs>().WithSubscribe(source =>
             {
-                switch (key)
+                switch (source.Key)
                 {
-                    case "Enter": OkAction(); break;
-                    case "ESC": CancelAction(); break;
+                    case Key.Enter: OkAction(); break;
+                    case Key.Escape: CancelAction(); break;
                 }
             }).AddTo(Disposables);
         }
@@ -55,6 +56,7 @@ namespace Yomiage.GUI.Dialog.ViewModels
                 {
                     Min.Value = Math.Min(config.ShortPauseSetting.Min, config.LongPauseSetting.Min);
                     Max.Value = Math.Max(config.ShortPauseSetting.Max, config.LongPauseSetting.Max);
+                    Span_ms.Value = Math.Max(Min.Value, Math.Min(Span_ms.Value, Max.Value));
                 }
                 catch (Exception)
                 {

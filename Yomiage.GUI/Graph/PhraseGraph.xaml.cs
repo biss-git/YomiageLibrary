@@ -1,23 +1,19 @@
 ﻿using Prism.Services.Dialogs;
 using Reactive.Bindings;
-using Reactive.Bindings.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Yomiage.Core.Utility;
 using Yomiage.GUI.Graph.Dialog;
+using Yomiage.GUI.Util;
 using Yomiage.GUI.ViewModels;
 using Yomiage.SDK.Config;
 using Yomiage.SDK.Talk;
@@ -337,10 +333,266 @@ namespace Yomiage.GUI.Graph
 
         private void UpdateAction(string param)
         {
-            if (param == "ToGraph")
+            var moraGraph = this.MoraPoints.OfType<MoraGraph>().FirstOrDefault(x => x.IsActive);
+            var mora = moraGraph?.Mora;
+            var section = moraGraph?.Section;
+            switch (param)
             {
-                Draw();
+                case "ToGraph":
+                    Draw();
+                    break;
+                case "A": // アクセントの上下
+                    AccentToggle(mora);
+                    break;
+                case "V": // 無声化の切り替え
+                    ChangeVoiceless(mora);
+                    break;
+                case "S": // アクセント句の結合・分割
+                    AccentJoinSplit(section, mora);
+                    break;
+                case "P": // ポーズの切り替え
+                    ChangePause(section, mora);
+                    break;
+                case "ShiftP": // 任意ポーズの設定
+                    EditPause(section, mora);
+                    break;
+                case "Y": // 読み編集
+                    Task.Run(async () =>
+                    {
+                        await Task.Delay(100);
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            YomiEdit(mora);
+                            Draw();
+                            UpdateCommand.Execute("AccentChanged");
+                        });
+                    });
+                    break;
+                case "M": // 長音を増やす
+                    AddLongVowel(section, mora);
+                    break;
+                case "ShiftM": // 長音を減らす
+                    RemoveLongVowel(section, mora);
+                    break;
+                case "T": // 促音を増やす
+                    AddSokuon(section, mora);
+                    break;
+                case "ShiftT": // 促音を減らす
+                    RemoveSokuon(section, mora);
+                    break;
+                case "B": // 母音と長音の切り替え(モーラ)
+                    ToggleLongVowel(section, mora);
+                    break;
+                case "N": // 母音と拗音の切り替え(モーラ)
+                    ToggleYouon(section, mora);
+                    break;
+                case "ShiftD": // アクセント句の削除
+                    RemoveSection(section);
+                    break;
             }
+        }
+
+        private void ChangeVoiceless(Mora mora)
+        {
+            if (mora == null) { return; }
+            mora.Voiceless = mora.Voiceless switch
+            {
+                true => false,
+                false => null,
+                null => true,
+            };
+            // Draw();
+            foreach (var a in this.MoraPoints.OfType<MoraGraph>())
+            {
+                a.Voiceless = a.Mora.Voiceless;
+            }
+            UpdateCommand.Execute("VoicelessChanged");
+        }
+
+        private void AccentJoinSplit(Section section, Mora mora)
+        {
+            if (section == null || mora == null) { return; }
+            if (section.Moras.First() == mora)
+            {
+                AccentJoin(mora);
+            }
+            else
+            {
+                AccentSplit(mora);
+            }
+            DrawCore();
+            UpdateCommand.Execute("AccentChanged");
+        }
+
+        private void ChangePause(Section section, Mora mora)
+        {
+            if (section == null || mora == null) { return; }
+            Pause pause = FindPause(section, mora);
+            if (pause == null) { return; }
+
+            pause.Type = pause.Type switch
+            {
+                PauseType.Long => PauseType.None,
+                PauseType.Manual => PauseType.None,
+                PauseType.None => PauseType.Short,
+                PauseType.Short => PauseType.Long,
+                _ => PauseType.None,
+            };
+
+            Draw();
+            UpdateCommand.Execute("AccentChanged");
+        }
+
+        private void EditPause(Section section, Mora mora)
+        {
+            if (section == null || mora == null) { return; }
+            Pause pause = FindPause(section, mora);
+            if (pause == null) { return; }
+
+            PauseContextAction(pause, "任意ポーズを挿入");
+        }
+
+        private Pause FindPause(Section section, Mora mora)
+        {
+            if (section == null || mora == null) { return null; }
+            if (section.Moras.Last() != mora)
+            {
+                return section.Pause;
+            }
+            else
+            {
+                var index = this.Phrase.Sections.IndexOf(section);
+                index += 1;
+                if (index < this.Phrase.Sections.Count)
+                {
+                    return this.Phrase.Sections[index].Pause;
+                }
+                else
+                {
+                    return this.Phrase.EndSection.Pause;
+                }
+            }
+        }
+
+        private void AddLongVowel(Section section, Mora mora)
+        {
+            if (section == null || mora == null) { return; }
+            var index = section.Moras.IndexOf(mora);
+            section.Moras.Insert(index + 1, new Mora() { Character = "ー", Accent = mora.Accent });
+            Draw();
+            UpdateCommand.Execute("VoicelessChanged");
+        }
+
+        private void RemoveLongVowel(Section section, Mora mora)
+        {
+            if (section == null || mora == null) { return; }
+            if (mora.Character == "ー")
+            {
+                section.Moras.Remove(mora);
+            }
+            else
+            {
+                var index = section.Moras.IndexOf(mora);
+                if (index + 1 < section.Moras.Count && section.Moras[index + 1].Character == "ー")
+                {
+                    section.Moras.RemoveAt(index + 1);
+                }
+            }
+            Draw();
+            UpdateCommand.Execute("VoicelessChanged");
+        }
+
+        private void AddSokuon(Section section, Mora mora)
+        {
+            if (section == null || mora == null) { return; }
+            var index = section.Moras.IndexOf(mora);
+            section.Moras.Insert(index + 1, new Mora() { Character = "ッ", Accent = mora.Accent });
+            Draw();
+            UpdateCommand.Execute("VoicelessChanged");
+        }
+
+        private void RemoveSokuon(Section section, Mora mora)
+        {
+            if (section == null || mora == null) { return; }
+            if (mora.Character == "ッ")
+            {
+                section.Moras.Remove(mora);
+            }
+            else
+            {
+                var index = section.Moras.IndexOf(mora);
+                if (index + 1 < section.Moras.Count && section.Moras[index + 1].Character == "ッ")
+                {
+                    section.Moras.RemoveAt(index + 1);
+                }
+            }
+            Draw();
+            UpdateCommand.Execute("VoicelessChanged");
+        }
+
+        private void ToggleLongVowel(Section section, Mora mora)
+        {
+            if (section == null || mora == null) { return; }
+            if (mora.Character == "ー")
+            {
+                var boin = CharacterUtil.FindBoin(section, mora);
+                if (boin != null)
+                {
+                    mora.Character = boin;
+                }
+            }
+            else if (CharacterUtil.YouonBoin.Keys.Contains(mora.Character))
+            {
+                mora.Character = CharacterUtil.YouonBoin[mora.Character];
+            }
+            else if (CharacterUtil.BoinYouon.Keys.Contains(mora.Character))
+            {
+                var index = section.Moras.IndexOf(mora);
+                if (index == 0) { return; }
+                var preMora = section.Moras[index - 1];
+                if (preMora.Character == mora.Character ||
+                    CharacterUtil.FindBoin(preMora) == mora.Character)
+                {
+                    mora.Character = "ー";
+                }
+                else
+                {
+                    return;
+                }
+            }
+            Draw();
+            UpdateCommand.Execute("VoicelessChanged");
+        }
+
+        private void ToggleYouon(Section section, Mora mora)
+        {
+            if (section == null || mora == null) { return; }
+            if (mora.Character == "ー")
+            {
+                var boin = CharacterUtil.FindBoin(section, mora);
+                if (boin != null)
+                {
+                    mora.Character = boin;
+                }
+            }
+            else if (CharacterUtil.YouonBoin.Keys.Contains(mora.Character))
+            {
+                mora.Character = CharacterUtil.YouonBoin[mora.Character];
+            }
+            else if (CharacterUtil.BoinYouon.Keys.Contains(mora.Character))
+            {
+                mora.Character = CharacterUtil.BoinYouon[mora.Character];
+            }
+            Draw();
+            UpdateCommand.Execute("VoicelessChanged");
+        }
+
+        private void RemoveSection(Section section)
+        {
+            if (section == null) { return; }
+            this.Phrase.Sections.Remove(section);
+            Draw();
+            UpdateCommand.Execute("AccentChanged");
         }
 
         public static readonly DependencyProperty EngineConfigProperty =
@@ -376,6 +628,19 @@ namespace Yomiage.GUI.Graph
             if (d is PhraseGraph p) { p.Draw_PlayPosition(); }
         }
 
+        public static readonly DependencyProperty PrePlayPositionProperty =
+            DependencyProperty.Register(
+            nameof(PrePlayPosition),
+            typeof(int),
+            typeof(PhraseGraph),
+            new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, null));
+        public int PrePlayPosition
+        {
+            get { return (int)GetValue(PrePlayPositionProperty); }
+            set { SetValue(PrePlayPositionProperty, value); }
+        }
+
+
         public static readonly DependencyProperty PlayPositionEnableProperty =
             DependencyProperty.Register(
             "PlayPositionEnable",
@@ -399,14 +664,14 @@ namespace Yomiage.GUI.Graph
 
 
         private readonly List<UIElement> MoraPoints = new();
-        private readonly List<Button> MoraButtons = new();
+        private readonly List<UIElement> MoraButtons = new();
 
         private readonly List<Polyline> AccentLines = new();
-        private readonly List<MoraPoint> AccentPoints = new();
+        private readonly List<UIElement> AccentPoints = new();
         private readonly List<UpDown> UpDownPoints = new();
         private readonly Dictionary<MoraPoint, (Mora, Yomiage.SDK.Talk.Section)> moraDict = new();
         private Polyline PreAccentLine = new();
-        private readonly List<MoraPoint> PreAccentPoints = new();
+        private readonly List<MoraPoint2> PreAccentPoints = new();
         private readonly List<PauseGraph> PausePoints = new();
 
         private readonly List<Polyline> VolumeLines = new();
@@ -600,21 +865,30 @@ namespace Yomiage.GUI.Graph
             {
                 await Task.Delay(150);
                 if (id != drawId) { return; }
-                Dispatcher.Invoke(() =>
-                {
-                    if (this.Phrase == null) { return; } // Invoke 中じゃないとアクセスエラーになる。
-                    Draw_Lines();
-                    Draw_PlayPosition();
-                    Draw_Mora();
-                    Draw_Accent();
-                    Draw_Volume();
-                    Draw_Speed();
-                    Draw_Pitch();
-                    Draw_Emphasis();
-                    Draw_Settings();
-                });
+                DrawCore();
             });
         }
+        private void DrawCore()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (this.Phrase == null) { return; } // Invoke 中じゃないとアクセスエラーになる。
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                Draw_Lines();
+                Draw_PlayPosition();
+                Draw_Mora();
+                Draw_Accent();
+                Draw_Volume();
+                Draw_Speed();
+                Draw_Pitch();
+                Draw_Emphasis();
+                Draw_Settings();
+                sw.Stop();
+                Yomiage.GUI.Data.Status.StatusText.Value = sw.Elapsed.ToString();
+            });
+        }
+
         private void Draw_Lines()
         {
             if (this.Phrase == null) { return; }
@@ -628,8 +902,9 @@ namespace Yomiage.GUI.Graph
             this.bottomLine.X2 = Width;
             this.defaultLine.X2 = Width;
             this.MinWidth = Width;
-            this.mouse_grid.Margin = new Thickness() { Left = w_offset + w1, Top = h1 };
-            this.mouse_grid.Width = Width - w_offset - w1;
+            this.mouse_grid.Margin = new Thickness() { Left = w_offset + w1 / 2, Top = h1 };
+            //this.mouse_grid.Margin = new Thickness() { Left = w_offset + w1, Top = h1 };
+            this.mouse_grid.Width = Width - w_offset - w1 / 2;
             this.mouse_grid.Height = Math.Max(this.GraphHeight, 0);
 
             double h = GraphHeight;
@@ -717,6 +992,7 @@ namespace Yomiage.GUI.Graph
                     {
                         Height = this.grid.ActualHeight,
                         Mora = mora,
+                        Section = section,
                         Action = MoraContextAction,
                         Phrase = this.Phrase,
                     };
@@ -756,9 +1032,11 @@ namespace Yomiage.GUI.Graph
             int moraCount = 0;
             foreach (var section in this.Phrase.Sections)
             {
-                Button button = new() { MinWidth = 2 * w1 };
+                Button button = new() { MinWidth = 2 * w1, Focusable = false };
                 var p = position;
-                button.Click += (s, e) => { this.PlayPosition = p; };
+                button.Click += (s, e) => { this.PlayPosition = p; ParentFocus(this); };
+                button.MouseEnter += (s, e) => { this.PrePlayPosition = p; };
+                button.MouseLeave += (s, e) => { this.PrePlayPosition = -1; };
                 Canvas.SetLeft(button, w_offset + moraCount * w1 - w1);
                 this.graph_base.Children.Add(button);
                 MoraButtons.Add(button);
@@ -767,6 +1045,24 @@ namespace Yomiage.GUI.Graph
                 moraCount += 1 + section.Moras.Count;
             }
         }
+
+        private void ParentFocus(FrameworkElement element)
+        {
+            var p = element.Parent;
+            if (p is UIElement ui)
+            {
+                if (ui.Focusable)
+                {
+                    ui.Focus();
+                    return;
+                }
+            }
+            if (p is FrameworkElement fe)
+            {
+                ParentFocus(fe);
+            }
+        }
+
         private void MoraContextAction(Mora mora, string command)
         {
             if (this.Phrase == null) { return; }
@@ -796,7 +1092,29 @@ namespace Yomiage.GUI.Graph
             {
                 UpdateCommand.Execute("AccentChanged");
             }
-            Draw();
+            switch (command)
+            {
+                case "無声化する":
+                case "無声化しない":
+                case "無声化を指定しない":
+                    break;
+
+                case "_無声化する":
+                case "_無声化しない":
+                case "_無声化を指定しない":
+                case "読み編集":
+                case "アクセント句を結合":
+                case "アクセント句を分割":
+                case "長音を追加":
+                case "アクセントを削除":
+                case "アクセント句を削除":
+                case "MouseEnter":
+                case "MouseLeave":
+                case "ToggleAccent":
+                default:
+                    DrawCore();
+                    break;
+            }
         }
         private void YomiEdit(Mora mora)
         {
@@ -836,6 +1154,7 @@ namespace Yomiage.GUI.Graph
                 }
             }
         }
+        bool mouseLeaveCancelFlag = false;
         private void AccentMouseLeave(Mora mora)
         {
             if (mora is null)
@@ -843,24 +1162,32 @@ namespace Yomiage.GUI.Graph
                 return;
             }
 
-            Remove_PreAccent();
+            mouseLeaveCancelFlag = false;
+            Task.Run(async () =>
+            {
+                await Task.Delay(150);
+                if (mouseLeaveCancelFlag)
+                {
+                    return;
+                }
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Remove_PreAccent();
+                });
+            });
         }
         private void AccentMouseEnter(Mora mora)
         {
             if (mora == null) { return; }
-            if (mora.Accent)
-            {
-                AccentVerticalChange = +(hr2 - hr1) * this.GraphHeight * 0.2;
-            }
-            else
-            {
-                AccentVerticalChange = -(hr2 - hr1) * this.GraphHeight * 0.2;
-            }
+            mouseLeaveCancelFlag = true;
+            AccentVerticalChange = (mora.Accent ? 1 : -1) * (hr2 - hr1) * this.GraphHeight * 0.2;
             Remove_PreAccent();
-            Draw_PreAccent(AccentPoints.OfType<MoraPoint>().FirstOrDefault(x => x.Mora == mora));
+            Draw_PreAccent(AccentPoints.OfType<MoraPoint2>().FirstOrDefault(x => x.Mora == mora));
         }
         private void AccentToggle(Mora mora)
         {
+            if (mora == null) { return; }
+            AccentVerticalChange = (mora.Accent ? 1 : -1) * (hr2 - hr1) * this.GraphHeight * 0.2;
             var section = this.Phrase.Sections.FirstOrDefault(x => x.Moras.Contains(mora));
             double h = (hr2 - hr1) * this.GraphHeight;
             bool[] accent = CalcMoras(section, mora, AccentVerticalChange, h);
@@ -961,9 +1288,13 @@ namespace Yomiage.GUI.Graph
         #region Accent
         public void Draw_Accent()
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             Remove_Accent();
             Draw_Accent_Main();
             Draw_Accent_Pause();
+            sw.Stop();
+            Yomiage.GUI.Data.Status.StatusText.Value = sw.Elapsed.ToString();
         }
         private void Remove_Accent()
         {
@@ -997,20 +1328,58 @@ namespace Yomiage.GUI.Graph
                     line.Points.Add(new Point(w_offset + moraCount * w1, mora.Accent ? high : low));
 
                     {
-                        MoraPoint point = new()
+                        //MoraPoint point = new()
+                        //{
+                        //    Width = 2 * ar,
+                        //    Height = 2 * ar,
+                        //    Active = graph == this.graph,
+                        //    Mora = mora,
+                        //    Phrase = this.Phrase,
+                        //    Action = MoraContextAction,
+                        //};
+                        //if (point.Active == true)
+                        //{
+                        //    moraDict.Add(point, (mora, section));
+                        //    point.DragDelta += Accent_DragDelta;
+                        //    point.DragCompleted += Accent_DragCompleted;
+                        //    //point.Action = MoraContextAction;
+                        //}
+                        //Canvas.SetLeft(point, w_offset + moraCount * w1 - ar);
+                        //Canvas.SetTop(point, (mora.Accent ? high : low) - ar);
+                        //Panel.SetZIndex(point, -1);
+                        //graph.Children.Add(point);
+                        //AccentPoints.Add(point);
+                    }
+                    {
+                        MoraPoint2 point = new()
                         {
                             Width = 2 * ar,
                             Height = 2 * ar,
-                            Active = graph == this.graph,
                             Mora = mora,
+                            Section = section,
                             Phrase = this.Phrase,
                             Action = MoraContextAction,
                         };
+                        point.Active = graph == this.graph;
                         if (point.Active == true)
                         {
-                            moraDict.Add(point, (mora, section));
-                            point.DragDelta += Accent_DragDelta;
-                            point.DragCompleted += Accent_DragCompleted;
+                            point.MouseDown += (s, e) =>
+                            {
+                                if (e.ChangedButton != MouseButton.Left) { return; }
+                                AccentToggle(mora);
+                            };
+                            point.MouseEnter += (s, e) =>
+                            {
+                                MoraContextAction(mora, "MouseEnter");
+                            };
+                            point.MouseLeave += (s, e) =>
+                            {
+                                MoraContextAction(mora, "MouseLeave");
+                            };
+
+                            //moraDict.Add(point, (mora, section));
+                            //point.DragDelta += Accent_DragDelta;
+                            //point.DragCompleted += Accent_DragCompleted;
                             //point.Action = MoraContextAction;
                         }
                         Canvas.SetLeft(point, w_offset + moraCount * w1 - ar);
@@ -1020,17 +1389,17 @@ namespace Yomiage.GUI.Graph
                         AccentPoints.Add(point);
                     }
 
-                    {
-                        UpDown upDown = new(mora)
-                        {
-                            Action = MoraContextAction,
-                        };
-                        Canvas.SetLeft(upDown, w_offset + moraCount * w1);
-                        Canvas.SetTop(upDown, (high + low) / 2);
-                        Panel.SetZIndex(upDown, -2);
-                        graph.Children.Add(upDown);
-                        UpDownPoints.Add(upDown);
-                    }
+                    //{
+                    //    UpDown upDown = new(mora)
+                    //    {
+                    //        Action = MoraContextAction,
+                    //    };
+                    //    Canvas.SetLeft(upDown, w_offset + moraCount * w1);
+                    //    Canvas.SetTop(upDown, (high + low) / 2);
+                    //    Panel.SetZIndex(upDown, -2);
+                    //    graph.Children.Add(upDown);
+                    //    UpDownPoints.Add(upDown);
+                    //}
 
                     moraCount += 1;
                 }
@@ -1039,32 +1408,34 @@ namespace Yomiage.GUI.Graph
                 AccentLines.Add(line);
             }
         }
-        private void Accent_DragDelta(object sender, DragDeltaEventArgs e)
-        {
-            AccentVerticalChange = e.VerticalChange;
-            if (sender is MoraPoint point)
-            {
-                Remove_PreAccent();
-                Draw_PreAccent(point);
-            }
-        }
-        private void Accent_DragCompleted(object sender, DragCompletedEventArgs e)
-        {
-            if (sender is MoraPoint point)
-            {
-                var section = moraDict[point].Item2;
-                var mora = moraDict[point].Item1;
-                double h = (hr2 - hr1) * this.GraphHeight;
-                bool[] accent = CalcMoras(section, mora, AccentVerticalChange, h);
-                for (int i = 0; i < accent.Length; i++)
-                {
-                    section.Moras[i].Accent = accent[i];
-                }
-                Draw_Accent();
-                Remove_PreAccent();
-                UpdateCommand.Execute("AccentChanged");
-            }
-        }
+
+        //private void Accent_DragDelta(object sender, DragDeltaEventArgs e)
+        //{
+        //    AccentVerticalChange = e.VerticalChange;
+        //    if (sender is MoraPoint point)
+        //    {
+        //        Remove_PreAccent();
+        //        Draw_PreAccent(point);
+        //    }
+        //}
+        //private void Accent_DragCompleted(object sender, DragCompletedEventArgs e)
+        //{
+        //    if (sender is MoraPoint point)
+        //    {
+        //        var section = moraDict[point].Item2;
+        //        var mora = moraDict[point].Item1;
+        //        double h = (hr2 - hr1) * this.GraphHeight;
+        //        bool[] accent = CalcMoras(section, mora, AccentVerticalChange, h);
+        //        for (int i = 0; i < accent.Length; i++)
+        //        {
+        //            section.Moras[i].Accent = accent[i];
+        //        }
+        //        Draw_Accent();
+        //        Remove_PreAccent();
+        //        UpdateCommand.Execute("AccentChanged");
+        //    }
+        //}
+
         private void Remove_PreAccent()
         {
             if (this.graph.Children.Contains(PreAccentLine))
@@ -1073,7 +1444,7 @@ namespace Yomiage.GUI.Graph
             }
             Remove_Elements(PreAccentPoints);
         }
-        private void Draw_PreAccent(MoraPoint point)
+        private void Draw_PreAccent(MoraPoint2 point)
         {
             if (EngineConfig?.AccentHide == true) { return; }
 
@@ -1084,16 +1455,23 @@ namespace Yomiage.GUI.Graph
             foreach (var section in this.Phrase.Sections)
             {
                 moraCount += 1;
-                if (section == moraDict[point].Item2)
+                if (section == point.Section)
                 {
                     PreAccentLine = new Polyline() { Stroke = Brushes.DimGray };
-                    var mora = moraDict[point].Item1;
+                    var mora = point.Mora;
                     double h = (hr2 - hr1) * this.GraphHeight;
                     bool[] accent = CalcMoras(section, mora, AccentVerticalChange, h);
                     foreach (var a in accent)
                     {
                         PreAccentLine.Points.Add(new Point(w_offset + moraCount * w1, a ? high : low));
-                        MoraPoint p = new() { Width = 2 * ar, Height = 2 * ar };
+                        MoraPoint2 p = new() { Width = 2 * ar, Height = 2 * ar };
+                        p.MouseEnter += (s, e) => { mouseLeaveCancelFlag = true; };
+                        p.MouseDown += (s, e) =>
+                        {
+                            if (e.ChangedButton != MouseButton.Left) { return; }
+                            AccentToggle(mora);
+                        };
+                        point.Active = false;
                         Canvas.SetLeft(p, w_offset + moraCount * w1 - ar);
                         Canvas.SetTop(p, (a ? high : low) - ar);
                         Panel.SetZIndex(p, -2);
@@ -1246,6 +1624,7 @@ namespace Yomiage.GUI.Graph
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
             if (this.Phrase == null) { return; }
+
             Point p = e.GetPosition(this);
             var x = p.X;
             var y = p.Y;
@@ -1288,20 +1667,34 @@ namespace Yomiage.GUI.Graph
             LastX = 0.0;
             LastY = 0.0;
 
-
-            Remove_PreValues();
-
-            if (y < 10 || y > this.grid.ActualHeight - 10) { return; }
-
-
-            if (SelectedEffectSetting != null)
             {
-                double rate = (y - h1) / h;
-                rate = Math.Max(0, Math.Min(rate, 1));
+                // preValues
+                Remove_PreValues();
 
-                Draw_PreValues(x, rate);
+                if (y < 10 || y > this.grid.ActualHeight - 10) { return; }
+
+                if (SelectedEffectSetting != null)
+                {
+                    double rate = (y - h1) / h;
+                    rate = Math.Max(0, Math.Min(rate, 1));
+
+                    Draw_PreValues(x, rate);
+                }
+            }
+
+            {
+                // Active Mora
+                if (x < this.w_offset) { x += this.w1 - 1; }
+                (_, _, var value) = GetSmIndex(x + this.w1 / 2, false);
+                foreach (var moraGraph in MoraPoints.OfType<MoraGraph>())
+                {
+                    moraGraph.IsActive = moraGraph.Mora == value;
+                }
+                ParentFocus(this);
             }
         }
+
+
 
         private void SetCurve(double x1_index, double y1_rate, double x2_index, double y2_rate, EffectSetting setting)
         {
@@ -1395,7 +1788,7 @@ namespace Yomiage.GUI.Graph
                 value = textValue;
             }
 
-            SetEffectSelectedValue?.Invoke(index.Item3, value);
+            SetEffectSelectedValue?.Invoke(index.Item3, (Keyboard.Modifiers == ModifierKeys.Control) ? null : value);
             Draw_SelectedValues();
             this.UpdateCommand.Execute("ValueChanged_MouseDown");
         }
@@ -1660,6 +2053,10 @@ namespace Yomiage.GUI.Graph
             if (EngineConfig?.AccentHide == true) { return; }
 
             values[index.Item2] = value;
+            if (Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                values[index.Item2] = null;
+            }
             var brush = SelectedBrush;
 
             Draw_Values(this.graph, values, min, def, max, format, rule, PreValueLines, null, brush, 1);
@@ -1827,6 +2224,12 @@ namespace Yomiage.GUI.Graph
             return valueText;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x">x座標</param>
+        /// <param name="SectionGroup">セクションを返すかモーラを返すか</param>
+        /// <returns>(セクション番号、モーラ数、値)</returns>
         private (int, int, VoiceEffectValueBase) GetSmIndex(double x, bool SectionGroup)
         {
             double index = (x - w_offset) / w1;
@@ -1915,5 +2318,12 @@ namespace Yomiage.GUI.Graph
             this.UpdateCommand?.Execute("MouseUp");
         }
 
+        private void grid_MouseLeave(object sender, MouseEventArgs e)
+        {
+            foreach (var moraGraph in MoraPoints.OfType<MoraGraph>())
+            {
+                moraGraph.IsActive = false;
+            }
+        }
     }
 }

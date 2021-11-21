@@ -26,9 +26,7 @@
                                TextAlignment="Left">
                 <behaviors:Interaction.Triggers>
                     <behaviors:EventTrigger EventName="KeyDown">
-                        <rp:EventToReactiveCommand Command="{Binding KeyDownCommand}">
-                            <conv:KeyDownConverter/>
-                        </rp:EventToReactiveCommand>
+                        <rp:EventToReactiveCommand Command="{Binding KeyDownCommand}"/>
                     </behaviors:EventTrigger>
                 </behaviors:Interaction.Triggers>
             </mah:NumericUpDown>

@@ -1,4 +1,4 @@
-﻿using MeCab;
+﻿using NMeCab;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,9 +50,9 @@ namespace Yomiage.Core.Models
             this.voicePresetService = voicePresetService;
             try
             {
-                var param = new MeCabParam();
-                param.DicDir = System.IO.Path.Combine(param.DicDir, "AccentDic");
-                tagger = MeCabTagger.Create(param);
+                var dir = System.AppDomain.CurrentDomain.BaseDirectory;
+                var dicdir = System.IO.Path.Combine(dir, "AccentDic");
+                tagger = NMeCab.MeCabTagger.Create(dicdir);
             }
             catch (Exception)
             {
@@ -305,7 +305,7 @@ namespace Yomiage.Core.Models
                 OriginalText = text,
             };
             {
-                var nodes = tagger.ParseToNodes(text).ToArray(); // 形態素解析を実行
+                var nodes = tagger.Parse(text); //.ToArray(); // 形態素解析を実行
                 bool pauseFlag = false;
                 var caPronounciation = string.Empty;
                 bool conbineFlag;

@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:Yomiage.GUI.Graph"
              x:Name="MainControl"
              mc:Ignorable="d" 
+             ClipToBounds="True"
              SizeChanged="Grid_SizeChanged"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Name="grid"
@@ -14,12 +15,13 @@
           MouseMove="OnMouseMove"
           MouseDown="OnMouseDown"
           MouseUp="OnMouseUp"
+          MouseLeave="grid_MouseLeave"
           >
         <!-- ベース、モーラとか -->
         <Canvas Name="graph_base" HorizontalAlignment="Left">
             <Canvas.Resources>
                 <Style TargetType="Button">
-                    <Setter Property="MinHeight" Value="15"/>
+                    <Setter Property="MinHeight" Value="30"/>
                     <Setter Property="Background" Value="Transparent"/>
                     <Setter Property="Foreground" Value="Transparent"/>
                     <Setter Property="BorderThickness" Value="0"/>

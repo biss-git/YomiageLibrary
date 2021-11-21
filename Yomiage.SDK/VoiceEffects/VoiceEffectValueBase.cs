@@ -1,7 +1,10 @@
-﻿using System;
+﻿// <copyright file="VoiceEffectValueBase.cs" company="bisu">
+// © 2021 bisu
+// </copyright>
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
 using Yomiage.SDK.Common;
 using Yomiage.SDK.Config;
@@ -15,12 +18,13 @@ namespace Yomiage.SDK.VoiceEffects
     public abstract class VoiceEffectValueBase : IFixAble
     {
         /// <summary>
-        /// 
+        /// モーラかどうか
         /// </summary>
         [JsonIgnore]
         public virtual bool IsMora => false;
+
         /// <summary>
-        /// 
+        /// エンドセクションかどうか
         /// </summary>
         [JsonIgnore]
         public virtual bool IsEndSection => false;
@@ -30,41 +34,52 @@ namespace Yomiage.SDK.VoiceEffects
         /// </summary>
         [JsonPropertyName("V")]
         public double? Volume { get; set; }
+
         /// <summary>
         /// 話速の設定値
         /// </summary>
         [JsonPropertyName("S")]
         public double? Speed { get; set; }
+
         /// <summary>
         /// 高さの設定値
         /// </summary>
         [JsonPropertyName("P")]
         public double? Pitch { get; set; }
+
         /// <summary>
         /// 抑揚の設定値
         /// </summary>
         [JsonPropertyName("E")]
         public double? Emphasis { get; set; }
+
         /// <summary>
         /// 追加の設定
         /// </summary>
         [JsonIgnore]
         public Dictionary<string, double?> AdditionalEffect { get; set; } = new Dictionary<string, double?>();
+
         /// <summary>
-        /// 
+        /// 追加パラメータ（Json用）
         /// </summary>
         [JsonPropertyName("A")]
         public Dictionary<string, double?> AdditionalEffectIO
         {
             get
             {
-                if (AdditionalEffect == null) { return null; }
+                if (AdditionalEffect == null)
+                {
+                    return null;
+                }
+
                 if (AdditionalEffect.Any(pair => pair.Value != null))
                 {
                     return AdditionalEffect;
                 }
+
                 return null;
             }
+
             set
             {
                 if (value != null)
@@ -73,20 +88,26 @@ namespace Yomiage.SDK.VoiceEffects
                 }
             }
         }
+
         /// <summary>
-        /// 
+        /// Curve 用の追加パラメータ
         /// </summary>
         [JsonIgnore]
         public Dictionary<string, double[]> AdditionalEffects { get; set; } = new Dictionary<string, double[]>();
+
         /// <summary>
-        /// 
+        /// Curve 用の追加パラメータ（Json用）
         /// </summary>
         [JsonPropertyName("As")]
         public Dictionary<string, string> AdditionalEffectsString
         {
             get
             {
-                if (AdditionalEffects == null || AdditionalEffects.Count == 0) { return null; }
+                if (AdditionalEffects == null || AdditionalEffects.Count == 0)
+                {
+                    return null;
+                }
+
                 var dict = new Dictionary<string, string>();
                 foreach (var i in AdditionalEffects)
                 {
@@ -96,12 +117,22 @@ namespace Yomiage.SDK.VoiceEffects
                         dict.Add(i.Key, base64);
                     }
                 }
-                if (dict.Count == 0) { return null; }
+
+                if (dict.Count == 0)
+                {
+                    return null;
+                }
+
                 return dict;
             }
+
             set
             {
-                if (value == null || value.Count == 0) { return; }
+                if (value == null || value.Count == 0)
+                {
+                    return;
+                }
+
                 AdditionalEffects = new Dictionary<string, double[]>();
                 foreach (var i in value)
                 {
@@ -115,30 +146,24 @@ namespace Yomiage.SDK.VoiceEffects
         }
 
         /// <summary>
-        /// 
+        /// 追加パラメータを取得する
+        /// 取得できなかった場合はデフォルト値を返す
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
+        /// <param name="key">キー</param>
+        /// <param name="defaultValue">デフォルト値</param>
+        /// <returns>追加パラメータ</returns>
         public double GetAdditionalValueOrDefault(string key, double defaultValue = 0)
         {
-            if (AdditionalEffect != null &&
-                !string.IsNullOrWhiteSpace(key) &&
-                AdditionalEffect.ContainsKey(key))
-            {
-                var val = AdditionalEffect[key];
-                if (val != null)
-                {
-                    return (double)val;
-                }
-            }
-            return defaultValue;
+            var val = GetAdditionalValue(key);
+            return val == null ? defaultValue : (double)val;
         }
+
         /// <summary>
-        /// 
+        /// 追加パラメータを取得する
+        /// null が返ることもある
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
+        /// <param name="key">キー</param>
+        /// <returns>パラメータ値</returns>
         public double? GetAdditionalValue(string key)
         {
             if (AdditionalEffect != null &&
@@ -147,13 +172,15 @@ namespace Yomiage.SDK.VoiceEffects
             {
                 return AdditionalEffect[key];
             }
+
             return null;
         }
+
         /// <summary>
-        /// 
+        /// 追加パラメータを設定する
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
+        /// <param name="key">キー</param>
+        /// <param name="value">値</param>
         public void SetAdditionalValue(string key, double? value)
         {
             if (AdditionalEffect != null &&
@@ -163,15 +190,17 @@ namespace Yomiage.SDK.VoiceEffects
                 {
                     AdditionalEffect.Add(key, null);
                 }
+
                 AdditionalEffect[key] = value;
             }
         }
+
         /// <summary>
-        /// 
+        /// 追加パラメータを取得し、無ければデフォルト値で埋める
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
+        /// <param name="key">キー</param>
+        /// <param name="defaultValue">デフォルト値</param>
+        /// <returns>追加パラメータ</returns>
         public double[] GetAdditionalValuesOrAdd(string key, double defaultValue = 0)
         {
             if (AdditionalEffects != null &&
@@ -181,21 +210,25 @@ namespace Yomiage.SDK.VoiceEffects
                 {
                     AdditionalEffects.Add(key, Enumerable.Repeat(defaultValue, 10).ToArray());
                 }
+
                 var val = AdditionalEffects[key];
                 if (val != null)
                 {
                     return val;
                 }
+
                 AdditionalEffects[key] = Enumerable.Repeat(defaultValue, 10).ToArray();
             }
+
             return Enumerable.Repeat(defaultValue, 10).ToArray();
         }
+
         /// <summary>
-        /// 
+        /// 追加パラメータを取得し、無ければデフォルト値を返す
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
+        /// <param name="key">キー</param>
+        /// <param name="defaultValue">デフォルト値</param>
+        /// <returns>追加パラメータ</returns>
         public double[] GetAdditionalValuesOrDefault(string key, double defaultValue = 0)
         {
             if (AdditionalEffects != null &&
@@ -205,19 +238,22 @@ namespace Yomiage.SDK.VoiceEffects
                 {
                     return Enumerable.Repeat(defaultValue, 10).ToArray();
                 }
+
                 var val = AdditionalEffects[key];
                 if (val != null)
                 {
                     return val;
                 }
             }
+
             return Enumerable.Repeat(defaultValue, 10).ToArray();
         }
+
         /// <summary>
-        /// 
+        /// 追加パラメータを取得する
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
+        /// <param name="key">キー</param>
+        /// <returns>パラメータ</returns>
         public double[] GetAdditionalValues(string key)
         {
             if (AdditionalEffects != null &&
@@ -226,13 +262,15 @@ namespace Yomiage.SDK.VoiceEffects
             {
                 return AdditionalEffects[key];
             }
+
             return null;
         }
+
         /// <summary>
-        /// 
+        /// 追加パラメータを設定する
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
+        /// <param name="key">キー</param>
+        /// <param name="value">値</param>
         public void SetAdditionalValues(string key, double? value)
         {
             if (value == null)
@@ -240,6 +278,7 @@ namespace Yomiage.SDK.VoiceEffects
                 SetAdditionalValues(key, (double[])null);
                 return;
             }
+
             var values = GetAdditionalValues(key);
             if (values != null)
             {
@@ -249,11 +288,12 @@ namespace Yomiage.SDK.VoiceEffects
                 }
             }
         }
+
         /// <summary>
-        /// 
+        /// 追加パラメータを設定する
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="values"></param>
+        /// <param name="key">キー</param>
+        /// <param name="values">値</param>
         public void SetAdditionalValues(string key, double[] values)
         {
             if (AdditionalEffects != null &&
@@ -269,43 +309,38 @@ namespace Yomiage.SDK.VoiceEffects
                 }
             }
         }
-        /// <summary>
-        /// 
-        /// </summary>
+
+        /// <inheritdoc/>
         public void Fix()
         {
         }
 
-
-        private static string ToBase64(double[] values)
-        {
-            if (values == null || values.Length != 10) { return null; }
-            byte[] bytes = new byte[40];
-            Buffer.BlockCopy(values.Select(v => (float)v).ToArray(), 0, bytes, 0, bytes.Length);
-            string base64 = Convert.ToBase64String(bytes);
-            return base64;
-        }
-        private static double[] FromBase64(string base64)
-        {
-            if (string.IsNullOrWhiteSpace(base64)) { return null; }
-            byte[] bytes = Convert.FromBase64String(base64);
-            if (bytes.Length != 40) { return null; }
-            var values = new float[10];
-            Buffer.BlockCopy(bytes, 0, values, 0, bytes.Length);
-            return values.Select(v => (double)v).ToArray();
-        }
-
-
         /// <summary>
         /// 不要なパラメータを削除する。
         /// </summary>
-        /// <param name="engineConfig"></param>
+        /// <param name="engineConfig">エンジンコンフィグ</param>
         public void RemoveUnnecessaryParameters(EngineConfig engineConfig)
         {
-            if (engineConfig.VolumeSetting.Hide || !engineConfig.VolumeSetting.CheckIsMora(IsMora, IsEndSection)) { this.Volume = null; }
-            if (engineConfig.SpeedSetting.Hide || !engineConfig.SpeedSetting.CheckIsMora(IsMora, IsEndSection)) { this.Speed = null; }
-            if (engineConfig.PitchSetting.Hide || !engineConfig.PitchSetting.CheckIsMora(IsMora, IsEndSection)) { this.Pitch = null; }
-            if (engineConfig.EmphasisSetting.Hide || !engineConfig.EmphasisSetting.CheckIsMora(IsMora, IsEndSection)) { this.Emphasis = null; }
+            if (engineConfig.VolumeSetting.Hide || !engineConfig.VolumeSetting.CheckIsMora(IsMora, IsEndSection))
+            {
+                this.Volume = null;
+            }
+
+            if (engineConfig.SpeedSetting.Hide || !engineConfig.SpeedSetting.CheckIsMora(IsMora, IsEndSection))
+            {
+                this.Speed = null;
+            }
+
+            if (engineConfig.PitchSetting.Hide || !engineConfig.PitchSetting.CheckIsMora(IsMora, IsEndSection))
+            {
+                this.Pitch = null;
+            }
+
+            if (engineConfig.EmphasisSetting.Hide || !engineConfig.EmphasisSetting.CheckIsMora(IsMora, IsEndSection))
+            {
+                this.Emphasis = null;
+            }
+
             {
                 var keys = AdditionalEffect.Keys.ToList();
                 foreach (var key in keys)
@@ -317,6 +352,7 @@ namespace Yomiage.SDK.VoiceEffects
                     }
                 }
             }
+
             {
                 var keys = AdditionalEffects.Keys.ToList();
                 foreach (var key in keys)
@@ -328,6 +364,37 @@ namespace Yomiage.SDK.VoiceEffects
                     }
                 }
             }
+        }
+
+        private static string ToBase64(double[] values)
+        {
+            if (values == null || values.Length != 10)
+            {
+                return null;
+            }
+
+            byte[] bytes = new byte[40];
+            Buffer.BlockCopy(values.Select(v => (float)v).ToArray(), 0, bytes, 0, bytes.Length);
+            string base64 = Convert.ToBase64String(bytes);
+            return base64;
+        }
+
+        private static double[] FromBase64(string base64)
+        {
+            if (string.IsNullOrWhiteSpace(base64))
+            {
+                return null;
+            }
+
+            byte[] bytes = Convert.FromBase64String(base64);
+            if (bytes.Length != 40)
+            {
+                return null;
+            }
+
+            var values = new float[10];
+            Buffer.BlockCopy(bytes, 0, values, 0, bytes.Length);
+            return values.Select(v => (double)v).ToArray();
         }
     }
 }

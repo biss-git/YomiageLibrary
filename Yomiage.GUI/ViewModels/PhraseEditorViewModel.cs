@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using Yomiage.Core.Models;
 using Yomiage.GUI.EventMessages;
@@ -36,10 +36,10 @@ namespace Yomiage.GUI.ViewModels
 
         public ReactiveCommand CloseCommand { get; }
         public ReactiveCommand<string> SelectCommand { get; }
-        public ReactiveCommand<string> KeyDownCommand { get; }
+        public ReactiveCommand<KeyEventArgs> KeyDownCommand { get; }
         public ReactiveCommand UndoCommand { get; }
         public ReactiveCommand RedoCommand { get; }
-        public AsyncReactiveCommand PlayCommand { get; }
+        public ReactiveCommand PlayCommand { get; }
         public AsyncReactiveCommand StopCommand { get; }
         public ReactiveCommand CopyEditorCommand { get; }
         public ReactiveCommand RegisterCommand { get; }
@@ -48,6 +48,7 @@ namespace Yomiage.GUI.ViewModels
         public ReactiveCommand ClearCommand { get; }
         public ReactiveCommand CopyCommand { get; }
         public ReactiveCommand PasteCommand { get; }
+        public AsyncReactiveCommand SaveVoiceCommand { get; }
 
         public ReactivePropertySlim<bool> AccentSelected { get; } = new(true);
         public ReactivePropertySlim<bool> VolumeSelected { get; } = new(false);
@@ -55,7 +56,7 @@ namespace Yomiage.GUI.ViewModels
         public ReactivePropertySlim<bool> PitchSelected { get; } = new(false);
         public ReactivePropertySlim<bool> EmphasisSelected { get; } = new(false);
         public ReactivePropertySlim<TalkScript> Phrase { get; }
-        public ReactivePropertySlim<string> OriginalText { get; } = new ReactivePropertySlim<string>(string.Empty);
+        public ReactivePropertySlim<string> OriginalText { get; } = new(string.Empty);
         public ReadOnlyReactivePropertySlim<EngineConfig> EngineConfig { get; }
         public ReadOnlyReactivePropertySlim<EffectSetting> VolumeSetting { get; }
         public ReadOnlyReactivePropertySlim<EffectSetting> SpeedSetting { get; }
@@ -63,6 +64,7 @@ namespace Yomiage.GUI.ViewModels
         public ReadOnlyReactivePropertySlim<EffectSetting> EmphasisSetting { get; }
         public ReactiveCollection<PhraseSettingConfig> AdditionalSettings { get; } = new();
         public ReactivePropertySlim<int> PlayPosition { get; } = new();
+        public ReactivePropertySlim<int> PrePlayPosition { get; } = new(-1);
         public ReadOnlyReactivePropertySlim<bool> IsExtend { get; }
         public string[] EndChars { get; } = new string[5] { "---", "通常。", "呼びかけ♪", "疑問？", "断定！" };
         private readonly Dictionary<string, string> EndCharDict = new() { { "", "---" }, { "。", "通常。" }, { "♪", "呼びかけ♪" }, { "？", "疑問？" }, { "！", "断定！" }, };
@@ -74,15 +76,17 @@ namespace Yomiage.GUI.ViewModels
         private readonly UndoRedoManager<string> undoRedoManager = new();
         private readonly IMessageBroker messageBroker;
         private readonly PhraseService phraseService;
+        private readonly ScriptService scriptService;
         private readonly PhraseDictionaryService phraseDictionaryService;
         private readonly VoicePresetService voicePresetService;
-        private readonly VoicePlayerService voicePlayerService;
+        public VoicePlayerService VoicePlayerService { get; }
         private readonly TextService textService;
         private readonly WordDictionaryService wordDictionaryService;
         private readonly PauseDictionaryService pauseDictionaryService;
 
         public PhraseEditorViewModel(
             PhraseService phraseService,
+            ScriptService scriptService,
             PhraseDictionaryService PhraseDictionaryService,
             VoicePresetService voicePresetService,
             VoicePlayerService voicePlayerService,
@@ -95,9 +99,10 @@ namespace Yomiage.GUI.ViewModels
         {
             this.phraseDictionaryService = PhraseDictionaryService;
             this.phraseService = phraseService;
+            this.scriptService = scriptService;
             this.messageBroker = messageBroker;
             this.voicePresetService = voicePresetService;
-            this.voicePlayerService = voicePlayerService;
+            this.VoicePlayerService = voicePlayerService;
             this.textService = textService;
             this.wordDictionaryService = wordDictionaryService;
             this.pauseDictionaryService = pauseDictionaryService;
@@ -112,14 +117,7 @@ namespace Yomiage.GUI.ViewModels
             CopyCommand = new ReactiveCommand().WithSubscribe(CopyAction).AddTo(Disposables);
             PasteCommand = new ReactiveCommand().WithSubscribe(PasteAction).AddTo(Disposables);
 
-            KeyDownCommand = new ReactiveCommand<string>().WithSubscribe(key =>
-            {
-                switch (key)
-                {
-                    case "Undo": UndoAction(); break;
-                    case "Redo": RedoAction(); break;
-                }
-            }).AddTo(Disposables);
+            KeyDownCommand = new ReactiveCommand<KeyEventArgs>().WithSubscribe(KeyDownAction).AddTo(Disposables);
 
             Phrase = new ReactivePropertySlim<TalkScript>(null, mode: ReactivePropertyMode.RaiseLatestValueOnSubscribe);
             Phrase.Subscribe(PhraseChanged).AddTo(Disposables);
@@ -155,7 +153,7 @@ namespace Yomiage.GUI.ViewModels
 
             RedoCommand = this.CanRedo.ToReactiveCommand().WithSubscribe(RedoAction).AddTo(Disposables);
             UndoCommand = this.CanUndo.ToReactiveCommand().WithSubscribe(UndoAction).AddTo(Disposables);
-            PlayCommand = this.voicePlayerService.CanPlay.ToAsyncReactiveCommand().WithSubscribe(PlayAction).AddTo(Disposables);
+            PlayCommand = new ReactiveCommand().WithSubscribe(() => PlayAction()).AddTo(Disposables);
             StopCommand = new AsyncReactiveCommand().WithSubscribe(voicePlayerService.Stop).AddTo(Disposables);
             CopyEditorCommand = new ReactiveCommand().WithSubscribe(CopyEditorAction).AddTo(Disposables);
 
@@ -166,6 +164,8 @@ namespace Yomiage.GUI.ViewModels
             RegisterCharaCommand = this.CanRegisterChara.ToReactiveCommand().WithSubscribe(RegisterCharaAction).AddTo(Disposables);
             UnRegisterCommand = this.CanUnRegister.ToReactiveCommand().WithSubscribe(UnRegisterAction).AddTo(Disposables);
             ClearCommand = this.CanClear.ToReactiveCommand().WithSubscribe(ClearAction).AddTo(Disposables);
+
+            SaveVoiceCommand = this.VoicePlayerService.CanSave.ToAsyncReactiveCommand().WithSubscribe(SaveVoiceAction).AddTo(Disposables);
 
             this.OriginalText.Subscribe(_ =>
             {
@@ -178,10 +178,15 @@ namespace Yomiage.GUI.ViewModels
 
         private async Task PlayAction()
         {
+            if (this.VoicePlayerService.IsPlaying.Value)
+            {
+                this.VoicePlayerService.Pause();
+                return;
+            }
             var script = JsonUtil.DeepClone(this.Phrase.Value);
             script.OriginalText = OriginalText.Value;
             script.Sections.RemoveRange(0, PlayPosition.Value);
-            await this.voicePlayerService.Play(script);
+            await this.VoicePlayerService.Play(script);
             AddState();
         }
 
@@ -273,6 +278,13 @@ namespace Yomiage.GUI.ViewModels
                 this.voicePresetService.SelectedPreset.Value.Library.LibraryConfig.Key,
                 false
                 );
+            this.scriptService.ActiveScript.Value.PhraseDictionary?.RegisterDictionary(
+                this.OriginalText.Value,
+                this.voicePresetService.SelectedPreset.Value.Engine.EngineConfig.Key,
+                this.Phrase.Value,
+                this.voicePresetService.SelectedPreset.Value.Library.LibraryConfig.Key,
+                false
+                );
             AddState();
             UpdateState();
         }
@@ -286,6 +298,14 @@ namespace Yomiage.GUI.ViewModels
                 this.voicePresetService.SelectedPreset.Value.Library.LibraryConfig.Key,
                 true
                 );
+            this.scriptService.ActiveScript.Value.PhraseDictionary?.RegisterDictionary(
+                this.OriginalText.Value,
+                this.voicePresetService.SelectedPreset.Value.Engine.EngineConfig.Key,
+                this.Phrase.Value,
+                this.voicePresetService.SelectedPreset.Value.Library.LibraryConfig.Key,
+                true
+                );
+
             AddState();
             UpdateState();
         }
@@ -294,18 +314,34 @@ namespace Yomiage.GUI.ViewModels
             var result = MessageBox.Show("編集中のフレーズを辞書から削除してよろしいですか？", "確認", MessageBoxButton.OKCancel);
             if (result != MessageBoxResult.OK) { return; }
             this.phraseDictionaryService.UnRegiserDictionary(this.OriginalText.Value);
+            this.scriptService.ActiveScript.Value.PhraseDictionary?.UnRegiserDictionary(this.OriginalText.Value);
             UpdateState();
         }
         private void ClearAction()
         {
-            var phrase = this.phraseDictionaryService.GetDictionary(
+            var phrase = this.scriptService.ActiveScript.Value.PhraseDictionary?.GetDictionary(
                 OriginalText.Value,
                 this.voicePresetService.SelectedPreset.Value.Engine.EngineConfig.Key,
                 this.voicePresetService.SelectedPreset.Value.Library.LibraryConfig.Key
                 );
             if (phrase == null)
             {
-                var scripts = this.textService.Parse(OriginalText.Value, false, false, "", this.phraseDictionaryService.SearchDictionary, this.wordDictionaryService.WordDictionarys, this.pauseDictionaryService.PauseDictionary.ToList());
+                phrase = this.phraseDictionaryService.GetDictionary(
+                    OriginalText.Value,
+                    this.voicePresetService.SelectedPreset.Value.Engine.EngineConfig.Key,
+                    this.voicePresetService.SelectedPreset.Value.Library.LibraryConfig.Key
+                    );
+            }
+            if (phrase == null)
+            {
+                var scripts = this.textService.Parse(
+                    OriginalText.Value,
+                    false,
+                    false,
+                    "",
+                    null, //this.phraseDictionaryService.SearchDictionary,
+                    this.wordDictionaryService.WordDictionarys,
+                    this.pauseDictionaryService.PauseDictionary.ToList());
                 if (scripts.Length > 0)
                 {
                     phrase = scripts.First();
@@ -318,6 +354,9 @@ namespace Yomiage.GUI.ViewModels
             }
         }
 
+        /// <summary>
+        /// ボタン押せたり押せなかったりするようにしようかと思ったけど、面倒臭いのでやめた
+        /// </summary>
         private void UpdateState()
         {
             if (this.voicePresetService.SelectedPreset.Value == null) { return; }
@@ -329,7 +368,7 @@ namespace Yomiage.GUI.ViewModels
                 );
             this.CanRegister.Value = engineRegisterd != true;
             this.CanRegisterChara.Value = charaRegisterd != true;
-            this.CanUnRegister.Value = engineRegisterd != false || charaRegisterd != false || IsDirty.Value;
+            this.CanUnRegister.Value = engineRegisterd != false || charaRegisterd != false;// || IsDirty.Value;
             this.CanClear.Value = true; // engineRegisterd != false || charaRegisterd != false || IsDirty.Value;
         }
 
@@ -432,6 +471,189 @@ namespace Yomiage.GUI.ViewModels
             {
                 OriginalText.Value = phrase.OriginalText;
                 Phrase.Value = phrase;
+            }
+        }
+
+        private async Task SaveVoiceAction()
+        {
+            var script = JsonUtil.DeepClone(this.Phrase.Value);
+            script.OriginalText = OriginalText.Value;
+            //script.Sections.RemoveRange(0, PlayPosition.Value);
+            await this.VoicePlayerService.Save(script.OriginalText, script);
+        }
+
+        private void ChangeTab(int num)
+        {
+            string tabName = null;
+            var config = EngineConfig.Value;
+            if (!config.AccentHide)
+            {
+                if (num == 0) { tabName = "Accent"; }
+                num -= 1;
+            }
+
+            if (!config.VolumeSetting.Hide)
+            {
+                if (num == 0) { tabName = "Volume"; }
+                num -= 1;
+            }
+
+            if (!config.SpeedSetting.Hide)
+            {
+                if (num == 0) { tabName = "Speed"; }
+                num -= 1;
+            }
+
+            if (!config.PitchSetting.Hide)
+            {
+                if (num == 0) { tabName = "Pitch"; }
+                num -= 1;
+            }
+
+            if (!config.EmphasisSetting.Hide)
+            {
+                if (num == 0) { tabName = "Emphasis"; }
+                num -= 1;
+            }
+
+            foreach (var s in AdditionalSettings)
+            {
+                if (!s.Hide)
+                {
+                    if (num == 0) { tabName = s.Key; }
+                    num -= 1;
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(tabName))
+            {
+                SelectAction(tabName);
+            }
+        }
+
+        private void KeyDownAction(KeyEventArgs source)
+        {
+            if (Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                // Ctrl 押されているとき
+                switch (source.Key)
+                {
+                    case Key.Z: UndoAction(); break;
+                    case Key.Y: RedoAction(); break;
+                }
+            }
+            else if (Keyboard.Modifiers == ModifierKeys.Shift)
+            {
+                // Shift が押されているとき
+                switch (source.Key)
+                {
+                    case Key.C:
+                        CopyEditorAction();
+                        break;
+                    case Key.S:
+                        RegisterAction();
+                        break;
+                    case Key.D:
+                        this.UpdateCommand.Execute("ShiftD"); // アクセント句の削除
+                        break;
+                    case Key.P:
+                        this.UpdateCommand.Execute("ShiftP"); // 任意ポーズの設定
+                        break;
+                    case Key.M:
+                        this.UpdateCommand.Execute("ShiftM"); // 長音を減らす
+                        break;
+                    case Key.T:
+                        this.UpdateCommand.Execute("ShiftT"); // 促音を減らす
+                        break;
+                }
+            }
+            else if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift | ModifierKeys.Alt))
+            {
+                // Ctrl + Alt + Shift が押されているとき
+                switch (source.Key)
+                {
+                    case Key.S:
+                        this.SaveVoiceAction();
+                        break;
+                }
+            }
+            else
+            {
+                switch (source.Key)
+                {
+                    case Key.Space:
+                        {
+                            if (this.VoicePlayerService.IsPlaying.Value)
+                            {
+                                // Stop
+                                this.VoicePlayerService.Stop();
+                            }
+                            else
+                            {
+                                // Play
+                                if (PrePlayPosition.Value >= 0)
+                                {
+                                    PlayPosition.Value = PrePlayPosition.Value;
+                                }
+                                _ = PlayAction();
+                            }
+                        }
+                        break;
+                    case Key.D1: // 35
+                    case Key.D2: // 36
+                    case Key.D3: // 37
+                    case Key.D4: // 38
+                    case Key.D5: // 39
+                    case Key.D6: // 40
+                    case Key.D7: // 41
+                    case Key.D8: // 42
+                    case Key.D9: // 43
+                        var num = (int)source.Key - 35;
+                        ChangeTab(num);
+                        break;
+                    case Key.NumPad0:
+                        SelectedEndChar.Value = "---";
+                        break;
+                    case Key.NumPad1:
+                        SelectedEndChar.Value = "通常。";
+                        break;
+                    case Key.NumPad2:
+                        SelectedEndChar.Value = "呼びかけ♪";
+                        break;
+                    case Key.NumPad3:
+                        SelectedEndChar.Value = "疑問？";
+                        break;
+                    case Key.NumPad4:
+                        SelectedEndChar.Value = "断定！";
+                        break;
+                    case Key.A:
+                        this.UpdateCommand.Execute("A"); // アクセントの上下
+                        break;
+                    case Key.V:
+                        this.UpdateCommand.Execute("V"); // 無声化の切り替え
+                        break;
+                    case Key.S:
+                        this.UpdateCommand.Execute("S"); // アクセント句の結合・分割
+                        break;
+                    case Key.P:
+                        this.UpdateCommand.Execute("P"); // ポーズの切り替え
+                        break;
+                    case Key.Y:
+                        this.UpdateCommand.Execute("Y"); // 読み編集
+                        break;
+                    case Key.M:
+                        this.UpdateCommand.Execute("M"); // 長音を増やす
+                        break;
+                    case Key.T:
+                        this.UpdateCommand.Execute("T"); // 促音を増やす
+                        break;
+                    case Key.B:
+                        this.UpdateCommand.Execute("B"); // 母音と長音の切り替え(モーラ)
+                        break;
+                    case Key.N:
+                        this.UpdateCommand.Execute("N"); // 母音と拗音の切り替え(モーラ)
+                        break;
+                }
             }
         }
     }

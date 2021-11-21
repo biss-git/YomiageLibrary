@@ -16,7 +16,7 @@
                 <ResourceDictionary Source="pack://application:,,,/Yomiage.GUI;component/Themes/Docking.Dark.Crimson.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <SolidColorBrush x:Key="AccentRed">#FFA20025</SolidColorBrush>
+            <SolidColorBrush x:Key="AccentRed">#fd4c43</SolidColorBrush>
             <SolidColorBrush x:Key="AccentBlue">#51BCFF</SolidColorBrush>
             <SolidColorBrush x:Key="AccentGreen">#51FF97</SolidColorBrush>
             <SolidColorBrush x:Key="AccentPink">#FF51A8</SolidColorBrush>

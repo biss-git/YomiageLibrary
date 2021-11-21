@@ -374,5 +374,35 @@ namespace Yomiage.GUI
 
             }
         }
+
+        /// <summary>
+        /// グローバルのショートカットキー
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MetroWindow_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                switch (e.Key)
+                {
+                    case Key.Left:
+                        ScriptService.ActiveScript.Value?.PlayAction("CtrlLeft");
+                        break;
+                    case Key.Right:
+                        ScriptService.ActiveScript.Value?.PlayAction("CtrlRight");
+                        break;
+                }
+            }
+            else
+            {
+                switch (e.Key)
+                {
+                    case Key.F6:
+                        this.voicePlayerService.Stop();
+                        break;
+                }
+            }
+        }
     }
 }

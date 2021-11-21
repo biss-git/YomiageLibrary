@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// <copyright file="MasterEffectValue.cs" company="bisu">
+// © 2021 bisu
+// </copyright>
 
 namespace Yomiage.SDK.VoiceEffects
 {
@@ -13,14 +13,15 @@ namespace Yomiage.SDK.VoiceEffects
         /// 短ポーズの設定値 [ms]
         /// </summary>
         public double ShortPause { get; set; }
+
         /// <summary>
         /// 長ポーズの設定値 [ms]
         /// </summary>
         public double LongPause { get; set; }
+
         /// <summary>
         /// 文末ポーズの設定値 [ms]
         /// </summary>
         public double EndPause { get; set; }
-
     }
 }

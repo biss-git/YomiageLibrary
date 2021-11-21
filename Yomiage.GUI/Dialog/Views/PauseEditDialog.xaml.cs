@@ -33,6 +33,7 @@ namespace Yomiage.GUI.Dialog.Views
                 await Task.Delay(300);
                 this.Dispatcher.Invoke(() =>
                 {
+                    this.InputTextBox.Focus();
                     this.InputTextBox.SelectAll();
                 });
             });

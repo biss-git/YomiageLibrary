@@ -6,7 +6,9 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Reactive.Bindings.Notifiers;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using Yomiage.Core.Models;
 using Yomiage.Core.Types;
@@ -16,6 +18,7 @@ using Yomiage.GUI.Graph;
 using Yomiage.GUI.Models;
 using Yomiage.GUI.Util;
 using Yomiage.GUI.ViewModels;
+using Yomiage.SDK;
 
 namespace Yomiage.GUI
 {
@@ -63,6 +66,7 @@ namespace Yomiage.GUI
         // private readonly ConfigService ConfigService;
         readonly IMessageBroker messageBroker;
         readonly PauseDictionaryService pauseDictionaryService;
+        private readonly VoiceEngineService voiceEngineService;
 
 
         public MainWindowViewModel(
@@ -71,6 +75,7 @@ namespace Yomiage.GUI
             ScriptService scriptService,
             PhraseService phraseService,
             VoicePresetService voicePresetService,
+            VoiceEngineService voiceEngineService,
             //ConfigService configService,
             //VoicePlayerService voicePlayerService,
             //ApiService apiService, // apiサーバを立てるために呼ぶ
@@ -91,6 +96,7 @@ namespace Yomiage.GUI
             // this.ConfigService = configService;
             this.pauseDictionaryService = pauseDictionaryService;
             this.messageBroker = messageBroker;
+            this.voiceEngineService = voiceEngineService;
             PhraseGraph.DialogService = dialogService;
 
             StatusText = Status.StatusText.ToReadOnlyReactivePropertySlim();
@@ -171,9 +177,34 @@ namespace Yomiage.GUI
                     this.ScriptService.AddNew();
                     break;
                 case "Open":
-                    var ofd = new OpenFileDialog() { Filter = "テキスト文書|*.txt|すべてのファイル|*.*" };
+                    List<(string, IVoiceEngine)> filters = new();
+                    foreach(var engine in this.voiceEngineService.AllEngines)
+                    {
+                        var list = engine.VoiceEngine.FileConverter?.ImportFilterList;
+                        if (list != null)
+                        {
+                            foreach(var filter in list)
+                            {
+                                if (filter.Count(c => c == '|') == 1 &&
+                                    !filter.StartsWith("|") &&
+                                    !filter.EndsWith("|"))
+                                {
+                                    filters.Add((filter, engine.VoiceEngine));
+                                }
+                            }
+                        }
+                    }
+                    var filterString = "テキスト文書 | *.txt";
+                    filters.ForEach(f => filterString += "|" + f.Item1);
+                    filterString += "|すべてのファイル|*.*";
+                    var ofd = new OpenFileDialog() { Filter = filterString };
                     if (ofd.ShowDialog() != true) { return; }
-                    this.ScriptService.AddOpen(ofd.FileName);
+                    (string, IVoiceEngine) selectedFilter = (null, null);
+                    if(ofd.FilterIndex >= 2 && ofd.FilterIndex < filters.Count + 2)
+                    {
+                        selectedFilter = filters[ofd.FilterIndex - 2];
+                    }
+                    this.ScriptService.AddOpen(ofd.FileName, selectedFilter);
                     break;
                 case "Save":
                     this.ScriptService.ActiveScript.Value?.Save();

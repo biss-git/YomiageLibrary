@@ -1,24 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Reactive.Bindings;
+using Reactive.Bindings.Notifiers;
+using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Yomiage.GUI.Data;
-using Yomiage.GUI.ViewModels;
-using Reactive.Bindings.Notifiers;
 using Yomiage.GUI.EventMessages;
-using Yomiage.GUI.Models;
-using Reactive.Bindings;
-using Yomiage.SDK.Talk;
+using Yomiage.GUI.ViewModels;
 
 namespace Yomiage.GUI.Views
 {
@@ -27,6 +17,9 @@ namespace Yomiage.GUI.Views
     /// </summary>
     public partial class MainText : UserControl
     {
+        private double richScrollOffset;
+        private bool isMaking = false;
+
         MainTextViewModel MainTextViewModel;
 
         public ReactiveCommand AddPresetCommand { get; }
@@ -69,6 +62,7 @@ namespace Yomiage.GUI.Views
             if (e.VerticalChange != 0)
             {
                 this.scrollViewer.ScrollToVerticalOffset(e.VerticalOffset);
+                this.richScrollOffset = e.VerticalOffset;
             }
         }
 
@@ -120,7 +114,7 @@ namespace Yomiage.GUI.Views
             Task.Run(async () =>
             {
                 await Task.Delay(300);
-                if(changedId == id)
+                if (changedId == id)
                 {
                     this.Dispatcher.Invoke(() =>
                     {
@@ -218,7 +212,7 @@ namespace Yomiage.GUI.Views
         {
             var word = this.rich.Selection.Text;
             word = word.Replace("\r", "").Replace("\n", "");
-            if(word.Length > 30) { word = word.Substring(0, 30); }
+            if (word.Length > 30) { word = word.Substring(0, 30); }
             if (string.IsNullOrWhiteSpace(word)) { return; }
             if (this.DataContext is MainTextViewModel vm)
             {
@@ -248,27 +242,91 @@ namespace Yomiage.GUI.Views
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if(this.DataContext is MainTextViewModel vm)
+            if (this.DataContext is MainTextViewModel vm)
             {
-                vm.GetSelectedText = () => this.rich.Selection.Text;
-                vm.GetCursorText = GetCursorText;
+                vm.MainText = this;
             }
         }
 
-        private string GetCursorText()
+        public (string, string, string) GetSelectedText()
+        {
+            var beforeRange = new TextRange(this.rich.Document.ContentStart, this.rich.Selection.Start);
+            var afterRange = new TextRange(this.rich.Selection.End, this.rich.Document.ContentEnd);
+            if (string.IsNullOrWhiteSpace(this.rich.Selection.Text))
+            {
+                return ("", "", "");
+            }
+            else
+            {
+                return (beforeRange.Text, this.rich.Selection.Text, afterRange.Text);
+            }
+        }
+
+        public (string, string, string) GetCursorText()
         {
             var pos = this.rich.CaretPosition;
             var text = GetContent();
             string subText = new TextRange(pos.DocumentStart, pos).Text;
             if (!subText.Contains("\n"))
             {
-                return text;
+                return ("", text, "");
             }
             var index = subText.LastIndexOf('\n');
-            var cursotText = text.Substring(index + 1);
-
-            return cursotText;
+            var cursorText = text.Substring(index + 1);
+            var beforeText = text.Substring(0, index + 1);
+            return (beforeText, cursorText, "");
         }
 
+        public (string, string, string) CtrlLeft()
+        {
+            var pos = this.rich.CaretPosition;
+            var text = GetContent();
+            string subText = new TextRange(pos.DocumentStart, pos).Text;
+            var index1 = subText.Contains('\n') ? subText.LastIndexOf('\n') + 1 : 0;
+            var beforeText = text.Substring(0, index1);
+            var cursorText = text.Substring(index1);
+            var index2 = cursorText.Contains('\n') ? cursorText.IndexOf('\n') + 1 : cursorText.Length;
+            var afterText = cursorText.Substring(index2);
+            cursorText = cursorText.Substring(0, index2);
+
+            this.rich.CaretPosition = this.rich.CaretPosition.GetPositionAtOffset(index1 - subText.Length);
+            return (beforeText, cursorText, afterText);
+        }
+
+        public (string, string, string) CtrlRight()
+        {
+            var pos = this.rich.CaretPosition;
+            var text = GetContent();
+            string subText = new TextRange(pos.DocumentStart, pos).Text;
+            var index1 = subText.Contains('\n') ? subText.LastIndexOf('\n') + 1 : 0;
+            var beforeText = text.Substring(0, index1);
+            var cursorText = text.Substring(index1);
+            var index2 = cursorText.Contains('\n') ? cursorText.IndexOf('\n') + 1 : cursorText.Length;
+            var afterText = cursorText.Substring(index2);
+            cursorText = cursorText.Substring(0, index2);
+
+            this.rich.CaretPosition = this.rich.CaretPosition.GetPositionAtOffset(index1 - subText.Length + index2);
+            return (beforeText, cursorText, afterText);
+        }
+
+        public void SetPlayingDocument(FlowDocument document)
+        {
+            isMaking = true;
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                this.rich_playing.Document = document;
+                this.rich_playing.ScrollToVerticalOffset(this.richScrollOffset);
+                isMaking = false;
+            });
+        }
+
+        private void rich_playing_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (isMaking) { return; }
+            if (e.VerticalChange != 0)
+            {
+                this.rich.ScrollToVerticalOffset(e.VerticalOffset);
+            }
+        }
     }
 }

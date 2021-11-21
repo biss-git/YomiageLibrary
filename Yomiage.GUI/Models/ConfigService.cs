@@ -176,8 +176,29 @@ namespace Yomiage.GUI.Models
                     var dllPath = Path.Combine(directory, config.AssmblyName);
                     if (!File.Exists(dllPath)) { continue; }
                     var asm = Assembly.LoadFrom(dllPath);       // アセンブリの読み込み
-                    var module = asm.GetModule(config.ModuleName);        // アセンブリからモジュールを取得
-                    var type = module.GetType(config.TypeName);    // 利用するクラス(or 構造体)を取得
+                    Type type = null;
+
+                    if (!string.IsNullOrWhiteSpace(config.ModuleName) && !string.IsNullOrWhiteSpace(config.TypeName))
+                    {
+                        var module = asm.GetModule(config.ModuleName);        // アセンブリからモジュールを取得
+                        type = module?.GetType(config.TypeName);    // 利用するクラス(or 構造体)を取得
+                    }
+
+                    if (type == null)
+                    {
+                        foreach (var module in asm.GetModules())
+                        {
+                            foreach (var t in module.GetTypes())
+                            {
+                                if (typeof(IVoiceEngine).IsAssignableFrom(t))
+                                {
+                                    type = t;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
                     if (type == null) { continue; }
 
                     var engine = Activator.CreateInstance(type);
@@ -235,8 +256,28 @@ namespace Yomiage.GUI.Models
                     var dllPath = Path.Combine(directory, config.AssmblyName);
                     if (!File.Exists(dllPath)) { continue; }
                     var asm = Assembly.LoadFrom(dllPath);       // アセンブリの読み込み
-                    var module = asm.GetModule(config.ModuleName);        // アセンブリからモジュールを取得
-                    var type = module.GetType(config.TypeName);    // 利用するクラス(or 構造体)を取得
+                    Type type = null;
+
+                    if (!string.IsNullOrWhiteSpace(config.ModuleName) && !string.IsNullOrWhiteSpace(config.TypeName))
+                    {
+                        var module = asm.GetModule(config.ModuleName);        // アセンブリからモジュールを取得
+                        type = module?.GetType(config.TypeName);    // 利用するクラス(or 構造体)を取得
+                    }
+
+                    if (type == null)
+                    {
+                        foreach (var module in asm.GetModules())
+                        {
+                            foreach (var t in module.GetTypes())
+                            {
+                                if (typeof(IVoiceLibrary).IsAssignableFrom(t))
+                                {
+                                    type = t;
+                                    break;
+                                }
+                            }
+                        }
+                    }
                     if (type == null) { continue; }
 
                     var library = Activator.CreateInstance(type);

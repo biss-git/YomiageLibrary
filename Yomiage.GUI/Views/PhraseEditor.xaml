@@ -13,13 +13,14 @@
     xmlns:prism="http://prismlibrary.com/"
     xmlns:rp="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.WPF"
     d:DesignHeight="450"
-    d:DesignWidth="800"
+    d:DesignWidth="1000"
+    Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
+    Focusable="True"
+    MouseDown="UserControl_MouseDown"
     mc:Ignorable="d">
     <behaviors:Interaction.Triggers>
         <behaviors:EventTrigger EventName="KeyDown">
-            <rp:EventToReactiveCommand Command="{Binding KeyDownCommand}">
-                <conv:KeyDownConverter />
-            </rp:EventToReactiveCommand>
+            <rp:EventToReactiveCommand Command="{Binding KeyDownCommand}" />
         </behaviors:EventTrigger>
     </behaviors:Interaction.Triggers>
     <UserControl.ContextMenu>
@@ -32,13 +33,9 @@
                 Command="{Binding RedoCommand}"
                 Header="進む"
                 InputGestureText="Ctrl+Y" />
-            <Separator/>
-            <MenuItem
-                Command="{Binding CopyCommand}"
-                Header="コピー"/>
-            <MenuItem
-                Command="{Binding PasteCommand}"
-                Header="貼り付け"/>
+            <Separator />
+            <MenuItem Command="{Binding CopyCommand}" Header="コピー" />
+            <MenuItem Command="{Binding PasteCommand}" Header="貼り付け" />
         </ContextMenu>
     </UserControl.ContextMenu>
     <Grid>
@@ -69,7 +66,7 @@
                 Margin="3,0,0,0"
                 DockPanel.Dock="Right"
                 ItemsSource="{Binding EndChars}"
-                SelectedItem="{Binding SelectedEndChar.Value}" />
+                SelectedItem="{Binding SelectedEndChar.Value, Mode=TwoWay}" />
             <TextBox
                 Height="24"
                 FontSize="12"
@@ -92,12 +89,38 @@
                 </DockPanel>
             </Button>
             <StackPanel Orientation="Horizontal">
-                <Button Command="{Binding PlayCommand}" Style="{StaticResource IconButton}">
+                <!--<Button Command="{Binding PlayCommand}" Style="{StaticResource IconButton}">
                     <DockPanel>
                         <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="RegularPlayCircle" />
                         <TextBlock VerticalAlignment="Bottom">再生</TextBlock>
                     </DockPanel>
-                </Button>
+                </Button>-->
+                <Grid>
+                    <Button Command="{Binding PlayCommand}">
+                        <Button.Style>
+                            <Style BasedOn="{StaticResource IconButton}" TargetType="Button">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding VoicePlayerService.IsPlaying.Value}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <DockPanel>
+                            <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="RegularPlayCircle" />
+                            <TextBlock VerticalAlignment="Bottom">再生</TextBlock>
+                        </DockPanel>
+                    </Button>
+                    <Button
+                        Command="{Binding PlayCommand}"
+                        Style="{StaticResource IconButton}"
+                        Visibility="{Binding VoicePlayerService.IsPlaying.Value, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <DockPanel>
+                            <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="RegularPauseCircle" />
+                            <TextBlock VerticalAlignment="Bottom">再生</TextBlock>
+                        </DockPanel>
+                    </Button>
+                </Grid>
                 <Button Command="{Binding StopCommand}" Style="{StaticResource IconButton}">
                     <DockPanel>
                         <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="RegularStopCircle" />
@@ -156,6 +179,21 @@
                     <DockPanel>
                         <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="RegularRedo" />
                         <TextBlock VerticalAlignment="Bottom">進む</TextBlock>
+                    </DockPanel>
+                </Button>
+                <Button
+                    Margin="18,0,6,0"
+                    Command="{Binding SaveVoiceCommand}"
+                    Style="{StaticResource IconButton}">
+                    <DockPanel>
+                        <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="RegularDownload" />
+                        <TextBlock VerticalAlignment="Bottom">音声保存</TextBlock>
+                    </DockPanel>
+                </Button>
+                <Button Click="Button_Click" Style="{StaticResource IconButton}">
+                    <DockPanel>
+                        <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="RegularImageAlt" />
+                        <TextBlock VerticalAlignment="Bottom">画像保存</TextBlock>
                     </DockPanel>
                 </Button>
             </StackPanel>
@@ -366,6 +404,7 @@
                     PitchSelected="{Binding PitchSelected.Value}"
                     PitchVisible="{Binding IsChecked, ElementName=PitchCheck}"
                     PlayPosition="{Binding PlayPosition.Value}"
+                    PrePlayPosition="{Binding PrePlayPosition.Value}"
                     SpeedSelected="{Binding SpeedSelected.Value}"
                     SpeedVisible="{Binding IsChecked, ElementName=SpeedCheck}"
                     UpdateCommand="{Binding UpdateCommand}"

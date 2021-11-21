@@ -99,7 +99,6 @@ namespace Yomiage.API
                             if (command.command == "play" &&
                                 CommandService.PlayVoice != null)
                             {
-                                await Task.Delay(100); // ちょっと待たないと上手く再生できないときがある。
                                 command.success = CommandService.PlayVoice(command.TalkText);
                                 if (command.success == true)
                                 {
@@ -111,6 +110,7 @@ namespace Yomiage.API
                                 CommandService.StopAction != null)
                             {
                                 CommandService.StopAction();
+                                await Task.Delay(100); // ちょっと待たないと上手く再生できないときがある。
                                 command.success = true;
                                 res.StatusCode = 200;
                                 return JsonSerializer.Serialize(command);

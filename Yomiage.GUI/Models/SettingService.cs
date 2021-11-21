@@ -109,7 +109,7 @@ namespace Yomiage.GUI.Models
             {
                 if (theme.ToLower() == "system")
                 {
-                    ThemeManager.Current.ChangeTheme(Application.Current, SystemThemeIsLight ? "Light.Aoi" : "Dark.Akane");
+                    ThemeManager.Current.ChangeTheme(Application.Current, SystemThemeIsLight ? "Light.Aoi" : "Dark.Aoi");
                     return;
                 }
                 ThemeManager.Current.ChangeTheme(Application.Current, theme);

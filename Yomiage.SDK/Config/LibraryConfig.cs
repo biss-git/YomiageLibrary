@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Yomiage.SDK.Settings;
-using Yomiage.SDK.VoiceEffects;
+﻿// <copyright file="LibraryConfig.cs" company="bisu">
+// © 2021 bisu
+// </copyright>
 
 namespace Yomiage.SDK.Config
 {

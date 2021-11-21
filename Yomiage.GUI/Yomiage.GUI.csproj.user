@@ -102,6 +102,9 @@
     <Compile Update="Graph\MoraPoint.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Graph\MoraPoint2.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Graph\PauseGraph.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -257,6 +260,9 @@
     <Page Update="Graph\MoraPoint.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Graph\MoraPoint2.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Graph\PauseGraph.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -288,6 +294,9 @@
       <SubType>Designer</SubType>
     </None>
     <Page Update="Themes\Dark.Akari.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Themes\Dark.Aoi.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Themes\Dark.Monochrome.xaml">

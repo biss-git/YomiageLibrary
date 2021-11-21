@@ -50,7 +50,7 @@ namespace Yomiage.GUI.ViewModels
             this.textService = textService;
 
             UpdateCommand = new ReactiveCommand<string>().WithSubscribe(UpdateAction).AddTo(Disposables);
-            PlayCommand = this.voicePlayerService.CanPlay.ToAsyncReactiveCommand().WithSubscribe(PlayAction).AddTo(Disposables);
+            PlayCommand = this.voicePlayerService.CanSave.ToAsyncReactiveCommand().WithSubscribe(PlayAction).AddTo(Disposables);
             StopCommand = new AsyncReactiveCommand().WithSubscribe(voicePlayerService.Stop).AddTo(Disposables);
             RegisterCommand = this.CanRegister.ToReactiveCommand().WithSubscribe(RegisterAction).AddTo(Disposables);
             UnRegisterCommand = this.CanUnRegister.ToReactiveCommand().WithSubscribe(UnRegisterAction).AddTo(Disposables);
@@ -71,7 +71,10 @@ namespace Yomiage.GUI.ViewModels
 
         private void MakeScript(string text)
         {
-            var scripts = this.textService.Parse(text, PromptStringEnable: false, WordDictionarys: this.wordDictionaryService.WordDictionarys);
+            var scripts = this.textService.Parse(
+                text,
+                PromptStringEnable: false,
+                WordDictionarys: this.wordDictionaryService.WordDictionarys);
             if(scripts.Length > 0)
             {
                 this.Phrase.Value = scripts.First();

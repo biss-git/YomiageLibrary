@@ -12,6 +12,7 @@ using System.Text.Json;
 using System.Text.Unicode;
 using System.Threading.Tasks;
 using Yomiage.GUI.ViewModels;
+using Yomiage.SDK;
 using Yomiage.SDK.Common;
 
 namespace Yomiage.GUI.Models
@@ -46,9 +47,10 @@ namespace Yomiage.GUI.Models
             ActiveScript.Value = script;
         }
 
-        public void AddOpen(string filePath)
+        public void AddOpen(string filePath, (string, IVoiceEngine) filter)
         {
-            if (scripts.Any(s => s.FilePath.Value == filePath)) {
+            if (scripts.Any(s => s.FilePath.Value == filePath))
+            {
                 ActiveScript.Value = scripts.First(s => s.FilePath.Value == filePath);
                 return;
             }
@@ -57,16 +59,31 @@ namespace Yomiage.GUI.Models
             script.Title.Value = Path.GetFileNameWithoutExtension(filePath);
             try
             {
-                script.Content.Value = File.ReadAllText(filePath);
+                if (string.IsNullOrWhiteSpace(filter.Item1) ||
+                    filter.Item2?.FileConverter == null)
+                {
+                    script.Content.Value = File.ReadAllText(filePath);
+                    script.ResetDirty();
+                }
+                else
+                {
+                    (var text, var dic) = filter.Item2.FileConverter.Open(filePath, filter.Item1);
+                    if (text == null)
+                    {
+                        // null だったらキャンセル扱い
+                        script.Dispose();
+                        return;
+                    }
+                    script.Content.Value = text;
+                    script.AddDict(dic);
+                }
             }
             catch
             {
                 // ファイルの読み込みに失敗しました。
                 return;
             }
-            script.ResetDirty();
             this.AddWithFocus(script);
-
         }
 
         public void Remove(MainTextViewModel script)
@@ -99,8 +116,8 @@ namespace Yomiage.GUI.Models
             if (!File.Exists("scripts.json")) { AddNew(); return; }
             try
             {
-                var dict = JsonUtil.Deserialize<Dictionary<string,string>[]>("scripts.json");
-                foreach(var s in dict)
+                var dict = JsonUtil.Deserialize<Dictionary<string, string>[]>("scripts.json");
+                foreach (var s in dict)
                 {
                     try
                     {
@@ -146,7 +163,7 @@ namespace Yomiage.GUI.Models
             {
 
             }
-            if(this.scripts.Count == 0) { AddNew(); }
+            if (this.scripts.Count == 0) { AddNew(); }
         }
     }
 }

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿// <copyright file="EngineSettings.cs" company="bisu">
+// © 2021 bisu
+// </copyright>
 
 namespace Yomiage.SDK.Settings
 {
