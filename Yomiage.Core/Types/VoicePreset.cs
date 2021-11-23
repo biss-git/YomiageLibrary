@@ -77,6 +77,7 @@ namespace Yomiage.Core.Types
             script.Fill(Engine.EngineConfig, shortPause, longPause);
             try
             {
+                FixVoiceEffect();
                 return await Engine.VoiceEngine.Play(
                     new VoiceConfig(Library.VoiceLibrary, JsonUtil.DeepClone(VoiceEffect)),
                     new VoiceConfig(SubPreset?.Library.VoiceLibrary, JsonUtil.DeepClone(SubPreset?.VoiceEffect)),
@@ -107,6 +108,7 @@ namespace Yomiage.Core.Types
             }
             try
             {
+                FixVoiceEffect();
                 await Engine.VoiceEngine.Save(
                     new VoiceConfig(Library.VoiceLibrary, JsonUtil.DeepClone(VoiceEffect)),
                     new VoiceConfig(SubPreset?.Library.VoiceLibrary, JsonUtil.DeepClone(SubPreset?.VoiceEffect)),
@@ -123,6 +125,30 @@ namespace Yomiage.Core.Types
                 // ログ出す？ エラー投げる？　何もなかったことにする！
             }
         }
+
+        /// <summary>
+        /// null値が無いかチェックする
+        /// </summary>
+        private void FixVoiceEffect()
+        {
+            FixVoiceEffect(VoiceEffect, Library.LibraryConfig);
+            FixVoiceEffect(SubPreset?.VoiceEffect, SubPreset?.Library?.LibraryConfig);
+        }
+
+        private static void FixVoiceEffect(VoiceEffectValue effect, LibraryConfig config)
+        {
+            if (effect == null) { return; }
+            effect.Volume ??= config?.VolumeSetting?.DefaultValue;
+            effect.Speed ??= config?.SpeedSetting?.DefaultValue;
+            effect.Pitch ??= config?.PitchSetting?.DefaultValue;
+            effect.Emphasis ??= config?.EmphasisSetting?.DefaultValue;
+
+            effect.Volume ??= 0;
+            effect.Speed ??= 0;
+            effect.Pitch ??= 0;
+            effect.Emphasis ??= 0;
+        }
+
 
         private (int, int) GetPauseSpan(MasterEffectValue masterEffectValue)
         {

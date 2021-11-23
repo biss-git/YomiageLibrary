@@ -203,7 +203,7 @@ namespace Yomiage.GUI
             containerRegistry.RegisterDialog<VersionInfoDialog, VersionInfoViewModel>();
             containerRegistry.RegisterDialog<SettingProjectDialog, SettingProjectViewModel>();
             containerRegistry.RegisterDialog<SettingEnvironmentDialog, SettingEnvironmentViewModel>();
-            containerRegistry.RegisterDialog<SettingShortcutDialog, PresetFilterViewModel>();
+            containerRegistry.RegisterDialog<SettingShortcutDialog, SettingShortcutViewModel>();
             containerRegistry.RegisterDialog<SettingsEngineDialog, SettingsEngineViewModel>();
             containerRegistry.RegisterDialog<SettingsLibraryDialog, SettingsLibraryViewModel>();
             containerRegistry.RegisterDialog<TextDialog, TextViewModel>();

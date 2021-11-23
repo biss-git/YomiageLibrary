@@ -28,7 +28,7 @@ namespace Yomiage.GUI.Models
             WordDictionaryService wordDictionaryService,
             PauseDictionaryService pauseDictionaryService,
             IMessageBroker messageBroker
-            ): base(null)
+            ) : base(null)
         {
             this.phraseService = phraseService;
             this.scriptService = scriptService;
@@ -121,7 +121,7 @@ namespace Yomiage.GUI.Models
         {
             var key = text.Replace("\r", "").Replace("\n", "");
             var dict = this.scriptService.ActiveScript.Value.PhraseDictionary?.GetDictionary(key, preset.EngineKey, preset.LibraryKey);
-            dict ??= GetDictionary(key, preset.EngineKey, preset.LibraryKey);
+            dict ??= GetDictionary(key, preset?.EngineKey, preset?.LibraryKey);
             return dict;
         }
 

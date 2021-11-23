@@ -22,8 +22,8 @@
     IsEnabled="False"
     Loaded="MetroWindow_Loaded"
     MouseDown="MetroWindow_MouseDown"
-    TitleBarHeight="24"
     PreviewKeyDown="MetroWindow_PreviewKeyDown"
+    TitleBarHeight="24"
     mc:Ignorable="d">
     <mah:MetroWindow.Resources>
         <conv:ActiveScriptConverter x:Key="ActiveScriptConverter" />
@@ -234,7 +234,10 @@
                             Command="{Binding OpenDialogCommand}"
                             CommandParameter="SettingEnvironmentDialog"
                             Header="環境設定" />
-                        <!--<MenuItem Header="ショートカット設定" Command="{Binding OpenDialogCommand}" CommandParameter="SettingShortcutDialog"/>-->
+                        <MenuItem
+                            Command="{Binding OpenDialogCommand}"
+                            CommandParameter="SettingShortcutDialog"
+                            Header="ショートカットキー" />
                         <Separator />
                         <!--<MenuItem Header="音声合成エンジン設定" Command="{Binding OpenDialogCommand}" CommandParameter="EngineListDialog"/>
                         <MenuItem Header="音声ライブラリ設定" Command="{Binding OpenDialogCommand}" CommandParameter="LibraryListDialog"/>
@@ -247,7 +250,7 @@
                             Command="{Binding OpenDialogCommand}"
                             CommandParameter="LibraryListDialog"
                             Header="音声ライブラリ一覧" />
-                        <Separator/>
+                        <Separator />
                         <MenuItem
                             Margin="0,0,0,6"
                             Command="{Binding InitializeSettingCommand}"
@@ -453,9 +456,9 @@
                 Grid.Row="2"
                 Grid.Column="0"
                 Grid.ColumnSpan="{Binding TunerSpan.Value}"
-                FontSize="16"
                 d:Grid.ColumnSpan="5"
-                ActiveContentChanged="TuningDocking_ActiveContentChanged">
+                ActiveContentChanged="TuningDocking_ActiveContentChanged"
+                FontSize="16">
                 <LayoutRoot>
                     <LayoutPanel>
                         <LayoutDocumentPane>
@@ -476,10 +479,10 @@
                                 CanClose="False"
                                 ContentId="phrase">
                                 <DockingManager
-                                    FontSize="12"
                                     x:Name="TuneTab3"
                                     ActiveContent="{Binding PhraseService.ActiveEditor.Value, Mode=TwoWay, Converter={StaticResource ActivePhraseEditorConverter}}"
-                                    DocumentsSource="{Binding PhraseService.Editors}">
+                                    DocumentsSource="{Binding PhraseService.Editors}"
+                                    FontSize="12">
                                     <DockingManager.LayoutItemTemplate>
                                         <DataTemplate>
                                             <view:PhraseEditor DataContext="{Binding}" />

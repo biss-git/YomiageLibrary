@@ -26,12 +26,6 @@ namespace Yomiage.SDK.Config
         public bool AccentHide { get; set; }
 
         /// <summary>
-        /// アクセントの入力規則。
-        /// 今は特に使わない。デフォルトではA.I.VOICEと同じアクセントを入力できるようにする。（アクセントは同じアクセント句の中では一度しか下がらず、下がったあとは上がらない。）
-        /// </summary>
-        public string AccentRule { get; set; }
-
-        /// <summary>
         /// サブプリセット（ボイスフュージョン）機能を有効にする。
         /// </summary>
         public bool SubPresetEnable { get; set; }
@@ -56,9 +50,8 @@ namespace Yomiage.SDK.Config
         public override void Fix()
         {
             base.Fix();
-            AccentRule = AccentRule.Fix();
-            ShortPauseSetting.Fix();
-            LongPauseSetting.Fix();
+            ShortPauseSetting?.Fix();
+            LongPauseSetting?.Fix();
         }
     }
 }

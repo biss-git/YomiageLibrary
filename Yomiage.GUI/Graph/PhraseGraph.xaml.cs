@@ -873,8 +873,6 @@ namespace Yomiage.GUI.Graph
             Dispatcher.Invoke(() =>
             {
                 if (this.Phrase == null) { return; } // Invoke 中じゃないとアクセスエラーになる。
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
                 Draw_Lines();
                 Draw_PlayPosition();
                 Draw_Mora();
@@ -884,8 +882,6 @@ namespace Yomiage.GUI.Graph
                 Draw_Pitch();
                 Draw_Emphasis();
                 Draw_Settings();
-                sw.Stop();
-                Yomiage.GUI.Data.Status.StatusText.Value = sw.Elapsed.ToString();
             });
         }
 
@@ -1288,13 +1284,9 @@ namespace Yomiage.GUI.Graph
         #region Accent
         public void Draw_Accent()
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
             Remove_Accent();
             Draw_Accent_Main();
             Draw_Accent_Pause();
-            sw.Stop();
-            Yomiage.GUI.Data.Status.StatusText.Value = sw.Elapsed.ToString();
         }
         private void Remove_Accent()
         {

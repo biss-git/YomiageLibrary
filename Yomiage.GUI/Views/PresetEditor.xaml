@@ -59,11 +59,22 @@
                              IsReadOnly="{Binding NameReadOnly.Value}"/>
 
                     <DockPanel>
-                        <Button DockPanel.Dock="Right" Style="{StaticResource IconButton}"
+                        <Button DockPanel.Dock="Right"
                                 Command="{Binding OpenSettingsCommand}"
                                 CommandParameter="Main"
-                                Visibility="{Binding SinglePresetMode.Value, Converter={BoolToVisibilityConverter}}"
                                 Width="24" MinHeight="10" Height="20" Margin="0">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SinglePresetMode.Value}" Value="false">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding SelectedPreset.Value.Library.LibrarySettings}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
                             <icon:PackIconBoxIcons Kind="SolidCog" Width="12"/>
                         </Button>
                         <Label Padding="8,1,0,1"

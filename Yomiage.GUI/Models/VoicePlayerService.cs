@@ -32,8 +32,8 @@ namespace Yomiage.GUI.Models
 
         private int playIndex = 0;
 
-        const int bufferLimit = 20000;
-        const int bytesLimit = 40000;
+        const int bufferLimit = 25000;
+        const int bytesLimit = 50000;
 
         /// <summary>
         /// ファイル命名規則を指定して選択するのときに
@@ -185,8 +185,8 @@ namespace Yomiage.GUI.Models
             int scriptIndex = 0;
             int nextBufferListSize = 4;
             List<List<double[]>> nextBufferList = new List<List<double[]>>();
+            VoicePreset[] voicePresets = new VoicePreset[scripts.Length];
             VoicePreset presetNow = null;
-            VoicePreset presetNext = null;
             Task<List<double[]>> synthesizeTask = null;
             while (this.wavPlayer.PlaybackState != PlaybackState.Stopped &&
                   (bufferedWaveProvider.BufferedBytes > 0 ||
@@ -202,7 +202,11 @@ namespace Yomiage.GUI.Models
                 if (synthesizeTask != null && synthesizeTask.IsCompleted)
                 {
                     var nextBuffer = synthesizeTask.Result;
-                    presetNext = GetPreset(scripts[scriptIndex], preset);
+                    voicePresets[scriptIndex] = GetPreset(scripts[scriptIndex], preset);
+                    if (presetNow == null)
+                    {
+                        presetNow = voicePresets[scriptIndex];
+                    }
                     scriptIndex += 1;
                     if (nextBuffer != null && nextBuffer.Count != 0)
                     {
@@ -223,7 +227,11 @@ namespace Yomiage.GUI.Models
                     nextBufferList.RemoveRange(0, index + 1);
                     // 台本のほうに現在の再生位置を送る
                     SubmitPlayPosition?.Invoke(scriptIndex - (nextBufferList.Count + 1));
-                    presetNow = presetNext;
+                    Task.Run(async () =>
+                    {
+                        await Task.Delay(Math.Min(1200, bufferedWaveProvider.BufferedBytes / 88));
+                        presetNow = voicePresets[scriptIndex - (nextBufferList.Count + 1)];
+                    });
                     await Task.Delay(100);
                 }
                 if (bufferedWaveProvider.BufferedBytes < bytesLimit)
@@ -241,7 +249,7 @@ namespace Yomiage.GUI.Models
                     }
                     else
                     {
-
+                        continue;
                     }
                 }
 
@@ -313,9 +321,15 @@ namespace Yomiage.GUI.Models
             if (fs == target_fs) { return wave; }
 
             var reSampledWave = new List<double>();
-            SaveWav(wave, "original.wav", fs);
+            var tempPath = "original.wav";
             {
-                MediaFoundationReader reader = new("original.wav");
+                using (var writer = new WaveFileWriter(tempPath, new WaveFormat(fs, 16, 1)))
+                {
+                    writer.WriteSamples(wave.Select(v => (float)v).ToArray(), 0, wave.Length);
+                }
+            }
+            {
+                using MediaFoundationReader reader = new(tempPath);
                 WaveFormat format = new(target_fs, 16, 1);
                 MediaType mediaType = new(format);
 
@@ -375,6 +389,7 @@ namespace Yomiage.GUI.Models
             {
                 this.wavPlayer = new WasapiOut(this.mmDevice, AudioClientShareMode.Shared, false, 50);
             }
+            wavPlayer.Volume = 0.7f;
             this.wavPlayer.Init(wavProvider); //出力に入力を接続
         }
 
@@ -625,6 +640,8 @@ namespace Yomiage.GUI.Models
                 ConvertWav(inputPath, outputPath, settingService.OutputFormatWav);
             }
         }
+
+
         private static void ConvertWav(string inputPath, string outputPath, string format)
         {
             WaveFormat waveFormat;

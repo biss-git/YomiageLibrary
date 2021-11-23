@@ -325,7 +325,7 @@ namespace Yomiage.GUI.ViewModels
 
                 if (index > 0)
                 {
-                    await Task.Delay(800);
+                    await Task.Delay(1000);
                 }
                 Application.Current.Dispatcher.Invoke(() =>
                 {

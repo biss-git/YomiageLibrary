@@ -83,8 +83,8 @@ namespace Yomiage.GUI.ViewModels
 
         private void SetPreset(VoicePreset preset)
         {
-            if(preset == null) { return; }
-            if(!preset.IsDirty || preset.VoiceEffectSaved == null)
+            if (preset == null) { return; }
+            if (!preset.IsDirty || preset.VoiceEffectSaved == null)
             {
                 preset.MakeSavedEffect();
             }
@@ -93,7 +93,7 @@ namespace Yomiage.GUI.ViewModels
             this.PresetName.Value = preset.Name;
             this.NameReadOnly.Value = preset.Type == PresetType.Standard;
 
-            if(preset.Type == PresetType.Standard || !preset.Engine.EngineConfig.SubPresetEnable)
+            if (preset.Type == PresetType.Standard || !preset.Engine.EngineConfig.SubPresetEnable)
             {
                 SinglePresetMode.Value = true;
             }
@@ -126,9 +126,10 @@ namespace Yomiage.GUI.ViewModels
             this.SpeedConfig.Value.Value.Subscribe(v => { SetDirty(); this.SelectedPreset.Value.VoiceEffect.Speed = v; }).AddTo(Disposables);
             this.PitchConfig.Value.Value.Subscribe(v => { SetDirty(); this.SelectedPreset.Value.VoiceEffect.Pitch = v; }).AddTo(Disposables);
             this.EmphasisConfig.Value.Value.Subscribe(v => { SetDirty(); this.SelectedPreset.Value.VoiceEffect.Emphasis = v; }).AddTo(Disposables);
-            foreach(var s in this.AdditionalSettings)
+            foreach (var s in this.AdditionalSettings)
             {
-                s.Value.Subscribe(v => {
+                s.Value.Subscribe(v =>
+                {
                     SetDirty();
                     if (!this.SelectedPreset.Value.VoiceEffect.AdditionalEffect.ContainsKey(s.Key))
                     {
@@ -195,11 +196,13 @@ namespace Yomiage.GUI.ViewModels
             switch (param)
             {
                 case "Main":
+                    if (this.SelectedPreset.Value.Library.LibrarySettings == null) { return; }
                     parameters.Add("Library", this.SelectedPreset.Value.Library);
                     this.DialogService.ShowDialog("SettingsLibraryDialog", parameters, result => { });
                     break;
                 case "Sub":
-                    if(this.SelectedPreset.Value.SubPreset == null) { return; }
+                    if (this.SelectedPreset.Value.SubPreset == null) { return; }
+                    if (this.SelectedPreset.Value.SubPreset.Library.LibrarySettings == null) { return; }
                     parameters.Add("Library", this.SelectedPreset.Value.SubPreset.Library);
                     this.DialogService.ShowDialog("SettingsLibraryDialog", parameters, result => { });
                     break;
@@ -216,8 +219,9 @@ namespace Yomiage.GUI.ViewModels
             parameters.Add("Preset", this.SelectedPreset.Value);
             this.DialogService.ShowDialog("PresetFusionDialog",
                 parameters,
-                result => {
-                    if(result.Result == ButtonResult.OK)
+                result =>
+                {
+                    if (result.Result == ButtonResult.OK)
                     {
                         this.SelectedPreset.Value = this.SelectedPreset.Value;
                         SetDirty();

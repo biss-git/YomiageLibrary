@@ -32,12 +32,12 @@
                 </DockPanel>
             </Button>
         </StackPanel>
-        
+
         <!-- 検索ボックス -->
         <DockPanel DockPanel.Dock="Top" Margin="0,3,0,3" Height="26">
-            <Button DockPanel.Dock="Right" Margin="3,0,0,0" MinWidth="28" Padding="0">
+            <!--<Button DockPanel.Dock="Right" Margin="3,0,0,0" MinWidth="28" Padding="0">
                 <icon:PackIconBoxIcons Kind="RegularX" Width="9"/>
-            </Button>
+            </Button>-->
             <!--<Button DockPanel.Dock="Right" Margin="3,0,0,0" MinWidth="28" Padding="0"
                     Command="{Binding OpenDialogCommand}" CommandParameter="PresetFilterDialog">
                 <icon:PackIconBoxIcons Kind="RegularFilterAlt" Width="14"/>
@@ -60,7 +60,7 @@
                 </TextBox.Style>
             </TextBox>
         </DockPanel>
-        
+
         <!-- キャラクターリスト -->
         <ListView ItemsSource="{Binding FilterdPresets}" SelectedItem="{Binding SelectedPreset.Value, Mode=TwoWay}"
                   SelectionMode="Single"

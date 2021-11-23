@@ -139,9 +139,9 @@
         <iconPack:PackIconBoxIcons
             x:Name="splitIcon"
             Canvas.Left="-18"
-            Canvas.Bottom="26"
+            Canvas.Bottom="15"
             Width="14"
-            Height="14"
+            Height="30"
             Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
             Cursor="Hand"
             Kind="RegularCut"
@@ -163,13 +163,37 @@
         <iconPack:PackIconBoxIcons
             x:Name="joinIcon"
             Canvas.Left="-34"
-            Canvas.Bottom="26"
+            Canvas.Bottom="18"
             Width="18"
-            Height="18"
+            Height="20"
             Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
             Cursor="Hand"
             Kind="RegularHorizontalCenter"
             MouseDown="JoinIcon_MouseDown"
+            MouseEnter="Icon_MouseEnter">
+            <iconPack:PackIconBoxIcons.Style>
+                <Style TargetType="iconPack:PackIconBoxIcons">
+                    <Setter Property="Opacity" Value="0" />
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Opacity" Value="1" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </iconPack:PackIconBoxIcons.Style>
+        </iconPack:PackIconBoxIcons>
+
+        <!--  読み編集ボタン  -->
+        <iconPack:PackIconBoxIcons
+            x:Name="yomiIcon"
+            Canvas.Left="-26"
+            Canvas.Bottom="0"
+            Width="14"
+            Height="18"
+            Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
+            Cursor="Hand"
+            Kind="SolidEditAlt"
+            MouseDown="yomiIcon_MouseDown"
             MouseEnter="Icon_MouseEnter">
             <iconPack:PackIconBoxIcons.Style>
                 <Style TargetType="iconPack:PackIconBoxIcons">

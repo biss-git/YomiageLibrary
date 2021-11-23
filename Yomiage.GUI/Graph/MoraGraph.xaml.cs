@@ -58,6 +58,7 @@ namespace Yomiage.GUI.Graph
 
         bool? canJoin;
         bool? canSplit;
+        bool? canEdit;
 
         public TalkScript Phrase;
         private Mora mora;
@@ -135,6 +136,11 @@ namespace Yomiage.GUI.Graph
             }
             return false;
         }
+        private bool CanEdit()
+        {
+            var moraIndex = Section.Moras.IndexOf(mora);
+            return moraIndex == 0;
+        }
 
         private void MoraText_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -166,6 +172,7 @@ namespace Yomiage.GUI.Graph
             CheckCanJoinSplit();
             this.joinIcon.Visibility = canJoin == true ? Visibility.Visible : Visibility.Collapsed;
             this.splitIcon.Visibility = canSplit == true ? Visibility.Visible : Visibility.Collapsed;
+            this.yomiIcon.Visibility = canEdit == true ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void CheckCanJoinSplit()
@@ -177,6 +184,10 @@ namespace Yomiage.GUI.Graph
             if (canSplit == null)
             {
                 canSplit = CanSplit();
+            }
+            if (canEdit == null)
+            {
+                canEdit = CanEdit();
             }
         }
 
@@ -194,6 +205,11 @@ namespace Yomiage.GUI.Graph
         {
             if (e.ChangedButton != MouseButton.Left) { return; }
             Action(Mora, "ToggleAccent");
+        }
+
+        private void yomiIcon_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Action(Mora, "読み編集");
         }
     }
 }

@@ -149,7 +149,7 @@ namespace Yomiage.GUI.Models
                 try
                 {
                     var config = JsonUtil.Deserialize<EngineConfig>(f);
-                    if (voiceEngineService.AllEngines.Any(e => e.EngineConfig.Key == config?.Key)) { continue; }
+                    if (string.IsNullOrWhiteSpace(config?.Key) || voiceEngineService.AllEngines.Any(e => e.EngineConfig.Key == config?.Key)) { continue; }
                     var directory = Path.GetDirectoryName(f);
 
                     var settings = new EngineSettings();
@@ -229,29 +229,10 @@ namespace Yomiage.GUI.Models
                 try
                 {
                     var config = JsonUtil.Deserialize<LibraryConfig>(f);
-                    if (voiceLibraryService.AllLibrarys.Any(l => l.LibraryConfig.Key == config?.Key)) { continue; }
+                    if (string.IsNullOrWhiteSpace(config?.Key) || voiceLibraryService.AllLibrarys.Any(l => l.LibraryConfig.Key == config?.Key)) { continue; }
                     var directory = Path.GetDirectoryName(f);
 
-                    var settings = new LibrarySettings();
-                    {
-                        // settings 読み込み
-                        var settingsPath = Path.Combine(directory, "library.settings.json");
-                        if (File.Exists(settingsPath))
-                        {
-                            try
-                            {
-                                settings = JsonUtil.Deserialize<LibrarySettings>(settingsPath);
-                            }
-                            catch (Exception)
-                            {
-
-                            }
-                            if (settings == null)
-                            {
-                                settings = new LibrarySettings();
-                            }
-                        }
-                    }
+                    var settings = LoadLibrarySettings(Path.Combine(directory, "library.settings.json"));
 
                     var dllPath = Path.Combine(directory, config.AssmblyName);
                     if (!File.Exists(dllPath)) { continue; }
@@ -304,22 +285,89 @@ namespace Yomiage.GUI.Models
             {
                 foreach (var engine in voiceEngineService.AllEngines)
                 {
-                    foreach (var library in voiceLibraryService.AllLibrarys)
+                    if (engine.EngineConfig.LibraryFormat == null || engine.EngineConfig.LibraryFormat.Length == 0)
                     {
-                        bool match = engine.EngineConfig.LibraryFormat.Any(f => library.LibraryConfig.LibraryFormat.Contains(f));
-                        if (!match) { continue; }
-                        if (voicePresetService.StandardPreset.Any(p => p.EngineKey == engine.EngineConfig.Key && p.LibraryKey == library.LibraryConfig.Key)) { continue; }
-                        voicePresetService.Add(new VoicePreset(engine, library)
+                        // エンジン単体でプリセットとなる
+
+                        var files = new List<string>();
+                        var keys = new List<string>();
+                        Utility.SearchFile(engine.ConfigDirectory, "library.config.json", 5, files);
+                        Utility.SearchFile(engine.DllDirectory, "library.config.json", 5, files);
+                        files = files.Distinct().ToList();
+                        foreach (var f in files)
                         {
-                            Type = PresetType.Standard,
-                            Name = library.LibraryConfig.Name
-                        });
+                            try
+                            {
+                                var config = JsonUtil.Deserialize<LibraryConfig>(f);
+                                if (string.IsNullOrWhiteSpace(config?.Key) || keys.Any(k => k == config?.Key)) { continue; }
+                                var directory = Path.GetDirectoryName(f);
+
+                                var settings = LoadLibrarySettings(Path.Combine(directory, "library.settings.json"));
+
+                                var characterPath = Path.Combine(directory, "character.config.json");
+                                var characterConfig = JsonUtil.Deserialize<CharacterConfig>(characterPath);
+
+                                var voiceLibrary = new VoiceLibraryDummy();
+
+                                var library = new Library(directory, engine.DllDirectory, voiceLibrary, config, settings, characterConfig);
+                                voicePresetService.Add(new VoicePreset(engine, library)
+                                {
+                                    Type = PresetType.Standard,
+                                    Name = library.LibraryConfig.Name
+                                });
+                                keys.Add(config.Key);
+                            }
+                            catch (Exception)
+                            {
+
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        // VoiceLibrary と組み合わせる
+                        foreach (var library in voiceLibraryService.AllLibrarys)
+                        {
+                            bool match = engine.EngineConfig.LibraryFormat.Any(f => library.LibraryConfig.LibraryFormat?.Contains(f) == true);
+                            if (!match) { continue; }
+                            if (voicePresetService.StandardPreset.Any(p => p.EngineKey == engine.EngineConfig.Key && p.LibraryKey == library.LibraryConfig.Key)) { continue; }
+                            voicePresetService.Add(new VoicePreset(engine, library)
+                            {
+                                Type = PresetType.Standard,
+                                Name = library.LibraryConfig.Name
+                            });
+                        }
                     }
                 }
                 voicePresetService.SelectedPreset.Value = voicePresetService.AllPresets.FirstOrDefault();
             });
         }
 
+        private LibrarySettings LoadLibrarySettings(string filePath)
+        {
+            var settings = new LibrarySettings();
+            {
+                // settings 読み込み
+                var settingsPath = Path.Combine(filePath);
+                if (File.Exists(settingsPath))
+                {
+                    try
+                    {
+                        settings = JsonUtil.Deserialize<LibrarySettings>(settingsPath);
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                    if (settings == null)
+                    {
+                        settings = new LibrarySettings();
+                    }
+                }
+            }
+            return settings;
+        }
 
         public void SavePresets()
         {
