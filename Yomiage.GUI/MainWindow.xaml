@@ -17,13 +17,16 @@
     Width="1010"
     Height="700"
     prism:ViewModelLocator.AutoWireViewModel="True"
+    AllowDrop="True"
     Closed="MetroWindow_Closed"
     Closing="MetroWindow_Closing"
+    Drop="MetroWindow_Drop"
     IsEnabled="False"
     Loaded="MetroWindow_Loaded"
     MouseDown="MetroWindow_MouseDown"
+    PreviewDragOver="MetroWindow_PreviewDragOver"
     PreviewKeyDown="MetroWindow_PreviewKeyDown"
-    TitleBarHeight="24"
+    TitleBarHeight="28"
     mc:Ignorable="d">
     <mah:MetroWindow.Resources>
         <conv:ActiveScriptConverter x:Key="ActiveScriptConverter" />

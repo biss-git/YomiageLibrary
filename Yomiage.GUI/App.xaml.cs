@@ -1,6 +1,6 @@
 ﻿using ControlzEx.Theming;
 using MahApps.Metro.Theming;
-using Microsoft.Win32;
+using Prism.DryIoc;
 using Prism.Ioc;
 using Prism.Modularity;
 using Reactive.Bindings.Notifiers;
@@ -24,8 +24,9 @@ namespace Yomiage.GUI
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App
+    public partial class App : PrismApplication
     {
+
         private AppConfig appConfig;
         private Splash splash;
         protected override void OnStartup(StartupEventArgs e)
@@ -50,7 +51,7 @@ namespace Yomiage.GUI
                     // ここはログに出せない
                 }
             }
-            this.Properties["AppConfig"] = appConfig;
+            AppConfig.SetCurrent(appConfig);
 
 
             if (!appConfig.AllowMultiProcess)

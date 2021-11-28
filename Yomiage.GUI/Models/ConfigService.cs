@@ -20,6 +20,7 @@ using Yomiage.SDK.VoiceEffects;
 using System.Windows;
 using Yomiage.GUI.Data;
 using System.Diagnostics;
+using System.IO.Compression;
 
 namespace Yomiage.GUI.Models
 {
@@ -173,7 +174,7 @@ namespace Yomiage.GUI.Models
                         }
                     }
 
-                    var dllPath = Path.Combine(directory, config.AssmblyName);
+                    var dllPath = Path.Combine(directory, config.AssemblyName);
                     if (!File.Exists(dllPath)) { continue; }
                     var asm = Assembly.LoadFrom(dllPath);       // アセンブリの読み込み
                     Type type = null;
@@ -234,39 +235,47 @@ namespace Yomiage.GUI.Models
 
                     var settings = LoadLibrarySettings(Path.Combine(directory, "library.settings.json"));
 
-                    var dllPath = Path.Combine(directory, config.AssmblyName);
-                    if (!File.Exists(dllPath)) { continue; }
-                    var asm = Assembly.LoadFrom(dllPath);       // アセンブリの読み込み
-                    Type type = null;
+                    var dllPath = Path.Combine(directory, config.AssemblyName);
 
-                    if (!string.IsNullOrWhiteSpace(config.ModuleName) && !string.IsNullOrWhiteSpace(config.TypeName))
+                    //if (!File.Exists(dllPath)) { continue; }
+                    //var asm = Assembly.LoadFrom(dllPath);       // アセンブリの読み込み
+                    //Type type = null;
+
+                    //if (!string.IsNullOrWhiteSpace(config.ModuleName) && !string.IsNullOrWhiteSpace(config.TypeName))
+                    //{
+                    //    var module = asm.GetModule(config.ModuleName);        // アセンブリからモジュールを取得
+                    //    type = module?.GetType(config.TypeName);    // 利用するクラス(or 構造体)を取得
+                    //}
+
+                    //if (type == null)
+                    //{
+                    //    foreach (var module in asm.GetModules())
+                    //    {
+                    //        foreach (var t in module.GetTypes())
+                    //        {
+                    //            if (typeof(IVoiceLibrary).IsAssignableFrom(t))
+                    //            {
+                    //                type = t;
+                    //                break;
+                    //            }
+                    //        }
+                    //    }
+                    //}
+                    //if (type == null) { continue; }
+
+                    //var library = Activator.CreateInstance(type);
+
+                    var voiceLibrary = CreateLibrary(directory, config.AssemblyName, config.ModuleName, config.TypeName);
+
+                    if (voiceLibrary == null)
                     {
-                        var module = asm.GetModule(config.ModuleName);        // アセンブリからモジュールを取得
-                        type = module?.GetType(config.TypeName);    // 利用するクラス(or 構造体)を取得
+                        return;
                     }
-
-                    if (type == null)
-                    {
-                        foreach (var module in asm.GetModules())
-                        {
-                            foreach (var t in module.GetTypes())
-                            {
-                                if (typeof(IVoiceLibrary).IsAssignableFrom(t))
-                                {
-                                    type = t;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    if (type == null) { continue; }
-
-                    var library = Activator.CreateInstance(type);
 
                     var characterPath = Path.Combine(directory, "character.config.json");
                     var characterConfig = JsonUtil.Deserialize<CharacterConfig>(characterPath);
 
-                    if (library is IVoiceLibrary voiceLibrary)
+                    //if (library is IVoiceLibrary voiceLibrary)
                     {
                         var dllDirectory = Path.GetDirectoryName(dllPath);
                         voiceLibraryService.Add(new Library(directory, dllDirectory, voiceLibrary, config, settings, characterConfig));
@@ -277,6 +286,49 @@ namespace Yomiage.GUI.Models
 
                 }
             }
+        }
+
+        private IVoiceLibrary CreateLibrary(string directory, string assemblyName, string moduleName, string typeName)
+        {
+            if (string.IsNullOrWhiteSpace(assemblyName))
+            {
+                return new VoiceLibraryDummy();
+            }
+            var dllPath = Path.Combine(directory, assemblyName);
+            if (!File.Exists(dllPath)) { return null; }
+            var asm = Assembly.LoadFrom(dllPath);       // アセンブリの読み込み
+            Type type = null;
+
+            if (!string.IsNullOrWhiteSpace(moduleName) && !string.IsNullOrWhiteSpace(typeName))
+            {
+                var module = asm.GetModule(moduleName);        // アセンブリからモジュールを取得
+                type = module?.GetType(typeName);    // 利用するクラス(or 構造体)を取得
+            }
+
+            if (type == null)
+            {
+                foreach (var module in asm.GetModules())
+                {
+                    foreach (var t in module.GetTypes())
+                    {
+                        if (typeof(IVoiceLibrary).IsAssignableFrom(t))
+                        {
+                            type = t;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (type == null) { return null; }
+
+            var library = Activator.CreateInstance(type);
+
+            if (library is IVoiceLibrary voiceLibrary)
+            {
+                return voiceLibrary;
+            }
+
+            return null;
         }
 
         public void InitPreset()
@@ -307,9 +359,20 @@ namespace Yomiage.GUI.Models
                                 var characterPath = Path.Combine(directory, "character.config.json");
                                 var characterConfig = JsonUtil.Deserialize<CharacterConfig>(characterPath);
 
-                                var voiceLibrary = new VoiceLibraryDummy();
+                                var dllDirectory = string.Empty;
 
-                                var library = new Library(directory, engine.DllDirectory, voiceLibrary, config, settings, characterConfig);
+                                IVoiceLibrary voiceLibrary = CreateLibrary(directory, config.AssemblyName, config.ModuleName, config.TypeName);
+
+                                if (voiceLibrary is VoiceLibraryDummy)
+                                {
+                                    dllDirectory = engine.DllDirectory;
+                                }
+                                else
+                                {
+                                    dllDirectory = Path.Combine(directory, config.AssemblyName);
+                                }
+
+                                var library = new Library(directory, dllDirectory, voiceLibrary, config, settings, characterConfig, engine.ConfigDirectory);
                                 voicePresetService.Add(new VoicePreset(engine, library)
                                 {
                                     Type = PresetType.Standard,
@@ -446,7 +509,8 @@ namespace Yomiage.GUI.Models
         {
             if (string.IsNullOrWhiteSpace(this.settingService.PresetFilePath) || this.settingService.PresetFilePath == "未登録")
             {
-                this.settingService.PresetFilePath = Path.Combine(this.PresetDirectory, "user.yvpc");
+                this.settingService.PresetFilePath = Path.Combine(this.PresetDirectory,
+                    Path.GetFileNameWithoutExtension(Process.GetCurrentProcess().MainModule.FileName) + ".yvpc");
             }
             string filePath = this.settingService.PresetFilePath;
             if (!File.Exists(filePath))
@@ -464,5 +528,44 @@ namespace Yomiage.GUI.Models
             return filePath;
         }
 
+
+        public void UnZipVEng(string filePath, List<string> configs)
+        {
+            var directorys = Directory.GetDirectories(EngineDirectory);
+            var directory = string.Empty;
+            for (int i = 0; i < 10000; i++)
+            {
+                directory = Path.Combine(EngineDirectory, "Engine_" + i.ToString("000"));
+                if (!directorys.Contains(directory)) { break; }
+            }
+            try
+            {
+                ZipFile.ExtractToDirectory(filePath, directory, Encoding.GetEncoding("sjis"));
+                Util.Utility.SearchFile(directory, "engine.config.json", 6, configs);
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        public void UnZipVLib(string filePath, List<string> configs)
+        {
+            var directorys = Directory.GetDirectories(LibraryDirectory).ToList();
+            var directory = string.Empty;
+            for (int i = 0; i < 10000; i++)
+            {
+                directory = Path.Combine(LibraryDirectory, "Library_" + i.ToString("000"));
+                if (!directorys.Contains(directory)) { break; }
+            }
+            try
+            {
+                ZipFile.ExtractToDirectory(filePath, directory, Encoding.GetEncoding("sjis"));
+                directorys.Add(directory);
+                Util.Utility.SearchFile(directory, "library.config.json", 6, configs);
+            }
+            catch (Exception)
+            {
+            }
+        }
     }
 }

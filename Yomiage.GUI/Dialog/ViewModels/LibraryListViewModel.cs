@@ -48,26 +48,41 @@ namespace Yomiage.GUI.Dialog.ViewModels
 
         private void AddAction()
         {
-            var ofd = new OpenFileDialog() { Filter = "音声ライブラリ(.vlib)|*.vlib" };
+            var ofd = new OpenFileDialog()
+            {
+                Filter = "音声ライブラリ(.vlib)|*.vlib",
+                Multiselect = true,
+            };
+
             if (ofd.ShowDialog() != true) { return; }
 
-            var directorys = Directory.GetDirectories(ConfigService.LibraryDirectory);
-            var directory = string.Empty;
-            for (int i = 0; i < 1000; i++)
-            {
-                directory = Path.Combine(ConfigService.LibraryDirectory, "Library_" + i.ToString("000"));
-                if (!directorys.Contains(directory)) { break; }
-            }
-
-            ZipFile.ExtractToDirectory(ofd.FileName, directory, Encoding.GetEncoding("sjis"));
-
+            // var directorys = Directory.GetDirectories(ConfigService.LibraryDirectory).ToList();
             var configs = new List<string>();
-            Util.Utility.SearchFile(directory, "library.config.json", 6, configs);
+
+            foreach (var vlib in ofd.FileNames)
+            {
+                this.ConfigService.UnZipVLib(vlib, configs);
+                //var directory = string.Empty;
+                //for (int i = 0; i < 1000; i++)
+                //{
+                //    directory = Path.Combine(ConfigService.LibraryDirectory, "Library_" + i.ToString("000"));
+                //    if (!directorys.Contains(directory)) { break; }
+                //}
+                //try
+                //{
+                //    ZipFile.ExtractToDirectory(vlib, directory, Encoding.GetEncoding("sjis"));
+                //    directorys.Add(directory);
+                //    Util.Utility.SearchFile(directory, "library.config.json", 6, configs);
+                //}
+                //catch (Exception)
+                //{
+                //}
+            }
 
             ConfigService.LoadLibrary(ConfigService.LibraryDirectory);
             ConfigService.InitPreset();
 
-            var Text = configs.Count == 0 ? ($"音声ライブラリが見つかりませんでした。\n{directory} を確認してください。") :
+            var Text = configs.Count == 0 ? ($"音声ライブラリが見つかりませんでした。") :
                                             ($"音声ライブラリが {configs.Count} 件みつかりました。");
 
             MessageBox.Show(Text, "音声ライブラリのインストール", MessageBoxButton.OK);

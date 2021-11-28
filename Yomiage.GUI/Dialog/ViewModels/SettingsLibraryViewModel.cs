@@ -119,23 +119,24 @@ namespace Yomiage.GUI.Dialog.ViewModels
 
         private void OpenLicenseAction()
         {
-            var path = Path.Combine(Library.ConfigDirectory, "license.md");
-            if (File.Exists(path))
+            if (OpenText(Path.Combine(Library.ConfigDirectory, "license.md"))) { return; }
+            if (OpenText(Path.Combine(Library.ConfigDirectory, "license.txt"))) { return; }
+            if (!string.IsNullOrWhiteSpace(Library.PairEngineConfigDirectory))
             {
-                OpenText(path);
-                return;
-            }
-            path = Path.Combine(Library.ConfigDirectory, "license.txt");
-            if (File.Exists(path))
-            {
-                OpenText(path);
+                if (OpenText(Path.Combine(Library.PairEngineConfigDirectory, "license.md"))) { return; }
+                if (OpenText(Path.Combine(Library.PairEngineConfigDirectory, "license.txt"))) { return; }
             }
         }
-        private void OpenText(string path)
+        private bool OpenText(string path)
         {
+            if (!File.Exists(path))
+            {
+                return false;
+            }
             IDialogParameters param = new DialogParameters();
             param.Add("FileName", path);
             this.dialogService.ShowDialog("TextDialog", param, _ => { });
+            return true;
         }
         private async Task ActivationAction(string param)
         {

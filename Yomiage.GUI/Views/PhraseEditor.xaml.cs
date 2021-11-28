@@ -37,19 +37,6 @@ namespace Yomiage.GUI.Views
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            // レイアウトを再計算させる
-            var size = new Size(this.ActualWidth, this.ActualHeight);
-
-            var scale = 2;
-
-            // VisualObjectをBitmapに変換する
-            var renderBitmap = new RenderTargetBitmap((int)size.Width * scale,       // 画像の幅
-                                                      (int)size.Height * scale,      // 画像の高さ
-                                                      96.0d * scale,                 // 横96.0DPI
-                                                      96.0d * scale,                 // 縦96.0DPI
-                                                      PixelFormats.Pbgra32); // 32bit(RGBA各8bit)
-            renderBitmap.Render(this);
-
             SaveFileDialog sfd = new()
             {
                 Filter = "画像|*.png",
@@ -62,7 +49,7 @@ namespace Yomiage.GUI.Views
                 // 変換したBitmapをエンコードしてFileStreamに保存する。
                 // BitmapEncoder が指定されなかった場合は、PNG形式とする。
                 var encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
+                encoder.Frames.Add(GetPhraseBitmapFrame(2));
                 encoder.Save(os);
             }
         }
@@ -70,6 +57,27 @@ namespace Yomiage.GUI.Views
         private void UserControl_MouseDown(object sender, MouseButtonEventArgs e)
         {
             this.Focus();
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetImage(GetPhraseBitmapFrame(2));
+        }
+
+        private BitmapFrame GetPhraseBitmapFrame(int scale)
+        {
+            // レイアウトを再計算させる
+            var size = new Size(this.ActualWidth, this.ActualHeight);
+
+            // VisualObjectをBitmapに変換する
+            var renderBitmap = new RenderTargetBitmap((int)size.Width * scale,       // 画像の幅
+                                                      (int)size.Height * scale,      // 画像の高さ
+                                                      96.0d * scale,                 // 横96.0DPI
+                                                      96.0d * scale,                 // 縦96.0DPI
+                                                      PixelFormats.Pbgra32); // 32bit(RGBA各8bit)
+            renderBitmap.Render(this);
+
+            return BitmapFrame.Create(renderBitmap);
         }
     }
 }

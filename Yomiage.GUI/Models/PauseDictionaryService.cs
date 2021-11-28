@@ -4,6 +4,7 @@ using Reactive.Bindings;
 using Reactive.Bindings.Notifiers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -138,7 +139,8 @@ namespace Yomiage.GUI.Models
         {
             if (string.IsNullOrWhiteSpace(this.settingService.PauseDictionaryPath) || this.settingService.PauseDictionaryPath == "未登録")
             {
-                this.settingService.PauseDictionaryPath = Path.Combine(this.configService.PauseDirectory, "user.ysdic");
+                this.settingService.PauseDictionaryPath = Path.Combine(this.configService.PauseDirectory,
+                    Path.GetFileNameWithoutExtension(Process.GetCurrentProcess().MainModule.FileName) + ".ysdic");
             }
             string filePath = this.settingService.PauseDictionaryPath;
             if (!File.Exists(filePath))

@@ -144,8 +144,7 @@
                     Drop="rich_Drop"
                     FontFamily="{Binding SettingService.FontFamily.Value}"
                     FontSize="{Binding SettingService.FontSize.Value}"
-                    PreviewDragOver="rich_PreviewDragOver"
-                    PreviewDrop="rich_PreviewDrop"
+                    DragOver="rich_DragOver"
                     ScrollViewer.ScrollChanged="rich_ScrollChanged"
                     SelectionChanged="rich_SelectionChanged"
                     TextChanged="rich_TextChanged"
@@ -217,8 +216,8 @@
                     FontFamily="{Binding SettingService.FontFamily.Value}"
                     FontSize="{Binding SettingService.FontSize.Value}"
                     IsReadOnly="True"
-                    VerticalScrollBarVisibility="Visible"
                     ScrollViewer.ScrollChanged="rich_playing_ScrollChanged"
+                    VerticalScrollBarVisibility="Visible"
                     Visibility="{Binding VoicePlayerService.IsPlaying.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </Grid>
         </Border>

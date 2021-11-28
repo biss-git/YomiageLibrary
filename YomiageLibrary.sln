@@ -1,17 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31005.135
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yomiage.GUI", "Yomiage.GUI\Yomiage.GUI.csproj", "{9500E54D-7357-415C-B07C-CE7DDC48CB9A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yomiage.SDK", "Yomiage.SDK\Yomiage.SDK.csproj", "{365320C4-EC28-4D21-9957-F06C99438CAC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yomiage.Core", "Yomiage.Core\Yomiage.Core.csproj", "{6E009D2A-6F16-4179-81C6-D9A996E8CCB3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yomiage.API", "Yomiage.API\Yomiage.API.csproj", "{63BC5758-849C-4050-A071-ABDE2DB3A30A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yomiage.API", "Yomiage.API\Yomiage.API.csproj", "{63BC5758-849C-4050-A071-ABDE2DB3A30A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yomiage.YukarinettePlugin", "Yomiage.YukarinettePlugin\Yomiage.YukarinettePlugin.csproj", "{648E7D6C-0E1C-4EA5-8252-DC01D066A6D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yomiage.GUI", "Yomiage.GUI\Yomiage.GUI.csproj", "{B08EF295-6C3B-461D-BFD2-132F1559CA81}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,10 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9500E54D-7357-415C-B07C-CE7DDC48CB9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9500E54D-7357-415C-B07C-CE7DDC48CB9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9500E54D-7357-415C-B07C-CE7DDC48CB9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9500E54D-7357-415C-B07C-CE7DDC48CB9A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{365320C4-EC28-4D21-9957-F06C99438CAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{365320C4-EC28-4D21-9957-F06C99438CAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{365320C4-EC28-4D21-9957-F06C99438CAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +35,10 @@ Global
 		{648E7D6C-0E1C-4EA5-8252-DC01D066A6D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{648E7D6C-0E1C-4EA5-8252-DC01D066A6D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{648E7D6C-0E1C-4EA5-8252-DC01D066A6D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B08EF295-6C3B-461D-BFD2-132F1559CA81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B08EF295-6C3B-461D-BFD2-132F1559CA81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B08EF295-6C3B-461D-BFD2-132F1559CA81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B08EF295-6C3B-461D-BFD2-132F1559CA81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

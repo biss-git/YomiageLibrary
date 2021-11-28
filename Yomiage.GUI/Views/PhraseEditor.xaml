@@ -34,8 +34,10 @@
                 Header="進む"
                 InputGestureText="Ctrl+Y" />
             <Separator />
-            <MenuItem Command="{Binding CopyCommand}" Header="コピー" />
-            <MenuItem Command="{Binding PasteCommand}" Header="貼り付け" />
+            <MenuItem Command="{Binding CopyEditorCommand}" Header="タブをコピー" />
+            <MenuItem Click="MenuItem_Click" Header="クリップボードに画像をコピー" />
+            <!--<MenuItem Command="{Binding CopyCommand}" Header="コピー" />
+            <MenuItem Command="{Binding PasteCommand}" Header="貼り付け" />-->
         </ContextMenu>
     </UserControl.ContextMenu>
     <Grid>

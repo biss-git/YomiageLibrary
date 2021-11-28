@@ -17,7 +17,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Yomiage.API;
 using Yomiage.Core.Models;
 using Yomiage.GUI.EventMessages;
@@ -402,6 +401,60 @@ namespace Yomiage.GUI
                         this.voicePlayerService.Stop();
                         break;
                 }
+            }
+        }
+
+        private void MetroWindow_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var fileNames = (string[])e.Data.GetData(DataFormats.FileDrop);
+                var engineConfigs = new List<string>();
+                var libraryConfigs = new List<string>();
+                foreach (var fileName in fileNames)
+                {
+                    try
+                    {
+                        switch (Path.GetExtension(fileName))
+                        {
+                            case ".txt":
+                                this.ScriptService.AddOpen(fileName, (null, null));
+                                break;
+                            case ".veng":
+                                this.ConfigService.UnZipVEng(fileName, engineConfigs);
+                                break;
+                            case ".vlib":
+                                this.ConfigService.UnZipVLib(fileName, libraryConfigs);
+                                break;
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                }
+                if (engineConfigs.Count > 0 || libraryConfigs.Count > 0)
+                {
+                    var Text = (libraryConfigs.Count > 0 ? $"音声ライブラリが {libraryConfigs.Count} 件みつかりました。\n" : "") +
+                               (engineConfigs.Count > 0 ? $"音声合成エンジンが {engineConfigs.Count} 件みつかりました。" : "");
+                    MessageBox.Show(Text, "プラグインのインストール", MessageBoxButton.OK);
+                    ConfigService.LoadEngine(ConfigService.EngineDirectory);
+                    ConfigService.LoadLibrary(ConfigService.LibraryDirectory);
+                    ConfigService.InitPreset();
+                }
+            }
+        }
+
+        private void MetroWindow_PreviewDragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effects = DragDropEffects.All;
+                e.Handled = true;
+            }
+            else
+            {
+                e.Effects = DragDropEffects.None;
             }
         }
     }

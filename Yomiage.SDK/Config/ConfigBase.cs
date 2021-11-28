@@ -49,7 +49,7 @@ namespace Yomiage.SDK.Config
         /// <summary>
         /// 音声ライブラリまたは音声合成エンジンのdllの.config.jsonからの相対パス
         /// </summary>
-        public string AssmblyName { get; set; } = string.Empty;
+        public string AssemblyName { get; set; } = string.Empty;
 
         /// <summary>
         /// 音声ライブラリまたは音声合成エンジンのモジュール名

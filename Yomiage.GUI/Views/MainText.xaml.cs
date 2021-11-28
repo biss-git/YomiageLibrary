@@ -222,23 +222,21 @@ namespace Yomiage.GUI.Views
 
         private void rich_Drop(object sender, DragEventArgs e)
         {
-            AddPresetAction();
+            if (e.Data.GetDataPresent("Data"))
+            {
+                AddPresetAction();
+                e.Handled = true;
+            }
         }
 
-        private void rich_PreviewDragOver(object sender, DragEventArgs e)
+        private void rich_DragOver(object sender, DragEventArgs e)
         {
-            var data = e.Data;
-            var d = data.GetDataPresent("Data");
             //ファイルがドラッグされたとき、カーソルをドラッグ中のアイコンに変更し、そうでない場合は何もしない。
             //e.Effects = (e.Data.GetDataPresent(DataFormats.FileDrop)) ? DragDropEffects.Copy : e.Effects = DragDropEffects.None;
-            e.Effects = d ? DragDropEffects.Move : e.Effects = DragDropEffects.None;
+            e.Effects = (e.Data.GetDataPresent("Data") || e.Data.GetDataPresent(DataFormats.FileDrop)) ? DragDropEffects.Move : DragDropEffects.None;
             e.Handled = true;
         }
 
-        private void rich_PreviewDrop(object sender, DragEventArgs e)
-        {
-
-        }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {

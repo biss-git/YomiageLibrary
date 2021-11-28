@@ -242,7 +242,7 @@ namespace Yomiage.GUI.Models
 
     public class MySettings
     {
-        public string SettingsFilePath;
+        public readonly string SettingsFilePath;
         public SettingValues Default { get; private set; }
         public MySettings(string settingsFilePath, bool reload = true)
         {

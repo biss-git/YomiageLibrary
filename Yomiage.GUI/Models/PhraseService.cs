@@ -3,6 +3,7 @@ using Reactive.Bindings;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
@@ -19,6 +20,8 @@ namespace Yomiage.GUI.Models
 {
     public class PhraseService : IDisposable
     {
+        private readonly string filePath = ".editors.json";
+
         private readonly CompositeDisposable _disposables = new();
         public void Dispose() => _disposables.Dispose();
 
@@ -32,6 +35,11 @@ namespace Yomiage.GUI.Models
         {
             this.container = container;
             Editors = new ReadOnlyObservableCollection<PhraseEditorViewModel>(editors);
+
+            {
+                using var processModule = Process.GetCurrentProcess().MainModule;
+                filePath = processModule?.FileName + ".editors.json";
+            }
         }
 
         private void Add(PhraseEditorViewModel editor) => editors.Add(editor);
@@ -105,14 +113,14 @@ namespace Yomiage.GUI.Models
                     {"OriginalText" , e.OriginalText.Value},
                     {"Phrase" , JsonUtil.SerializeToString(e.Phrase.Value)},
                 });
-            JsonUtil.Serialize(dict, "editors.json");
+            JsonUtil.Serialize(dict, filePath);
         }
         public void LoadEditors()
         {
-            if (!File.Exists("editors.json")) { AddNew(); return; }
+            if (!File.Exists(filePath)) { AddNew(); return; }
             try
             {
-                var dict = JsonUtil.Deserialize<Dictionary<string, string>[]>("editors.json");
+                var dict = JsonUtil.Deserialize<Dictionary<string, string>[]>(filePath);
                 foreach (var s in dict)
                 {
                     try

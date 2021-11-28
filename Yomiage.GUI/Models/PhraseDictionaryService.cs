@@ -1,4 +1,5 @@
 ﻿using Reactive.Bindings.Notifiers;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Yomiage.Core.Models;
@@ -93,7 +94,8 @@ namespace Yomiage.GUI.Models
         {
             if (string.IsNullOrWhiteSpace(this.settingService.PhraseDictionaryPath) || this.settingService.PhraseDictionaryPath == "未登録")
             {
-                this.settingService.PhraseDictionaryPath = Path.Combine(this.configService.PhraseDirectory, "user.ypdic");
+                this.settingService.PhraseDictionaryPath = Path.Combine(this.configService.PhraseDirectory,
+                    Path.GetFileNameWithoutExtension(Process.GetCurrentProcess().MainModule.FileName) + ".ypdic");
             }
             string filePath = this.settingService.PhraseDictionaryPath;
             if (!File.Exists(filePath))

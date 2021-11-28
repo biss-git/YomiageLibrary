@@ -2,78 +2,21 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <Version>1.3.0</Version>
+    <PackageIcon>coloricon.png</PackageIcon>
     <ApplicationIcon>icon.ico</ApplicationIcon>
-    <PublishSingleFile>true</PublishSingleFile>
-    <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
-    <AssemblyName>Yomiage.GUI</AssemblyName>
-    <RootNamespace>Yomiage.GUI</RootNamespace>
-    <Version>1.2.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="picture\**" />
-    <EmbeddedResource Remove="picture\**" />
-    <None Remove="picture\**" />
-    <Page Remove="picture\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="coloricon.png" />
     <None Remove="icon.png" />
-    <None Remove="original.gif" />
-    <None Remove="Themes\Light.Zunda" />
     <None Remove="スプラッシュ.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dirkster.AvalonDock" Version="4.50.3" />
-    <PackageReference Include="Dirkster.AvalonDock.Themes.VS2013" Version="4.50.3" />
-    <PackageReference Include="MahApps.Metro" Version="2.4.5" />
-    <PackageReference Include="MahApps.Metro.IconPacks" Version="4.8.0" />
-    <PackageReference Include="NAudio" Version="2.0.0" />
-    <PackageReference Include="NLog" Version="4.7.10" />
-    <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
-    <PackageReference Include="ReactiveProperty.WPF" Version="7.9.0" />
-    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
-    <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Yomiage.API\Yomiage.API.csproj" />
-    <ProjectReference Include="..\Yomiage.Core\Yomiage.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="icon.ico">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <None Update="Themes\Docking.Dark.Crimson.xaml.origin">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <Generator>MSBuild:Compile</Generator>
-    </None>
-    <None Update="Themes\Light.Zunda">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
-    <None Update="UniCoe.exe.config.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Yomiage.GUI.exe.config.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\original.gif">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <Resource Include="coloricon.png" />
-    <Resource Include="icon.png" />
+    <Content Include="icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -81,11 +24,40 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Settings.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
+    <PackageReference Include="Dirkster.AvalonDock" Version="4.60.0" />
+    <PackageReference Include="Dirkster.AvalonDock.Themes.VS2013" Version="4.60.0" />
+    <PackageReference Include="MahApps.Metro" Version="2.4.9" />
+    <PackageReference Include="MahApps.Metro.IconPacks" Version="4.11.0" />
+    <PackageReference Include="NAudio" Version="2.0.1" />
+    <PackageReference Include="NLog" Version="4.7.12" />
+    <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
+    <PackageReference Include="ReactiveProperty.WPF" Version="8.0.2" />
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+    <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Yomiage.API\Yomiage.API.csproj" />
+    <ProjectReference Include="..\Yomiage.Core\Yomiage.Core.csproj" />
+    <ProjectReference Include="..\Yomiage.SDK\Yomiage.SDK.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="coloricon.png" />
+    <Resource Include="icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="coloricon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="UniCoe.exe.config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Yomiage.GUI.exe.config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

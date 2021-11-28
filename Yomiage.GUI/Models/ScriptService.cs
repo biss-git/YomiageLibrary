@@ -3,6 +3,7 @@ using Reactive.Bindings;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
@@ -19,6 +20,8 @@ namespace Yomiage.GUI.Models
 {
     public class ScriptService : IDisposable
     {
+        private readonly string filePath = ".scripts.json";
+
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         public void Dispose() => _disposables.Dispose();
 
@@ -32,6 +35,11 @@ namespace Yomiage.GUI.Models
         {
             this.container = container;
             Scripts = new ReadOnlyObservableCollection<MainTextViewModel>(scripts);
+
+            {
+                using var processModule = Process.GetCurrentProcess().MainModule;
+                filePath = processModule?.FileName + ".scripts.json";
+            }
         }
 
         public void Add(MainTextViewModel script) => scripts.Add(script);
@@ -109,14 +117,14 @@ namespace Yomiage.GUI.Models
                     {"IsActive" , (s == ActiveScript.Value).ToString()},
                     {"Content" , s.IsDirty.Value ? s.GetContent() : ""},
                 });
-            JsonUtil.Serialize(dict, "scripts.json");
+            JsonUtil.Serialize(dict, filePath);
         }
         public void LoadScripts()
         {
-            if (!File.Exists("scripts.json")) { AddNew(); return; }
+            if (!File.Exists(filePath)) { AddNew(); return; }
             try
             {
-                var dict = JsonUtil.Deserialize<Dictionary<string, string>[]>("scripts.json");
+                var dict = JsonUtil.Deserialize<Dictionary<string, string>[]>(filePath);
                 foreach (var s in dict)
                 {
                     try

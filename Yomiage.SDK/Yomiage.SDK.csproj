@@ -2,11 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <PackageProjectUrl>https://github.com/biss-git/YomiageLibrary</PackageProjectUrl>
     <Copyright />
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageIcon>circleicon256x256-bgbk.png</PackageIcon>
+    <PackageIconUrl />
+    <RepositoryUrl>https://github.com/biss-git/YomiageLibrary</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -19,6 +22,10 @@
 
   <ItemGroup>
     <None Remove="stylecop.json" />
+    <None Include="D:\読み上げちゃんUI\☆_アイコン\unikoe-logo-fix01\unikoe-logo-fix01\icon\circleicon256x256-bgbk.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
