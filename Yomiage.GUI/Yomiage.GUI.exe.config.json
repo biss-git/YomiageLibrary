@@ -1,6 +1,11 @@
 {
-  "EngineDirectory": "C:\\Users\\kikuchi\\source\\repos\\UtaTalk",
-  "LibraryDirectory": "C:\\Users\\kikuchi\\source\\repos\\UtaTalk",
+  // "EngineDirectory": "C:\\Users\\kikuchi\\source\\repos\\UtaTalk",
+  // "LibraryDirectory": "C:\\Users\\kikuchi\\source\\repos\\UtaTalk",
+  // "EngineDirectory": "C:\\Users\\kikuchi\\source\\repos\\SampleTalk",
+  // "LibraryDirectory": "C:\\Users\\kikuchi\\source\\repos\\SampleTalk",
+  // "EngineDirectory": "C:\\Users\\kikuchi\\source\\repos\\VoiceVoxTalk\\VoiceVoxTalk\\bin\\Debug\\netstandard2.1",
+  // "EngineDirectory": "C:\\Users\\kikuchi\\source\\repos\\NeutrinoTalk\\NeutrinoTalk\\bin\\Debug",
+  "EngineDirectory": "C:\\Users\\kikuchi\\source\\repos\\SapiTalk\\SapiTalk\\bin\\Debug\\netstandard2.1",
   "AllowMultiProcess": true,
   "DocumentDirectoryMode": false,
   "PortNumber": 42503

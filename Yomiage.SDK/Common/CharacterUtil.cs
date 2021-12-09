@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Yomiage.SDK.Talk;
 
-namespace Yomiage.GUI.Util
+namespace Yomiage.SDK.Common
 {
-    internal static class CharacterUtil
+    public static class CharacterUtil
     {
         /// <summary>
         /// 母音, 拗音

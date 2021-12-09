@@ -21,21 +21,19 @@ namespace Yomiage.Core.Types
         public string SettingPath => Path.Combine(ConfigDirectory, "library.settings.json");
         public IVoiceLibrary VoiceLibrary { get; }
         public LibraryConfig LibraryConfig { get; }
-        public LibrarySettings LibrarySettings { get; set; }
         public CharacterConfig CharacterConfig { get; }
 
 
         public Library(string configDirectory, string dllDirectory, IVoiceLibrary VoiceLibrary, LibraryConfig LibraryConfig, LibrarySettings LibrarySettings, CharacterConfig characterConfig, string pairEngineConfigDirectory = null)
         {
-            VoiceLibrary.Initialize(configDirectory, dllDirectory, LibraryConfig);
-            VoiceLibrary.Settings = LibrarySettings;
             this.ConfigDirectory = configDirectory;
             this.DllDirectory = dllDirectory;
             this.VoiceLibrary = VoiceLibrary;
             this.LibraryConfig = LibraryConfig;
-            this.LibrarySettings = LibrarySettings;
             this.CharacterConfig = characterConfig;
             this.PairEngineConfigDirectory = pairEngineConfigDirectory;
+            VoiceLibrary.Settings = LibrarySettings;
+            VoiceLibrary.Initialize(configDirectory, dllDirectory, LibraryConfig);
         }
 
     }

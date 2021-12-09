@@ -15,8 +15,12 @@ namespace Yomiage.SDK.Talk
     /// 文章の読み上げ指示情報
     /// フレーズ編集情報
     /// </summary>
-    public class TalkScript
+    public class TalkScript : VoiceEffectValueBase
     {
+        /// <inheritdoc/>
+        [JsonIgnore]
+        public override string Type => "Sentence";
+
         /// <summary>
         /// ユーザーが打ち込んだ文字列そのもの
         /// </summary>
@@ -42,7 +46,7 @@ namespace Yomiage.SDK.Talk
         /// <summary>
         /// 文末のポーズと音声効果。モーラは無いかわりに、？や！などの記号情報が入る。
         /// </summary>
-        [JsonPropertyName("E")]
+        [JsonPropertyName("End")]
         public EndSection EndSection { get; set; } = new EndSection();
 
         /// <summary>
@@ -70,29 +74,6 @@ namespace Yomiage.SDK.Talk
         }
 
         /// <summary>
-        /// 読み（全部カタカナ）を取得する。
-        /// </summary>
-        /// <param name="withSpace">空白をセクションの間に入れるか</param>
-        /// <returns>読み</returns>
-        public string GetYomi(bool withSpace = true)
-        {
-            string yomi = string.Empty;
-            this.Sections.ForEach(s =>
-            {
-                s.Moras.ForEach(m =>
-                {
-                    yomi += m.Character;
-                });
-                if (withSpace)
-                {
-                    yomi += "　";
-                }
-            });
-            yomi += EndSection.EndSymbol;
-            return yomi;
-        }
-
-        /// <summary>
         /// nullになっている部分を全て埋める
         /// </summary>
         /// <param name="config">エンジンコンフィグ</param>
@@ -110,13 +91,29 @@ namespace Yomiage.SDK.Talk
             {
                 Sections[i].FillCurve(curve, config);
             }
+
+            {
+                var talk = new VoiceEffectValue(config);
+                Volume ??= talk.Volume;
+                Speed ??= talk.Speed;
+                Pitch ??= talk.Pitch;
+                Emphasis ??= talk.Emphasis;
+                foreach (var s in talk.AdditionalEffect)
+                {
+                    var val = GetAdditionalValue(s.Key);
+                    if (val == null)
+                    {
+                        SetAdditionalValue(s.Key, s.Value);
+                    }
+                }
+            }
         }
 
         /// <summary>
         /// 不要なパラメータを削除する。
         /// </summary>
         /// <param name="engineConfig">エンジンコンフィグ</param>
-        public void RemoveUnnecessaryParameters(EngineConfig engineConfig)
+        public new void RemoveUnnecessaryParameters(EngineConfig engineConfig)
         {
             Sections.ForEach(s =>
             {
@@ -124,6 +121,8 @@ namespace Yomiage.SDK.Talk
                 s.Moras.ForEach(m => m.RemoveUnnecessaryParameters(engineConfig));
             });
             EndSection.RemoveUnnecessaryParameters(engineConfig);
+
+            base.RemoveUnnecessaryParameters(engineConfig);
         }
 
         /// <summary>
@@ -156,6 +155,83 @@ namespace Yomiage.SDK.Talk
             }
 
             return jsonText.Replace("\"", "!");
+        }
+
+        /// <summary>
+        /// 読み（全部カタカナ）を取得する。
+        /// </summary>
+        /// <param name="withSpace">空白をセクションの間に入れるか</param>
+        /// <returns>読み</returns>
+        public string GetYomi(bool withSpace = true)
+        {
+            string yomi = string.Empty;
+            this.Sections.ForEach(s =>
+            {
+                s.Moras.ForEach(m =>
+                {
+                    yomi += m.Character;
+                });
+                if (withSpace)
+                {
+                    yomi += "　";
+                }
+            });
+            yomi += EndSection.EndSymbol;
+            return yomi;
+        }
+
+        /// <summary>
+        /// 全てのカナはカタカナで記述される
+        /// アクセント句は/または、で区切る。、で区切った場合に限り無音区間が挿入される。
+        /// カナの手前に_を入れるとそのカナは無声化される
+        /// アクセント位置を'で指定する。全てのアクセント句にはアクセント位置を1つ指定する必要がある。
+        /// 長音は使えない
+        /// </summary>
+        /// <param name="splitChar">区切り文字 / or 、</param>
+        /// <returns>AquesTalkライクなテキスト</returns>
+        public string GetYomiForAquesTalkLike(string splitChar = "/")
+        {
+            var vowel = "ア";
+            string yomi = string.Empty;
+            this.Sections.ForEach(s =>
+            {
+                bool accentFlag = true;
+                for (int i = 0; i < s.Moras.Count; i++)
+                {
+                    var m = s.Moras[i];
+                    var character = m.Character;
+                    if (character == "ー")
+                    {
+                        character = vowel;
+                    }
+                    else if(character == "ン")
+                    {
+                        vowel = "ウ";
+                    }
+                    else
+                    {
+                        var v = CharacterUtil.FindBoin(m);
+                        if (v != null)
+                        {
+                            vowel = v;
+                        }
+                    }
+
+                    yomi += (m.Voiceless == true ? "_" : string.Empty) + character;
+                    if (accentFlag &&
+                        (m == s.Moras.Last() || (m.Accent && !s.Moras[i + 1].Accent)))
+                    {
+                        yomi += "'";
+                        accentFlag = false;
+                    }
+                }
+
+                if (s != Sections.Last())
+                {
+                    yomi += splitChar;
+                }
+            });
+            return yomi;
         }
     }
 }

@@ -13,7 +13,8 @@
              mc:Ignorable="d" >
     <StackPanel Margin="3">
         <StackPanel Margin="40">
-            <mah:NumericUpDown x:Name="InputTextBox"
+            <mah:NumericUpDown FontSize="24"
+                               x:Name="InputTextBox"
                                Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"
                                NumericInputMode="Decimal"
                                Speedup="True"

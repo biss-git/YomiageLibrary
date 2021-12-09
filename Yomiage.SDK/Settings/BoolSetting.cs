@@ -7,29 +7,21 @@ namespace Yomiage.SDK.Settings
     /// <summary>
     /// 真偽値の設定
     /// </summary>
-    public class BoolSetting : SettingBase
+    public class BoolSetting : SettingBase, ISetting<bool>
     {
-        /// <summary>
-        /// 設定値
-        /// </summary>
+        /// <inheritdoc/>
         public bool Value { get; set; }
 
-        /// <summary>
-        /// 初期値
-        /// </summary>
+        /// <inheritdoc/>
         public bool DefaultValue { get; set; }
 
-        /// <summary>
-        /// 初期値を設定値に代入
-        /// </summary>
+        /// <inheritdoc/>
         public override void ResetValue()
         {
             Value = DefaultValue;
         }
 
-        /// <summary>
-        /// 不正な値をはじく
-        /// </summary>
+        /// <inheritdoc/>
         public override void Fix()
         {
             // 特にはじくものは無いので、処理なし

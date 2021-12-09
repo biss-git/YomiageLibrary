@@ -62,6 +62,7 @@ namespace Yomiage.Core.Types
             {
                 this.VoiceEffect.AdditionalEffect.Add(s.Key, s.Value);
             });
+            VoiceEffect.PauseOverride = Engine.EngineConfig.PauseOverride;
             VoiceEffect.LongPause = Engine.EngineConfig.LongPauseSetting.DefaultValue;
             VoiceEffect.ShortPause = Engine.EngineConfig.ShortPauseSetting.DefaultValue;
         }
@@ -78,12 +79,16 @@ namespace Yomiage.Core.Types
             try
             {
                 FixVoiceEffect();
+                var mainVoice = new VoiceConfig(Library.VoiceLibrary, JsonUtil.DeepClone(VoiceEffect));
+                var subVoice = new VoiceConfig(SubPreset?.Library.VoiceLibrary, JsonUtil.DeepClone(SubPreset?.VoiceEffect));
+                var masterEffect = JsonUtil.DeepClone(masterEffectValue);
                 return await Engine.VoiceEngine.Play(
-                    new VoiceConfig(Library.VoiceLibrary, JsonUtil.DeepClone(VoiceEffect)),
-                    new VoiceConfig(SubPreset?.Library.VoiceLibrary, JsonUtil.DeepClone(SubPreset?.VoiceEffect)),
+                    mainVoice,
+                    subVoice,
                     script,
-                    JsonUtil.DeepClone(masterEffectValue),
-                    SetSamplingRate_Hz);
+                    masterEffect,
+                    SetSamplingRate_Hz,
+                    null);
             }
             catch (Exception)
             {

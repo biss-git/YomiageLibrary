@@ -15,6 +15,8 @@ using Yomiage.SDK.Talk;
 using Yomiage.SDK.VoiceEffects;
 using System.Windows.Media;
 using Yomiage.SDK.Settings;
+using Reactive.Bindings.Notifiers;
+using Yomiage.GUI.EventMessages;
 
 namespace Yomiage.GUI.ViewModels
 {
@@ -50,7 +52,8 @@ namespace Yomiage.GUI.ViewModels
         public PresetEditorViewModel(
             ConfigService configService,
             VoicePresetService voicePresetService,
-            IDialogService dialogService) : base(dialogService)
+            IDialogService dialogService,
+            IMessageBroker messageBroker) : base(dialogService)
         {
             this.configService = configService;
 
@@ -79,6 +82,8 @@ namespace Yomiage.GUI.ViewModels
             SelectSubPresetCommand = new ReactiveCommand().WithSubscribe(SelectSubPresetAction).AddTo(Disposables);
 
             voicePresetService.SelectedPreset.Subscribe(SetPreset).AddTo(Disposables);
+
+            messageBroker.Subscribe<AppLoaded>(_ => SetPreset(voicePresetService.SelectedPreset.Value)).AddTo(Disposables);
         }
 
         private void SetPreset(VoicePreset preset)
@@ -196,13 +201,11 @@ namespace Yomiage.GUI.ViewModels
             switch (param)
             {
                 case "Main":
-                    if (this.SelectedPreset.Value.Library.LibrarySettings == null) { return; }
                     parameters.Add("Library", this.SelectedPreset.Value.Library);
                     this.DialogService.ShowDialog("SettingsLibraryDialog", parameters, result => { });
                     break;
                 case "Sub":
                     if (this.SelectedPreset.Value.SubPreset == null) { return; }
-                    if (this.SelectedPreset.Value.SubPreset.Library.LibrarySettings == null) { return; }
                     parameters.Add("Library", this.SelectedPreset.Value.SubPreset.Library);
                     this.DialogService.ShowDialog("SettingsLibraryDialog", parameters, result => { });
                     break;

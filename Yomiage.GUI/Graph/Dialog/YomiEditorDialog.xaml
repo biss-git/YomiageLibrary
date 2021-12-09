@@ -14,7 +14,7 @@
         <Label Width="450" Height="0"/>
 
         <!-- 入力欄 -->
-        <TextBox x:Name="text" Margin="20" KeyDown="text_KeyDown"/>
+        <TextBox FontSize="24" x:Name="text" Margin="20" KeyDown="text_KeyDown"/>
         <Separator/>
 
         <!-- OK Cancel -->

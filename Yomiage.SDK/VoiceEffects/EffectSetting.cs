@@ -13,21 +13,17 @@ namespace Yomiage.SDK.VoiceEffects
     /// DoubleSetting とほぼ同じだが、
     /// 単位を設定できる、入力範囲の拡張ができる、色を設定できる、といった違いがある。
     /// </summary>
-    public class EffectSetting : SettingBase, Common.IFixAble
+    public class EffectSetting : SettingBase, Common.IFixAble, ISetting<double>
     {
         /// <summary>
         /// 表示単位 特になければ空文字でいい
         /// </summary>
         public string Unit { get; set; } = string.Empty;
 
-        /// <summary>
-        /// 設定値
-        /// </summary>
+        /// <inheritdoc/>
         public double Value { get; set; }
 
-        /// <summary>
-        /// 初期値
-        /// </summary>
+        /// <inheritdoc/>
         public double DefaultValue { get; set; }
 
         /// <summary>
@@ -49,6 +45,11 @@ namespace Yomiage.SDK.VoiceEffects
         /// 設定可能な最大値（入力範囲が拡張されたとき）
         /// </summary>
         public double MaxExtend { get; set; }
+
+        /// <summary>
+        /// TalkScript に null値を許すかどうか
+        /// </summary>
+        public bool NullAble { get; set; }
 
         /// <summary>
         /// GUIでの最小ステップ。マウスホイールとかで一度に動く値。
@@ -82,17 +83,13 @@ namespace Yomiage.SDK.VoiceEffects
         /// </summary>
         public string IconKind { get; set; }
 
-        /// <summary>
-        /// 初期値に戻す
-        /// </summary>
+        /// <inheritdoc/>
         public override void ResetValue()
         {
             Value = DefaultValue;
         }
 
-        /// <summary>
-        /// 不正な値をはじく
-        /// </summary>
+        /// <inheritdoc/>
         public override void Fix()
         {
             Value = Value.Fix();
@@ -121,18 +118,19 @@ namespace Yomiage.SDK.VoiceEffects
         }
 
         /// <summary>
-        /// Mora か Section かが Type と一致しているかを確認します。
+        /// Type が Type と一致しているかを確認します。
         /// 一致していなければ辞書に保存するときには消して大丈夫
         /// </summary>
-        /// <param name="isMora">isMora</param>
-        /// <param name="isEndSection">isEndSection</param>
+        /// <param name="type">type</param>
         /// <returns>
-        /// true: isMora が Type と一致している
-        /// false: isMora が Type と一致していない
+        /// true: type が Type と一致している
+        /// false: type が Type と一致していない
         /// </returns>
-        public bool CheckIsMora(bool isMora, bool isEndSection)
+        public bool CheckType(string type)
         {
-            return isEndSection || (Type == "Mora" && isMora) || (Type != "Mora" && !isMora);
+            return Type == type ||
+                (Type == "EndSection" &&
+                 (type == "Section" || type == "Mora" || type == "Curve"));
         }
     }
 }

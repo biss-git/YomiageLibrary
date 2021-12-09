@@ -52,8 +52,9 @@ namespace Yomiage.SDK
         /// <param name="talkScript"> 読み上げる内容 </param>
         /// <param name="masterEffect"> マスターコントロールの音声効果 </param>
         /// <param name="setSamplingRate_Hz"> サンプリング周波数を教えてほしい </param>
+        /// <param name="submitWavePart">音声波形を分割して渡す</param>
         /// <returns> 音声波形 </returns>
-        Task<double[]> Play(VoiceConfig mainVoice, VoiceConfig subVoice, TalkScript talkScript, MasterEffectValue masterEffect, Action<int> setSamplingRate_Hz);
+        Task<double[]> Play(VoiceConfig mainVoice, VoiceConfig subVoice, TalkScript talkScript, MasterEffectValue masterEffect, Action<int> setSamplingRate_Hz, Action<double[]> submitWavePart);
 
         /// <summary>
         /// 音声の保存処理
@@ -72,6 +73,13 @@ namespace Yomiage.SDK
         /// <param name="encoding"> テキストのエンコード情報 </param>
         /// <returns> 音声波形 </returns>
         Task Save(VoiceConfig mainVoice, VoiceConfig subVoice, TalkScript[] talkScripts, MasterEffectValue masterEffect, string filePath, int startPause, int endPause, bool saveWithText, Encoding encoding);
+
+        /// <summary>
+        /// エンジン固有の読みを取得する。
+        /// </summary>
+        /// <param name="text">読み上げる文章</param>
+        /// <returns>読み方</returns>
+        Task<TalkScript> GetDictionary(string text);
 
         /// <summary>
         /// 音声生成の中断処理

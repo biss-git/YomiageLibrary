@@ -19,17 +19,15 @@ namespace Yomiage.Core.Types
         public string SettingPath => Path.Combine(ConfigDirectory, "engine.settings.json");
         public IVoiceEngine VoiceEngine { get; }
         public EngineConfig EngineConfig { get; }
-        public EngineSettings EngineSettings { get; set; }
 
         public Engine(string configDirectory, string dllDirectory, IVoiceEngine VoiceEngine, EngineConfig EngineConfig, EngineSettings EngineSettings)
         {
-            VoiceEngine.Initialize(configDirectory, dllDirectory, EngineConfig);
             this.ConfigDirectory = configDirectory;
             this.DllDirectory = dllDirectory;
             this.VoiceEngine = VoiceEngine;
             this.EngineConfig = EngineConfig;
-            this.EngineSettings = EngineSettings;
             VoiceEngine.Settings = EngineSettings;
+            VoiceEngine.Initialize(configDirectory, dllDirectory, EngineConfig);
         }
     }
 }

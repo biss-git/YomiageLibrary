@@ -12,20 +12,24 @@
         Width="1000"
         AutoGenerateColumns="False"
         CanUserAddRows="False"
+        IsReadOnly="True"
         CanUserReorderColumns="False"
         ItemsSource="{Binding Items}">
         <DataGrid.Columns>
             <DataGridTextColumn
                 Width="*"
                 Binding="{Binding Operation}"
+                IsReadOnly="True"
                 Header="操作内容" />
             <DataGridTextColumn
                 Width="200"
                 Binding="{Binding Key}"
+                IsReadOnly="True"
                 Header="ショートカットキー" />
             <DataGridTextColumn
                 Width="200"
                 Binding="{Binding Target}"
+                IsReadOnly="True"
                 Header="操作対象" />
         </DataGrid.Columns>
         <DataGrid.Style>

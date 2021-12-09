@@ -17,9 +17,11 @@ namespace Yomiage.GUI.ViewModels
     class PresetStandardViewModel : ViewModelBase
     {
         public ReadOnlyReactiveCollection<VoicePreset> Presets { get; }
+        public IFilteredReadOnlyObservableCollection<VoicePreset> FilterdPresets { get; }
         public ReactivePropertySlim<VoicePreset> SelectedPreset { get; }
         public ReactiveCommand CopyCommand { get; }
         public VoicePresetService VoicePresetService { get; }
+        public ReactivePropertySlim<string> SearchText { get; } = new();
 
         private ReactivePropertySlim<bool> isSelected;
         LayoutService layoutService;
@@ -40,6 +42,7 @@ namespace Yomiage.GUI.ViewModels
 
             isSelected = new ReactivePropertySlim<bool>(false).AddTo(Disposables);
             Presets = voicePresetService.StandardPreset.ToReadOnlyReactiveCollection();
+            FilterdPresets = Presets.ToFilteredReadOnlyObservableCollection(x => x.IsVisible).AddTo(Disposables);
             CopyCommand = isSelected.ToReactiveCommand().WithSubscribe(CopyAction).AddTo(Disposables);
             SelectedPreset = new ReactivePropertySlim<VoicePreset>().AddTo(Disposables);
             SelectedPreset.Subscribe(preset =>
@@ -54,6 +57,16 @@ namespace Yomiage.GUI.ViewModels
                 isSelected.Value = (preset != null && preset.Type == PresetType.Standard);
                 SelectedPreset.Value = isSelected.Value ? preset : null;
             }).AddTo(Disposables);
+
+            SearchText.Subscribe(text =>
+            {
+                foreach (var p in Presets)
+                {
+                    p.IsVisible = string.IsNullOrWhiteSpace(text) ||
+                                  p.Name.Contains(text, StringComparison.OrdinalIgnoreCase) ||
+                                  p.Engine.Name.Contains(text, StringComparison.OrdinalIgnoreCase);
+                }
+            });
         }
 
         private void CopyAction()

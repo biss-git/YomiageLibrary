@@ -15,10 +15,9 @@ namespace Yomiage.SDK.Talk
     /// </summary>
     public class EndSection : VoiceEffectValueBase
     {
-        /// <summary>
-        /// エンドセクションかどうか
-        /// </summary>
-        public override bool IsEndSection => true;
+        /// <inheritdoc/>
+        [JsonIgnore]
+        public override string Type => "EndSection";
 
         /// <summary>
         /// フレーズ編集の最後のポーズ

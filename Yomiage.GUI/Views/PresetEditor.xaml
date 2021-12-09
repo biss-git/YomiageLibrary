@@ -69,9 +69,6 @@
                                         <DataTrigger Binding="{Binding SinglePresetMode.Value}" Value="false">
                                             <Setter Property="Visibility" Value="Collapsed"/>
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding SelectedPreset.Value.Library.LibrarySettings}" Value="{x:Null}">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </Button.Style>

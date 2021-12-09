@@ -36,6 +36,8 @@ namespace Yomiage.GUI.Dialog.ViewModels
         public ReactivePropertySlim<int> MajorVersion { get; } = new();
         public ReactivePropertySlim<int> MinorVersion { get; } = new();
 
+        public ReactivePropertySlim<LibrarySettings> SettingsEdit { get; } = new();
+
         public ReactiveCommand OpenLicenseCommand { get; }
         public AsyncReactiveCommand<string> ActivationCommand { get; }
         public ReactiveCommand DefaultCommand { get; }
@@ -95,19 +97,21 @@ namespace Yomiage.GUI.Dialog.ViewModels
         private void SetSettingList()
         {
             var list = new List<ISetting>();
-            Library.LibrarySettings.Bools?
+            var settings = JsonUtil.DeepClone(Library.VoiceLibrary.Settings);
+            SettingsEdit.Value = settings;
+            settings?.Bools?
                 .Where(s => !s.Hide)?
                 .ToList()?
                 .ForEach(s => list.Add(s));
-            Library.LibrarySettings.Ints?
+            settings?.Ints?
                 .Where(s => !s.Hide)?
                 .ToList()?
                 .ForEach(s => list.Add(s));
-            Library.LibrarySettings.Doubles?
+            settings?.Doubles?
                 .Where(s => !s.Hide)?
                 .ToList()?
                 .ForEach(s => list.Add(s));
-            Library.LibrarySettings.Strings?
+            settings?.Strings?
                 .Where(s => !s.Hide)?
                 .ToList()?
                 .ForEach(s => list.Add(s));
@@ -166,29 +170,16 @@ namespace Yomiage.GUI.Dialog.ViewModels
         }
         private void ApplyAction()
         {
-            JsonUtil.Serialize(Library.LibrarySettings, Library.SettingPath);
-            Library.VoiceLibrary.Settings = JsonUtil.DeepClone(Library.LibrarySettings);
+            if (SettingsEdit.Value != null)
+            {
+                JsonUtil.Serialize(SettingsEdit.Value, Library.SettingPath);
+            }
+            Library.VoiceLibrary.Settings = JsonUtil.DeepClone(SettingsEdit.Value);
         }
         protected override void OkAction()
         {
             ApplyAction();
             base.OkAction();
-        }
-        protected override void CancelAction()
-        {
-            var path = Library.SettingPath;
-            if (path != null && File.Exists(path) && Library != null)
-            {
-                try
-                {
-                    Library.LibrarySettings = JsonUtil.Deserialize<LibrarySettings>(path);
-                }
-                catch
-                {
-
-                }
-            }
-            base.CancelAction();
         }
     }
 }

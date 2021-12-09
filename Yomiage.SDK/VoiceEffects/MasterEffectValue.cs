@@ -2,6 +2,8 @@
 // © 2021 bisu
 // </copyright>
 
+using System.Text.Json.Serialization;
+
 namespace Yomiage.SDK.VoiceEffects
 {
     /// <summary>
@@ -9,6 +11,10 @@ namespace Yomiage.SDK.VoiceEffects
     /// </summary>
     public class MasterEffectValue : VoiceEffectValueBase
     {
+        /// <inheritdoc/>
+        [JsonIgnore]
+        public override string Type => "Master";
+
         /// <summary>
         /// 短ポーズの設定値 [ms]
         /// </summary>

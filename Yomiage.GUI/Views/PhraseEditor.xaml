@@ -208,22 +208,28 @@
             HorizontalScrollBarVisibility="Hidden"
             VerticalScrollBarVisibility="Hidden">
             <StackPanel Margin="3,0,3,0">
-                <StackPanel.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="Width" Value="5" />
-                        <Setter Property="BorderThickness" Value="5" />
-                        <Setter Property="Margin" Value="0,9,0,10" />
-                    </Style>
-                </StackPanel.Resources>
                 <DockPanel Visibility="{Binding AccentHide.Value, Converter={InverseBoolToVisibilityConverter}}">
                     <CheckBox
                         Name="AccentCheck"
                         mah:CheckBoxHelper.CheckGlyphForegroundChecked="{DynamicResource MahApps.Brushes.ThemeForeground}"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="Transparent"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeUncheckedMouseOver="{DynamicResource MahApps.Brushes.ThemeForeground}"
                         mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="{DynamicResource MahApps.Brushes.ThemeForeground}"
                         mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="{DynamicResource MahApps.Brushes.ThemeForeground}"
                         IsChecked="True" />
-                    <Border BorderBrush="{DynamicResource MahApps.Brushes.ThemeForeground}" Visibility="{Binding AccentSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    <Button
+                    <Border BorderBrush="{DynamicResource MahApps.Brushes.ThemeForeground}"
+                            Margin="0,0,0,2">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="BorderThickness" Value="1,0,0,0"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding AccentSelected.Value}" Value="True">
+                                        <Setter Property="BorderThickness" Value="5,0,0,1"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Button
                         Height="35"
                         Margin="0,0,0,2"
                         Padding="5,0,0,0"
@@ -231,25 +237,38 @@
                         Command="{Binding SelectCommand}"
                         CommandParameter="Accent"
                         Style="{StaticResource IconButton}">
-                        <DockPanel>
-                            <icon:PackIconBoxIcons
+                            <DockPanel>
+                                <icon:PackIconBoxIcons
                                 Margin="0,0,4,0"
                                 Kind="SolidShareAlt"
                                 RotationAngle="90" />
-                            <TextBlock VerticalAlignment="Bottom">アクセント</TextBlock>
-                        </DockPanel>
-                    </Button>
+                                <TextBlock VerticalAlignment="Bottom">アクセント</TextBlock>
+                            </DockPanel>
+                        </Button>
+                    </Border>
                 </DockPanel>
                 <DockPanel Visibility="{Binding VolumeSetting.Value.Hide, Converter={InverseBoolToVisibilityConverter}}">
                     <CheckBox
                         Name="VolumeCheck"
                         mah:CheckBoxHelper.CheckBackgroundStrokeChecked="{StaticResource AccentRed}"
-                        mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="{StaticResource AccentRed}"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="Transparent"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeUncheckedMouseOver="{StaticResource AccentRed}"
                         mah:CheckBoxHelper.CheckGlyphForegroundChecked="{StaticResource AccentRed}"
                         mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="{StaticResource AccentRed}"
                         mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="{StaticResource AccentRed}" />
-                    <Border BorderBrush="{StaticResource AccentRed}" Visibility="{Binding VolumeSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    <Button
+                    <Border BorderBrush="{StaticResource AccentRed}"
+                            Margin="0,0,0,2">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="BorderThickness" Value="1,0,0,0"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding VolumeSelected.Value}" Value="True">
+                                        <Setter Property="BorderThickness" Value="5,0,0,1"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Button
                         Height="35"
                         Margin="0,0,0,2"
                         Padding="5,0,0,0"
@@ -258,22 +277,35 @@
                         CommandParameter="Volume"
                         Style="{StaticResource IconButton}"
                         ToolTip="{Binding VolumeSetting.Value.Description}">
-                        <DockPanel HorizontalAlignment="Stretch">
-                            <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="SolidMegaphone" />
-                            <TextBlock VerticalAlignment="Bottom" Text="{Binding VolumeSetting.Value.Name}" />
-                        </DockPanel>
-                    </Button>
+                            <DockPanel HorizontalAlignment="Stretch">
+                                <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="SolidMegaphone" />
+                                <TextBlock VerticalAlignment="Bottom" Text="{Binding VolumeSetting.Value.Name}" />
+                            </DockPanel>
+                        </Button>
+                    </Border>
                 </DockPanel>
                 <DockPanel Visibility="{Binding SpeedSetting.Value.Hide, Converter={InverseBoolToVisibilityConverter}}">
                     <CheckBox
                         Name="SpeedCheck"
                         mah:CheckBoxHelper.CheckBackgroundStrokeChecked="{StaticResource AccentGreen}"
-                        mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="{StaticResource AccentGreen}"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="Transparent"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeUncheckedMouseOver="{StaticResource AccentGreen}"
                         mah:CheckBoxHelper.CheckGlyphForegroundChecked="{StaticResource AccentGreen}"
                         mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="{StaticResource AccentGreen}"
                         mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="{StaticResource AccentGreen}" />
-                    <Border BorderBrush="{StaticResource AccentGreen}" Visibility="{Binding SpeedSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    <Button
+                    <Border BorderBrush="{StaticResource AccentGreen}"
+                            Margin="0,0,0,2">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="BorderThickness" Value="1,0,0,0"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SpeedSelected.Value}" Value="True">
+                                        <Setter Property="BorderThickness" Value="5,0,0,1"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Button
                         Height="35"
                         Margin="0,0,0,2"
                         Padding="5,0,0,0"
@@ -282,22 +314,35 @@
                         CommandParameter="Speed"
                         Style="{StaticResource IconButton}"
                         ToolTip="{Binding SpeedSetting.Value.Description}">
-                        <DockPanel>
-                            <icon:PackIconMaterial Margin="0,0,4,0" Kind="Speedometer" />
-                            <TextBlock VerticalAlignment="Bottom" Text="{Binding SpeedSetting.Value.Name}" />
-                        </DockPanel>
-                    </Button>
+                            <DockPanel>
+                                <icon:PackIconMaterial Margin="0,0,4,0" Kind="Speedometer" />
+                                <TextBlock VerticalAlignment="Bottom" Text="{Binding SpeedSetting.Value.Name}" />
+                            </DockPanel>
+                        </Button>
+                    </Border>
                 </DockPanel>
                 <DockPanel Visibility="{Binding PitchSetting.Value.Hide, Converter={InverseBoolToVisibilityConverter}}">
                     <CheckBox
                         Name="PitchCheck"
                         mah:CheckBoxHelper.CheckBackgroundStrokeChecked="{StaticResource AccentYellow}"
-                        mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="{StaticResource AccentYellow}"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="Transparent"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeUncheckedMouseOver="{StaticResource AccentYellow}"
                         mah:CheckBoxHelper.CheckGlyphForegroundChecked="{StaticResource AccentYellow}"
                         mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="{StaticResource AccentYellow}"
                         mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="{StaticResource AccentYellow}" />
-                    <Border BorderBrush="{StaticResource AccentYellow}" Visibility="{Binding PitchSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    <Button
+                    <Border BorderBrush="{StaticResource AccentYellow}"
+                            Margin="0,0,0,2">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="BorderThickness" Value="1,0,0,0"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding PitchSelected.Value}" Value="True">
+                                        <Setter Property="BorderThickness" Value="5,0,0,1"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Button
                         Height="35"
                         Margin="0,0,0,2"
                         Padding="5,0,0,0"
@@ -306,22 +351,35 @@
                         CommandParameter="Pitch"
                         Style="{StaticResource IconButton}"
                         ToolTip="{Binding PitchSetting.Value.Description}">
-                        <DockPanel>
-                            <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="LogosYahoo" />
-                            <TextBlock VerticalAlignment="Bottom" Text="{Binding PitchSetting.Value.Name}" />
-                        </DockPanel>
-                    </Button>
+                            <DockPanel>
+                                <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="LogosYahoo" />
+                                <TextBlock VerticalAlignment="Bottom" Text="{Binding PitchSetting.Value.Name}" />
+                            </DockPanel>
+                        </Button>
+                    </Border>
                 </DockPanel>
                 <DockPanel Visibility="{Binding EmphasisSetting.Value.Hide, Converter={InverseBoolToVisibilityConverter}}">
                     <CheckBox
                         Name="EmphasisCheck"
                         mah:CheckBoxHelper.CheckBackgroundStrokeChecked="{StaticResource AccentPink}"
-                        mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="{StaticResource AccentPink}"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="Transparent"
+                        mah:CheckBoxHelper.CheckBackgroundStrokeUncheckedMouseOver="{StaticResource AccentPink}"
                         mah:CheckBoxHelper.CheckGlyphForegroundChecked="{StaticResource AccentPink}"
                         mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="{StaticResource AccentPink}"
                         mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="{StaticResource AccentPink}" />
-                    <Border BorderBrush="{StaticResource AccentPink}" Visibility="{Binding EmphasisSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    <Button
+                    <Border BorderBrush="{StaticResource AccentPink}"
+                            Margin="0,0,0,2">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="BorderThickness" Value="1,0,0,0"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding EmphasisSelected.Value}" Value="True">
+                                        <Setter Property="BorderThickness" Value="5,0,0,1"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Button
                         Height="35"
                         Margin="0,0,0,2"
                         Padding="5,0,0,0"
@@ -330,11 +388,12 @@
                         CommandParameter="Emphasis"
                         Style="{StaticResource IconButton}"
                         ToolTip="{Binding EmphasisSetting.Value.Description}">
-                        <DockPanel>
-                            <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="RegularPulse" />
-                            <TextBlock VerticalAlignment="Bottom" Text="{Binding EmphasisSetting.Value.Name}" />
-                        </DockPanel>
-                    </Button>
+                            <DockPanel>
+                                <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="RegularPulse" />
+                                <TextBlock VerticalAlignment="Bottom" Text="{Binding EmphasisSetting.Value.Name}" />
+                            </DockPanel>
+                        </Button>
+                    </Border>
                 </DockPanel>
 
                 <ItemsControl ItemsSource="{Binding AdditionalSettings}">
@@ -348,18 +407,26 @@
                             <DockPanel Visibility="{Binding Hide, Converter={InverseBoolToVisibilityConverter}}">
                                 <CheckBox
                                     mah:CheckBoxHelper.CheckBackgroundStrokeChecked="{Binding Color}"
-                                    mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="{Binding Color}"
+                                    mah:CheckBoxHelper.CheckBackgroundStrokeUnchecked="Transparent"
+                                    mah:CheckBoxHelper.CheckBackgroundStrokeUncheckedMouseOver="{Binding Color}"
                                     mah:CheckBoxHelper.CheckGlyphForegroundChecked="{Binding Color}"
                                     mah:CheckBoxHelper.CheckGlyphForegroundCheckedMouseOver="{Binding Color}"
                                     mah:CheckBoxHelper.CheckGlyphForegroundCheckedPressed="{Binding Color}"
                                     IsChecked="{Binding IsVisible.Value}" />
                                 <Border
-                                    Width="5"
-                                    Margin="0,9,0,10"
-                                    BorderBrush="{Binding Color}"
-                                    BorderThickness="5"
-                                    Visibility="{Binding IsSelected.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                <Button
+                                    Margin="0,0,0,2"
+                                    BorderBrush="{Binding Color}">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="BorderThickness" Value="1,0,0,0"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected.Value}" Value="True">
+                                                    <Setter Property="BorderThickness" Value="5,0,0,1"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <Button
                                     Height="35"
                                     Margin="0,0,0,2"
                                     Padding="5,0,0,0"
@@ -368,11 +435,12 @@
                                     CommandParameter="{Binding Key}"
                                     Style="{StaticResource IconButton}"
                                     ToolTip="{Binding Description}">
-                                    <DockPanel>
-                                        <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="{Binding IconKind}" />
-                                        <TextBlock VerticalAlignment="Bottom" Text="{Binding Name}" />
-                                    </DockPanel>
-                                </Button>
+                                        <DockPanel>
+                                            <icon:PackIconBoxIcons Margin="0,0,4,0" Kind="{Binding IconKind}" />
+                                            <TextBlock VerticalAlignment="Bottom" Text="{Binding Name}" />
+                                        </DockPanel>
+                                    </Button>
+                                </Border>
                             </DockPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

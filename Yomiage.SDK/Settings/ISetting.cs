@@ -51,4 +51,21 @@ namespace Yomiage.SDK.Settings
         /// </summary>
         void ResetValue();
     }
+
+    /// <summary>
+    /// 型付きの設定値
+    /// </summary>
+    /// <typeparam name="T">型</typeparam>
+    public interface ISetting<T> : ISetting
+    {
+        /// <summary>
+        /// 設定値
+        /// </summary>
+        public T Value { get; set; }
+
+        /// <summary>
+        /// 初期値
+        /// </summary>
+        public T DefaultValue { get; set; }
+    }
 }

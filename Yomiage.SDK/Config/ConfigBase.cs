@@ -92,7 +92,7 @@ namespace Yomiage.SDK.Config
         /// <summary>
         /// 追加の設定
         /// </summary>
-        public SettingList<EffectSetting> AdditionalSettings { get; set; }
+        public SettingList<EffectSetting, double> AdditionalSettings { get; set; }
 
         /// <summary>
         /// 不正な値を取り除く

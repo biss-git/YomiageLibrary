@@ -145,6 +145,7 @@
                     FontFamily="{Binding SettingService.FontFamily.Value}"
                     FontSize="{Binding SettingService.FontSize.Value}"
                     DragOver="rich_DragOver"
+                    PreviewDragOver="rich_DragOver"
                     ScrollViewer.ScrollChanged="rich_ScrollChanged"
                     SelectionChanged="rich_SelectionChanged"
                     TextChanged="rich_TextChanged"

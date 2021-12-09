@@ -3,6 +3,7 @@
 // </copyright>
 
 using System.Linq;
+using System.Text.Json.Serialization;
 using Yomiage.SDK.Config;
 
 namespace Yomiage.SDK.VoiceEffects
@@ -12,6 +13,10 @@ namespace Yomiage.SDK.VoiceEffects
     /// </summary>
     public class VoiceEffectValue : VoiceEffectValueBase
     {
+        /// <inheritdoc/>
+        [JsonIgnore]
+        public override string Type => "VoiceEffectValue";
+
         /// <summary>
         /// Initializes a new instance of the <see cref="VoiceEffectValue"/> class.
         /// </summary>

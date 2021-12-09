@@ -12,6 +12,26 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <DockPanel>
+        <!-- 検索ボタン -->
+        <DockPanel DockPanel.Dock="Top" Margin="0,3,0,3" Height="26">
+            <TextBox mah:TextBoxHelper.ClearTextButton="True"
+                     mah:TextBoxHelper.Watermark="検索..."
+                     Text="{Binding SearchText.Value, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Return"/>
+                </TextBox.InputBindings>
+                <TextBox.Style>
+                    <Style BasedOn="{StaticResource MahApps.Styles.TextBox.Search}" TargetType="{x:Type TextBox}">
+                        <Style.Triggers>
+                            <Trigger Property="mah:TextBoxHelper.HasText" Value="True">
+                                <Setter Property="mah:TextBoxHelper.ButtonContent" Value="r" />
+                                <Setter Property="mah:TextBoxHelper.ButtonContentTemplate" Value="{x:Null}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+        </DockPanel>
         <!-- 下部ボタン -->
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Height="35" Margin="3">
             <Button Style="{StaticResource IconButton}" Command="{Binding CopyCommand}">
@@ -22,7 +42,7 @@
             </Button>
         </StackPanel>
         <!-- キャラクターリスト -->
-        <ListView ItemsSource="{Binding Presets}" SelectedItem="{Binding SelectedPreset.Value}" Margin="0,3,0,0"
+        <ListView ItemsSource="{Binding FilterdPresets}" SelectedItem="{Binding SelectedPreset.Value}" Margin="0,3,0,0"
                   VirtualizingPanel.IsVirtualizing="False"
                   SelectionMode="Single"
                   PreviewMouseMove="ListView_PreviewMouseMove">

@@ -18,7 +18,8 @@
 
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Amber.xaml" />
+        <!--<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Amber.xaml" />-->
+        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Crimson.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Yomiage.GUI;component/Themes/Docking.Light.Maki.xaml" />
         <ResourceDictionary Source="pack://application:,,,/Yomiage.GUI;component/Themes/Docking.Generic.xaml"/>
     </ResourceDictionary.MergedDictionaries>

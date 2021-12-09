@@ -238,7 +238,7 @@
                             CommandParameter="SettingEnvironmentDialog"
                             Header="環境設定" />
                         <MenuItem
-                            Command="{Binding OpenDialogCommand}"
+                            Command="{Binding ShowDialogCommand}"
                             CommandParameter="SettingShortcutDialog"
                             Header="ショートカットキー" />
                         <Separator />

@@ -25,6 +25,7 @@
                 見出し
             </Label>
             <TextBox
+                 FontSize="24"
                 Grid.Row="0"
                 Grid.Column="1"
                 VerticalAlignment="Center"
@@ -37,6 +38,7 @@
             </Label>
             <mah:NumericUpDown
                 Grid.Row="1"
+                 FontSize="24"
                 Grid.Column="1"
                 VerticalAlignment="Center"
                 Maximum="30000"

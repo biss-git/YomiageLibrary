@@ -36,6 +36,8 @@ namespace Yomiage.GUI.Dialog.ViewModels
         public ReactivePropertySlim<int> MajorVersion { get; } = new();
         public ReactivePropertySlim<int> MinorVersion { get; } = new();
 
+        public ReactivePropertySlim<EngineSettings> SettingsEdit { get; } = new();
+
         public ReactiveCommand OpenLicenseCommand { get; }
         public AsyncReactiveCommand<string> ActivationCommand { get; }
         public ReactiveCommand DefaultCommand { get; }
@@ -95,19 +97,21 @@ namespace Yomiage.GUI.Dialog.ViewModels
         private void SetSettingList()
         {
             var list = new List<ISetting>();
-            Engine.EngineSettings.Bools?
+            var settings = JsonUtil.DeepClone(Engine.VoiceEngine.Settings);
+            SettingsEdit.Value = settings;
+            settings?.Bools?
                 .Where(s => !s.Hide)?
                 .ToList()?
                 .ForEach(s => list.Add(s));
-            Engine.EngineSettings.Ints?
+            settings?.Ints?
                 .Where(s => !s.Hide)?
                 .ToList()?
                 .ForEach(s => list.Add(s));
-            Engine.EngineSettings.Doubles?
+            settings?.Doubles?
                 .Where(s => !s.Hide)?
                 .ToList()?
                 .ForEach(s => list.Add(s));
-            Engine.EngineSettings.Strings?
+            settings?.Strings?
                 .Where(s => !s.Hide)?
                 .ToList()?
                 .ForEach(s => list.Add(s));
@@ -165,29 +169,16 @@ namespace Yomiage.GUI.Dialog.ViewModels
         }
         private void ApplyAction()
         {
-            JsonUtil.Serialize(Engine.EngineSettings, Engine.SettingPath);
-            Engine.VoiceEngine.Settings = JsonUtil.DeepClone(Engine.EngineSettings);
+            if (SettingsEdit.Value != null)
+            {
+                JsonUtil.Serialize(SettingsEdit.Value, Engine.SettingPath);
+            }
+            Engine.VoiceEngine.Settings = JsonUtil.DeepClone(SettingsEdit.Value);
         }
         protected override void OkAction()
         {
             ApplyAction();
             base.OkAction();
-        }
-        protected override void CancelAction()
-        {
-            var path = Engine.SettingPath;
-            if (File.Exists(path))
-            {
-                try
-                {
-                    Engine.EngineSettings = JsonUtil.Deserialize<EngineSettings>(path);
-                }
-                catch
-                {
-
-                }
-            }
-            base.CancelAction();
         }
     }
 }

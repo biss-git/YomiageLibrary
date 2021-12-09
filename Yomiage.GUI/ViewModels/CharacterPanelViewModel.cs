@@ -21,6 +21,7 @@ namespace Yomiage.GUI.ViewModels
     class CharacterPanelViewModel : ViewModelBase
     {
         public ReactivePropertySlim<BitmapImage> Image { get; } = new();
+        public ReactivePropertySlim<BitmapImage> BackgroundImage { get; } = new();
         public ReactivePropertySlim<CharacterSize> Size { get; }
         public ReadOnlyReactivePropertySlim<double> Scale { get; }
         public ReactivePropertySlim<SleepMode> Sleep { get; }
@@ -41,6 +42,8 @@ namespace Yomiage.GUI.ViewModels
         private BitmapImage EyeClose;
         private BitmapImage Sleep1;
         private BitmapImage Sleep2;
+        private BitmapImage DarkBackground;
+        private BitmapImage LightBackground;
         private CharacterState state = CharacterState.Normal;
 
         private ReactiveTimer timer_Eye = new(new TimeSpan(0, 0, 6));
@@ -127,6 +130,8 @@ namespace Yomiage.GUI.ViewModels
             this.Sleep1 = loadBitmapImage(Path.Combine(directory, config.BasicFormat.Sleep1));
             this.Sleep2 = loadBitmapImage(Path.Combine(directory, config.BasicFormat.Sleep2));
             this.Sleep2 ??= this.Sleep1;
+            this.DarkBackground = loadBitmapImage(Path.Combine(directory, config.BasicFormat.DarkBackground));
+            this.LightBackground = loadBitmapImage(Path.Combine(directory, config.BasicFormat.LightBackground));
             Image.Value = this.Base;
             this.state = CharacterState.Normal;
             try
@@ -236,10 +241,12 @@ namespace Yomiage.GUI.ViewModels
                 (theme.ToLower() == "system" && !this.settingService.SystemThemeIsLight))
             {
                 this.Background.Value = darkBackground;
+                this.BackgroundImage.Value = DarkBackground;
             }
             else
             {
                 this.Background.Value = lightBackground;
+                this.BackgroundImage.Value = LightBackground;
             }
         }
     }

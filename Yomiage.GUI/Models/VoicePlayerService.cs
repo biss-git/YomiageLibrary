@@ -22,6 +22,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Concurrent;
 using Yomiage.GUI.Dialog;
 using System.Windows;
+using ImTools;
 
 namespace Yomiage.GUI.Models
 {
@@ -105,7 +106,7 @@ namespace Yomiage.GUI.Models
             var bufferedWaveProvider = new BufferedWaveProvider(new WaveFormat(fs, 16, 1)); //16bit１チャンネルの音源を想定
             var wavProvider = new VolumeWaveProvider16(bufferedWaveProvider)
             {
-                Volume = 1f
+                // Volume = 1f
             };  //ボリューム調整をするために上のBufferedWaveProviderをデコレータっぽく包む
             this.mmDevice?.Dispose();
             this.mmDevice = new MMDeviceEnumerator()
@@ -172,18 +173,27 @@ namespace Yomiage.GUI.Models
             var bufferedWaveProvider = new BufferedWaveProvider(new WaveFormat(fs, 16, 1)); //16bit１チャンネルの音源を想定
             var wavProvider = new VolumeWaveProvider16(bufferedWaveProvider)
             {
-                Volume = 1f
+                // Volume = 1f
             };  //ボリューム調整をするために上のBufferedWaveProviderをデコレータっぽく包む
             this.mmDevice?.Dispose();
             this.mmDevice = new MMDeviceEnumerator()
                 .GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);  //再生デバイスと出力先を設定
+
+            {
+                var script = scripts.FirstOrDefault(x => x.MoraCount > 0);
+                if (script != null)
+                {
+                    var index = scripts.IndexOf(script);
+                    SubmitPlayPosition?.Invoke(index);
+                }
+            }
 
             InitWaveProvider(wavProvider);
 
             this.wavPlayer.Play();
             var tempWave = new List<double>();
             int scriptIndex = 0;
-            int nextBufferListSize = 4;
+            int nextBufferListSize = 10;
             List<List<double[]>> nextBufferList = new List<List<double[]>>();
             VoicePreset[] voicePresets = new VoicePreset[scripts.Length];
             VoicePreset presetNow = null;
@@ -201,21 +211,29 @@ namespace Yomiage.GUI.Models
                 }
                 if (synthesizeTask != null && synthesizeTask.IsCompleted)
                 {
-                    var nextBuffer = synthesizeTask.Result;
+                    try
+                    {
+
+                        var nextBuffer = synthesizeTask.Result;
+                        if (nextBuffer != null && nextBuffer.Count != 0)
+                        {
+                            nextBufferList.Add(nextBuffer);
+                        }
+                        else
+                        {
+                            nextBufferList.Add(null);
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                    }
                     voicePresets[scriptIndex] = GetPreset(scripts[scriptIndex], preset);
                     if (presetNow == null)
                     {
                         presetNow = voicePresets[scriptIndex];
                     }
                     scriptIndex += 1;
-                    if (nextBuffer != null && nextBuffer.Count != 0)
-                    {
-                        nextBufferList.Add(nextBuffer);
-                    }
-                    else
-                    {
-                        nextBufferList.Add(null);
-                    }
                     synthesizeTask = null;
                 }
                 if (nextBufferList.Count(x => x != null) > 0 && buffer.Count <= 1)
@@ -226,10 +244,10 @@ namespace Yomiage.GUI.Models
                     var index = nextBufferList.IndexOf(nextBuffer);
                     nextBufferList.RemoveRange(0, index + 1);
                     // 台本のほうに現在の再生位置を送る
-                    SubmitPlayPosition?.Invoke(scriptIndex - (nextBufferList.Count + 1));
                     Task.Run(async () =>
                     {
                         await Task.Delay(Math.Min(1200, bufferedWaveProvider.BufferedBytes / 88));
+                        SubmitPlayPosition?.Invoke(scriptIndex - (nextBufferList.Count + 1));
                         presetNow = voicePresets[scriptIndex - (nextBufferList.Count + 1)];
                     });
                     await Task.Delay(100);
@@ -249,6 +267,7 @@ namespace Yomiage.GUI.Models
                     }
                     else
                     {
+                        await Task.Delay(50);
                         continue;
                     }
                 }
@@ -313,9 +332,20 @@ namespace Yomiage.GUI.Models
             if (script == null) { return null; }
             preset = GetPreset(script, preset);
             if (preset == null) { return null; }
+
+            var playIndex_ = playIndex;
+
             int fs = 44100;
+            var subText = script.OriginalText.Substring(0, Math.Min(5, script.OriginalText.Length));
+            AppLog.Info("Play Start : " + preset.Key + " : " + subText);
             var wave = await preset.Play(script, settingService.GetMasterEffectValue(),
                 x => fs = x);
+            AppLog.Info("Play End   : " + preset.Key + " : " + subText);
+
+            if (playIndex_ != playIndex)
+            {
+                return null;
+            }
 
             // サンプリングレート変更　音質が劣化するかもしれないという不安から MediaFoundationEncoder を使っているが必要ないかも
             if (fs == target_fs) { return wave; }
@@ -389,7 +419,6 @@ namespace Yomiage.GUI.Models
             {
                 this.wavPlayer = new WasapiOut(this.mmDevice, AudioClientShareMode.Shared, false, 50);
             }
-            wavPlayer.Volume = 0.7f;
             this.wavPlayer.Init(wavProvider); //出力に入力を接続
         }
 
@@ -556,7 +585,10 @@ namespace Yomiage.GUI.Models
                 if (settingService.Encoding.Contains("UTF-16 BE")) { enc = Encoding.BigEndianUnicode; }
                 if (settingService.Encoding == "Shift-JIS") { enc = Encoding.GetEncoding("Shift-JIS"); }
 
+                var subText = scripts.First().OriginalText.Substring(0, Math.Min(5, scripts.First().OriginalText.Length));
+                AppLog.Info("Save Start : " + firstPreset.Key + " : " + subText);
                 await firstPreset.Save(scripts, settingService.GetMasterEffectValue(), filePath, settingService.StartPause, settingService.EndPause, settingService.SaveWithText, enc);
+                AppLog.Info("Save End   : " + firstPreset.Key + " : " + subText);
                 return true;
             }
 
@@ -566,8 +598,11 @@ namespace Yomiage.GUI.Models
             {
                 if (script.MoraCount <= 0) { continue; }
                 var p = GetPreset(script, preset);
+                var subText = script.OriginalText.Substring(0, Math.Min(5, script.OriginalText.Length));
+                AppLog.Info("Play Start : " + p.Key + " : " + subText);
                 var wave = await p.Play(script, settingService.GetMasterEffectValue(),
                     x => fs = x);
+                AppLog.Info("Play End   : " + p.Key + " : " + subText);
                 waves.Add(wave);
             }
 

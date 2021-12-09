@@ -4,6 +4,7 @@ using Reactive.Bindings.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -23,8 +24,9 @@ namespace Yomiage.GUI.Dialog.ViewModels
 
         public override string Title => "バージョン情報";
 
-        public VersionInfoViewModel()
+        public VersionInfoViewModel(IDialogService dialogService)
         {
+            ComponentItem.DialogService = dialogService;
             AuthorCommand = new ReactiveCommand().WithSubscribe(AuthorAction).AddTo(Disposables);
 
             var assembly = Assembly.GetExecutingAssembly();
@@ -43,7 +45,8 @@ namespace Yomiage.GUI.Dialog.ViewModels
             ComponentList.Add(new ComponentItem(AssemblyList.GetJPNKanaConv(), ""));
             ComponentList.Add(new ComponentItem(AssemblyList.GetLibNMeCab(), "https://licenses.nuget.org/LGPL-2.1-or-later"));
 
-            ComponentList.Add(new ComponentItem("OpenJtalkのアクセント辞書", null, "http://open-jtalk.sourceforge.net/"));
+            ComponentList.Add(new ComponentItem("OpenJtalkのアクセント辞書(Web)", null, "http://open-jtalk.sourceforge.net/"));
+            ComponentList.Add(new ComponentItem("OpenJtalkのアクセント辞書(Text)", null, "AccentDic\\COPYING"));
 
         }
 
@@ -66,6 +69,8 @@ namespace Yomiage.GUI.Dialog.ViewModels
         public ReactiveCommand ShowCommand { get; }
         public string Link { get; }
 
+        public static IDialogService DialogService;
+
         public ComponentItem(Assembly assembly, string link = null)
         {
             this.Name = assembly.GetName().Name;
@@ -85,12 +90,21 @@ namespace Yomiage.GUI.Dialog.ViewModels
 
         private void ShowAction()
         {
-            ProcessStartInfo pi = new()
+            if (Link.StartsWith("http"))
             {
-                FileName = Link,
-                UseShellExecute = true,
-            };
-            Process.Start(pi);
+                ProcessStartInfo pi = new()
+                {
+                    FileName = Link,
+                    UseShellExecute = true,
+                };
+                Process.Start(pi);
+            }
+            else if(File.Exists(Link))
+            {
+                IDialogParameters param = new DialogParameters();
+                param.Add("FileName", Link);
+                DialogService?.ShowDialog("TextDialog", param, _ => { });
+            }
         }
     }
 }

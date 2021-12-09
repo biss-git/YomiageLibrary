@@ -237,39 +237,11 @@ namespace Yomiage.GUI.Models
 
                     var dllPath = Path.Combine(directory, config.AssemblyName);
 
-                    //if (!File.Exists(dllPath)) { continue; }
-                    //var asm = Assembly.LoadFrom(dllPath);       // アセンブリの読み込み
-                    //Type type = null;
-
-                    //if (!string.IsNullOrWhiteSpace(config.ModuleName) && !string.IsNullOrWhiteSpace(config.TypeName))
-                    //{
-                    //    var module = asm.GetModule(config.ModuleName);        // アセンブリからモジュールを取得
-                    //    type = module?.GetType(config.TypeName);    // 利用するクラス(or 構造体)を取得
-                    //}
-
-                    //if (type == null)
-                    //{
-                    //    foreach (var module in asm.GetModules())
-                    //    {
-                    //        foreach (var t in module.GetTypes())
-                    //        {
-                    //            if (typeof(IVoiceLibrary).IsAssignableFrom(t))
-                    //            {
-                    //                type = t;
-                    //                break;
-                    //            }
-                    //        }
-                    //    }
-                    //}
-                    //if (type == null) { continue; }
-
-                    //var library = Activator.CreateInstance(type);
-
                     var voiceLibrary = CreateLibrary(directory, config.AssemblyName, config.ModuleName, config.TypeName);
 
                     if (voiceLibrary == null)
                     {
-                        return;
+                        continue;
                     }
 
                     var characterPath = Path.Combine(directory, "character.config.json");
@@ -369,7 +341,7 @@ namespace Yomiage.GUI.Models
                                 }
                                 else
                                 {
-                                    dllDirectory = Path.Combine(directory, config.AssemblyName);
+                                    dllDirectory = Path.GetDirectoryName(Path.Combine(directory, config.AssemblyName));
                                 }
 
                                 var library = new Library(directory, dllDirectory, voiceLibrary, config, settings, characterConfig, engine.ConfigDirectory);
@@ -461,9 +433,15 @@ namespace Yomiage.GUI.Models
                     var dict = JsonSerializer.Deserialize<IEnumerable<PresetData>>(jsonstr);
                     foreach (var data in dict)
                     {
+                        var originalPreset = this.voicePresetService.AllPresets.FirstOrDefault(p => p.Engine.EngineConfig.Key == data.EngineKey && p.Library.LibraryConfig.Key == data.LibraryKey);
+                        if (originalPreset == null)
+                        {
+                            continue;
+                        }
+
                         if (data.Type == PresetType.Standard)
                         {
-                            var preset = this.voicePresetService.AllPresets.FirstOrDefault(p => p.Engine.EngineConfig.Key == data.EngineKey && p.Library.LibraryConfig.Key == data.LibraryKey);
+                            var preset = originalPreset;
                             if (preset == null) { continue; }
                             if (!string.IsNullOrWhiteSpace(data.Key))
                             {
@@ -475,8 +453,8 @@ namespace Yomiage.GUI.Models
                         }
                         else if (data.Type == PresetType.User)
                         {
-                            var engine = this.voiceEngineService.AllEngines.FirstOrDefault(e => e.EngineConfig.Key == data.EngineKey);
-                            var library = this.voiceLibraryService.AllLibrarys.FirstOrDefault(e => e.LibraryConfig.Key == data.LibraryKey);
+                            var engine = originalPreset.Engine;
+                            var library = originalPreset.Library;
                             if (engine == null || library == null) { continue; }
                             var preset = new VoicePreset(engine, library)
                             {

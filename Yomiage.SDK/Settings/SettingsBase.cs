@@ -18,22 +18,22 @@ namespace Yomiage.SDK.Settings
         /// <summary>
         /// 真偽値の設定値
         /// </summary>
-        public SettingList<BoolSetting> Bools { get; set; } = new SettingList<BoolSetting>();
+        public SettingList<BoolSetting, bool> Bools { get; set; } = new SettingList<BoolSetting, bool>();
 
         /// <summary>
         /// 整数値の設定値
         /// </summary>
-        public SettingList<IntSetting> Ints { get; set; } = new SettingList<IntSetting>();
+        public SettingList<IntSetting, int> Ints { get; set; } = new SettingList<IntSetting, int>();
 
         /// <summary>
         /// 実数値の設定値
         /// </summary>
-        public SettingList<DoubleSetting> Doubles { get; set; } = new SettingList<DoubleSetting>();
+        public SettingList<DoubleSetting, double> Doubles { get; set; } = new SettingList<DoubleSetting, double>();
 
         /// <summary>
         /// 文字列の設定値
         /// </summary>
-        public SettingList<StringSetting> Strings { get; set; } = new SettingList<StringSetting>();
+        public SettingList<StringSetting, string> Strings { get; set; } = new SettingList<StringSetting, string>();
 
         /// <summary>
         /// 初期値を設定値に代入
@@ -46,9 +46,7 @@ namespace Yomiage.SDK.Settings
             Strings.ResetValues();
         }
 
-        /// <summary>
-        /// 不正な値をはじく
-        /// </summary>
+        /// <inheritdoc/>
         public void Fix()
         {
             Bools.Fix();

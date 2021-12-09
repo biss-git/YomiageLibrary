@@ -28,7 +28,7 @@ namespace Yomiage.SDK.Common
         {
             if (obj == null)
             {
-                return default;
+                return null;
             }
 
             var options = new JsonSerializerOptions

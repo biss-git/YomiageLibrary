@@ -30,6 +30,11 @@ namespace Yomiage.GUI.Util
             logger.Info(" Start");
         }
 
+        public static void Info(string text)
+        {
+            logger.Info(text);
+        }
+
         static string GetProcessPath()
         {
             using var processModule = Process.GetCurrentProcess().MainModule;
@@ -53,6 +58,12 @@ namespace Yomiage.GUI.Util
                 if (e.Exception.Message.Contains("Could not load file or assembly")) { return; }
                 if (e.Exception.Message.Contains("The path is empty. (Parameter 'path')")) { return; }
                 if (e.Exception.Message.Contains("The input does not contain any JSON tokens. Expected the input to start with a valid JSON token,")) { return; }
+            }
+            if (!string.IsNullOrWhiteSpace(e.Exception?.StackTrace) &&
+                !e.Exception.StackTrace.Contains("\n"))
+            {
+                // スタックトレースが１行のみのものは、ほぼシステム的なものなのでログにはださなくていいや。
+                return;
             }
             Data.Status.StatusText.Value = "マネージコード内で例外が発生しました。エラー内容についてはログファイルをご確認ください。";
             var logText = "マネージコード内で例外が発生しました。" + Environment.NewLine;

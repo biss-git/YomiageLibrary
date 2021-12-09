@@ -108,7 +108,7 @@ namespace Yomiage.SDK
         }
 
         /// <inheritdoc/>
-        public virtual async Task<double[]> Play(VoiceConfig mainVoice, VoiceConfig subVoice, TalkScript talkScript, MasterEffectValue masterEffect, Action<int> setSamplingRate_Hz)
+        public virtual async Task<double[]> Play(VoiceConfig mainVoice, VoiceConfig subVoice, TalkScript talkScript, MasterEffectValue masterEffect, Action<int> setSamplingRate_Hz, Action<double[]> submitWavePart)
         {
             StateText = "再生されました。";
             if (IsPlaying)
@@ -159,6 +159,13 @@ namespace Yomiage.SDK
             }
 
             return !StopFlag;
+        }
+
+        /// <inheritdoc/>
+        public virtual async Task<TalkScript> GetDictionary(string text)
+        {
+            await Task.Delay(10);
+            return null;
         }
     }
 }

@@ -15,6 +15,7 @@ using Yomiage.Core.Utility;
 using Yomiage.GUI.Graph.Dialog;
 using Yomiage.GUI.Util;
 using Yomiage.GUI.ViewModels;
+using Yomiage.SDK.Common;
 using Yomiage.SDK.Config;
 using Yomiage.SDK.Talk;
 using Yomiage.SDK.VoiceEffects;
@@ -297,7 +298,11 @@ namespace Yomiage.GUI.Graph
         }
         private static void PhrasePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is PhraseGraph p) { p.Draw(); }
+            if (d is PhraseGraph p)
+            {
+                p.Remove_PreValues();
+                p.Draw();
+            }
         }
 
         public static readonly DependencyProperty IsExtendProperty =
@@ -713,6 +718,16 @@ namespace Yomiage.GUI.Graph
                 {
                     return pinkBrush;
                 }
+                if (Additionals != null)
+                {
+                    foreach (var s in Additionals)
+                    {
+                        if (s.IsSelected.Value && s.Color != null)
+                        {
+                            return s.Color;
+                        }
+                    }
+                }
                 return Brushes.Gray;
             }
         }
@@ -888,6 +903,8 @@ namespace Yomiage.GUI.Graph
         private void Draw_Lines()
         {
             if (this.Phrase == null) { return; }
+            Remove_PreValues();
+
             int moraCount = 0;
             foreach (var section in this.Phrase.Sections)
             {
@@ -1122,10 +1139,26 @@ namespace Yomiage.GUI.Graph
             if (yomi.Ok)
             {
                 var result = YomiDictionary.SurfaceToYomi(yomi.text.Text);
-                if (result.Length == 0) { return; }
-                section.Moras = YomiDictionary.TextToMoras(result)
-                    .Select(c => new Mora() { Character = c, Accent = true }).ToList();
-                section.Moras[0].Accent = false;
+                var characters = YomiDictionary.TextToMoras(result);
+                if (characters.Count == 0) { return; }
+                for (int i = 0; i < characters.Count; i++)
+                {
+                    if (i < section.Moras.Count)
+                    {
+                        section.Moras[i].Character = characters[i];
+                    }
+                    else
+                    {
+                        section.Moras.Add(new Mora() { Character = characters[i], Accent = section.Moras.Last().Accent });
+                    }
+                }
+                if (characters.Count < section.Moras.Count)
+                {
+                    section.Moras.RemoveRange(characters.Count, section.Moras.Count - characters.Count);
+                }
+                //section.Moras = YomiDictionary.TextToMoras(result)
+                //    .Select(c => new Mora() { Character = c, Accent = true }).ToList();
+                //section.Moras[0].Accent = false;
             }
         }
         private void AccentSplit(Mora mora)
@@ -1401,33 +1434,6 @@ namespace Yomiage.GUI.Graph
             }
         }
 
-        //private void Accent_DragDelta(object sender, DragDeltaEventArgs e)
-        //{
-        //    AccentVerticalChange = e.VerticalChange;
-        //    if (sender is MoraPoint point)
-        //    {
-        //        Remove_PreAccent();
-        //        Draw_PreAccent(point);
-        //    }
-        //}
-        //private void Accent_DragCompleted(object sender, DragCompletedEventArgs e)
-        //{
-        //    if (sender is MoraPoint point)
-        //    {
-        //        var section = moraDict[point].Item2;
-        //        var mora = moraDict[point].Item1;
-        //        double h = (hr2 - hr1) * this.GraphHeight;
-        //        bool[] accent = CalcMoras(section, mora, AccentVerticalChange, h);
-        //        for (int i = 0; i < accent.Length; i++)
-        //        {
-        //            section.Moras[i].Accent = accent[i];
-        //        }
-        //        Draw_Accent();
-        //        Remove_PreAccent();
-        //        UpdateCommand.Execute("AccentChanged");
-        //    }
-        //}
-
         private void Remove_PreAccent()
         {
             if (this.graph.Children.Contains(PreAccentLine))
@@ -1483,6 +1489,7 @@ namespace Yomiage.GUI.Graph
         {
             bool[] result = section.Moras.Select(m => m.Accent).ToArray();
             int index = section.Moras.IndexOf(mora);
+            if(index < 0) { return result; }
             if (mora.Accent)
             {
                 // hight のとき
@@ -1490,7 +1497,7 @@ namespace Yomiage.GUI.Graph
                 if (index > 0 && section.Moras[index - 1].Accent ||
                     change > 0.5 * h)
                 {
-                    for (int i = index; i < section.Moras.Count; i++)
+                    for (int i = index; i < result.Length; i++)
                     {
                         result[i] = false;
                     }
@@ -1677,7 +1684,7 @@ namespace Yomiage.GUI.Graph
             {
                 // Active Mora
                 if (x < this.w_offset) { x += this.w1 - 1; }
-                (_, _, var value) = GetSmIndex(x + this.w1 / 2, false);
+                (_, _, var value) = GetSmIndex(x + this.w1 / 2, "Mora");
                 foreach (var moraGraph in MoraPoints.OfType<MoraGraph>())
                 {
                     moraGraph.IsActive = moraGraph.Mora == value;
@@ -1760,27 +1767,34 @@ namespace Yomiage.GUI.Graph
             var selectedSetting = SelectedEffectSetting;
             if (selectedSetting == null) { return; }
             if (selectedSetting.Type == "Curve") { return; }
-            var index = GetSmIndex(x, selectedSetting.Type != "Mora");
-            if (index.Item1 < -1) { return; }
 
-            double h = GraphHeight;
+
 
             if (y < 10 || y > this.grid.ActualHeight - 10) { return; }
 
             (double min, double def, double max) = GetMinDefMax(selectedSetting);
-            string format = selectedSetting.StringFormat;
 
+            double h = GraphHeight;
             double rate = (y - h1) / h;
             rate = Math.Max(0, Math.Min(rate, 1));
 
             double value = rate * min + (1 - rate) * max;
 
+            string format = selectedSetting.StringFormat;
             if (double.TryParse(value.ToString(format), out double textValue))
             {
                 value = textValue;
             }
 
-            SetEffectSelectedValue?.Invoke(index.Item3, (Keyboard.Modifiers == ModifierKeys.Control) ? null : value);
+
+            VoiceEffectValueBase target;
+            {
+                var index = GetSmIndex(x, selectedSetting.Type);
+                if (index.Item1 < -1) { return; }
+                target = index.Item3;
+            }
+
+            SetEffectSelectedValue?.Invoke(target, (Keyboard.Modifiers == ModifierKeys.Control) ? null : value);
             Draw_SelectedValues();
             this.UpdateCommand.Execute("ValueChanged_MouseDown");
         }
@@ -1797,8 +1811,13 @@ namespace Yomiage.GUI.Graph
 
             if (selectedSetting == null) { return; }
             if (selectedSetting.Type == "Curve") { return; }
-            var index = GetSmIndex(x, selectedSetting.Type != "Mora");
-            if (index.Item1 < -1) { return; }
+
+            VoiceEffectValueBase target;
+            {
+                var index = GetSmIndex(x, selectedSetting.Type);
+                if (index.Item1 < -1) { return; }
+                target = index.Item3;
+            }
 
             var setValue = SetEffectSelectedValue;
             var getValue = GetEffectSelectedValue;
@@ -1809,17 +1828,17 @@ namespace Yomiage.GUI.Graph
                 double smallStep = selectedSetting.SmallStep;
                 string format = selectedSetting.StringFormat;
 
-                if (getValue(index.Item3) == null)
+                if (getValue(target) == null)
                 {
-                    setValue(index.Item3, def);
+                    setValue(target, def);
                 }
 
-                double value = (double)getValue(index.Item3) + (delta > 0 ? smallStep : -smallStep);
+                double value = (double)getValue(target) + (delta > 0 ? smallStep : -smallStep);
                 if (double.TryParse(value.ToString(format), out double textValue))
                 {
                     value = textValue;
                 }
-                setValue(index.Item3, Math.Max(min, Math.Min(value, max)));
+                setValue(target, Math.Max(min, Math.Min(value, max)));
 
                 Draw_SelectedValues();
 
@@ -1996,23 +2015,23 @@ namespace Yomiage.GUI.Graph
         }
         private double?[] Get_VolumeValues()
         {
-            return Get_Values(GetEffectVolume, this.EngineConfig?.VolumeSetting?.Type == "Mora");
+            return Get_Values(GetEffectVolume, this.EngineConfig?.VolumeSetting?.Type);
         }
         private double?[] Get_SpeedValues()
         {
-            return Get_Values(GetEffectSpeed, this.EngineConfig?.SpeedSetting?.Type == "Mora");
+            return Get_Values(GetEffectSpeed, this.EngineConfig?.SpeedSetting?.Type);
         }
         private double?[] Get_PitchValues()
         {
-            return Get_Values(GetEffectPitch, this.EngineConfig?.PitchSetting?.Type == "Mora");
+            return Get_Values(GetEffectPitch, this.EngineConfig?.PitchSetting?.Type);
         }
         private double?[] Get_EmphasisValues()
         {
-            return Get_Values(GetEffectEmphasis, this.EngineConfig?.EmphasisSetting?.Type == "Mora");
+            return Get_Values(GetEffectEmphasis, this.EngineConfig?.EmphasisSetting?.Type);
         }
         private double?[] Get_SettingValues(PhraseSettingConfig setting)
         {
-            return Get_Values((VoiceEffectValueBase item) => item.GetAdditionalValue(setting.Key), setting.Setting?.Type == "Mora");
+            return Get_Values((VoiceEffectValueBase item) => item.GetAdditionalValue(setting.Key), setting.Setting?.Type);
         }
 
 
@@ -2040,7 +2059,7 @@ namespace Yomiage.GUI.Graph
             double?[] values = Get_SelectedValues();
             if (values == null) { return; }
 
-            var index = GetSmIndex(x, selectedEffect.Type != "Mora");
+            var index = GetSmIndex(x, selectedEffect.Type);
             if (index.Item1 < -1) { return; }
             if (EngineConfig?.AccentHide == true) { return; }
 
@@ -2058,9 +2077,15 @@ namespace Yomiage.GUI.Graph
             Canvas.SetTop(PreValueText, h1 + rate * GraphHeight);
             this.graph.Children.Add(PreValueText);
         }
-        private double?[] Get_Values(Func<VoiceEffectValueBase, double?> getValue, bool isMora)
+        private double?[] Get_Values(Func<VoiceEffectValueBase, double?> getValue, string type)
         {
             double?[] values = new double?[this.Phrase.Sections.Count + this.Phrase.MoraCount + 2];
+            if (type == "Sentence")
+            {
+                values[1] = getValue(Phrase);
+                return values;
+            }
+            bool isMora = type == "Mora";
             int moraCount = 0;
             foreach (var section in this.Phrase.Sections)
             {
@@ -2222,8 +2247,13 @@ namespace Yomiage.GUI.Graph
         /// <param name="x">x座標</param>
         /// <param name="SectionGroup">セクションを返すかモーラを返すか</param>
         /// <returns>(セクション番号、モーラ数、値)</returns>
-        private (int, int, VoiceEffectValueBase) GetSmIndex(double x, bool SectionGroup)
+        private (int, int, VoiceEffectValueBase) GetSmIndex(double x, string type)
         {
+            if (type == "Sentence")
+            {
+                return (0, 1, Phrase);
+            }
+            bool SectionGroup = type != "Mora";
             double index = (x - w_offset) / w1;
             int moraCount = 0;
             if (index < 1) { return (-10, -10, null); }
@@ -2277,7 +2307,7 @@ namespace Yomiage.GUI.Graph
                 var SetValue = SetEffectSelectedValue;
                 var selectedEffect = this.SelectedEffectSetting;
                 if (SetValue == null || selectedEffect == null) { return; }
-                var index = GetSmIndex(lastX, selectedEffect.Type != "Mora");
+                var index = GetSmIndex(lastX, selectedEffect.Type);
                 var def = selectedEffect.DefaultValue;
                 switch (item.Header)
                 {
@@ -2312,6 +2342,7 @@ namespace Yomiage.GUI.Graph
 
         private void grid_MouseLeave(object sender, MouseEventArgs e)
         {
+            Remove_PreValues();
             foreach (var moraGraph in MoraPoints.OfType<MoraGraph>())
             {
                 moraGraph.IsActive = false;

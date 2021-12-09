@@ -272,6 +272,8 @@ namespace Yomiage.GUI
                         }
                         this.IsEnabled = true;
                         Data.Status.StatusText.Value = "正常起動　" + "API URL  " + $"http://localhost:{ServerInfo.ApiPort}/api";
+
+                        messageBroker.Publish(new AppLoaded());
                     });
                 });
             }
@@ -452,10 +454,11 @@ namespace Yomiage.GUI
                 e.Effects = DragDropEffects.All;
                 e.Handled = true;
             }
-            else
-            {
-                e.Effects = DragDropEffects.None;
-            }
+            //else
+            //{
+            //    e.Effects = DragDropEffects.None;
+            //    e.Handled = false;
+            //}
         }
     }
 }

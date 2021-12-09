@@ -252,7 +252,7 @@ namespace Yomiage.GUI.ViewModels
                         MainText != null)
                     {
                         // シフトが押されているとき
-                        (beforeText, text, afterText) = MainText.GetCursorText();
+                        text = Content.Value;
                     }
                     else if (MainText != null)
                     {
@@ -260,6 +260,10 @@ namespace Yomiage.GUI.ViewModels
                         (beforeText, text, afterText) = MainText.GetSelectedText();
                     }
                     break;
+            }
+            if (string.IsNullOrWhiteSpace(text) && string.IsNullOrEmpty(beforeText) && string.IsNullOrEmpty(afterText))
+            {
+                (beforeText, text, afterText) = MainText.GetCursorText();
             }
             if (string.IsNullOrWhiteSpace(text) && string.IsNullOrEmpty(beforeText) && string.IsNullOrEmpty(afterText))
             {
@@ -277,17 +281,6 @@ namespace Yomiage.GUI.ViewModels
                 this.pauseDictionaryService.PauseDictionary.ToList());
 
             int calledIndex = -1;
-
-            Task.Run(async () =>
-            {
-                await Task.Delay(200);
-                var script = scripts.FirstOrDefault(x => x.MoraCount > 0);
-                if (script != null)
-                {
-                    var index = scripts.IndexOf(script);
-                    SubmitPlayIndex(index);
-                }
-            });
 
             async void SubmitPlayIndex(int index)
             {
@@ -325,7 +318,7 @@ namespace Yomiage.GUI.ViewModels
 
                 if (index > 0)
                 {
-                    await Task.Delay(1000);
+                    //await Task.Delay(1000);
                 }
                 Application.Current.Dispatcher.Invoke(() =>
                 {
@@ -349,15 +342,20 @@ namespace Yomiage.GUI.ViewModels
         {
             Content.Value = GetContent();
             var text = "";
-            if (Keyboard.Modifiers == ModifierKeys.Shift &&
-                MainText != null)
-            {
-                (_, text, _) = MainText.GetCursorText();
-            }
-            else if (MainText != null)
+            //if (Keyboard.Modifiers == ModifierKeys.Shift &&
+            //    MainText != null)
+            //{
+            //    text = Content.Value;
+            //}
+            //else 
+            if (MainText != null)
             {
                 (_, text, _) = MainText.GetSelectedText();
             }
+            //if (string.IsNullOrWhiteSpace(text))
+            //{
+            //    (_, text, _) = MainText.GetCursorText();
+            //}
             if (string.IsNullOrWhiteSpace(text))
             {
                 text = Content.Value;

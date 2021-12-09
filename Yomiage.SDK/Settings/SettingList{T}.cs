@@ -13,8 +13,9 @@ namespace Yomiage.SDK.Settings
     /// でもkeyの重複とかは別に気にしてない。
     /// </summary>
     /// <typeparam name="T">型</typeparam>
-    public class SettingList<T> : List<T>
-        where T : ISetting
+    /// <typeparam name="T2">型2</typeparam>
+    public class SettingList<T, T2> : List<T>
+        where T : ISetting<T2>
     {
         /// <summary>
         /// キーに対応する設定を返す。
@@ -45,7 +46,7 @@ namespace Yomiage.SDK.Settings
         /// 設定を取得する
         /// </summary>
         /// <param name="key">キー</param>
-        /// <param name="setting">値</param>
+        /// <param name="setting">設定</param>
         /// <returns>成功したかどうか</returns>
         public bool TryGetSetting(string key, out T setting)
         {
@@ -56,12 +57,24 @@ namespace Yomiage.SDK.Settings
             }
 
             setting = this[key];
-            if (setting == null)
+
+            return setting != null;
+        }
+
+        /// <summary>
+        /// 設定値を取得する
+        /// </summary>
+        /// <param name="key">キー</param>
+        /// <param name="defaultValue">見つからなかった場合の値</param>
+        /// <returns>設定値</returns>
+        public T2 GetSettingValue(string key, T2 defaultValue)
+        {
+            if (TryGetSetting(key, out var setting))
             {
-                return false;
+                return setting.Value;
             }
 
-            return true;
+            return defaultValue;
         }
 
         /// <summary>

@@ -32,9 +32,10 @@ namespace Yomiage.SDK.Settings
         public int Order { get; set; }
 
         /// <summary>
-        /// GUIからの入力方法を指定する。主に 文字列 用。
+        /// GUIからの入力方法を指定する。主に 文字列用　または　フレーズ編集用。
         /// 以下のうちどれかにしておく
         /// textbox | combobox | file
+        /// Sentence | Section | Mora | Curve
         /// 上記に該当しない、または有効な値でない場合はデフォルトになる
         /// </summary>
         public string Type { get; set; } = string.Empty;

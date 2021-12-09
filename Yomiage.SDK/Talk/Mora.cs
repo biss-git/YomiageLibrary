@@ -17,10 +17,9 @@ namespace Yomiage.SDK.Talk
     /// </summary>
     public class Mora : VoiceEffectValueBase
     {
-        /// <summary>
-        /// モーラかどうか
-        /// </summary>
-        public override bool IsMora => true;
+        /// <inheritdoc/>
+        [JsonIgnore]
+        public override string Type => "Mora";
 
         /// <summary>
         /// モーラの記号

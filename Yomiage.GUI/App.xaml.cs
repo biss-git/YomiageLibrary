@@ -176,6 +176,7 @@ namespace Yomiage.GUI
         /// <param name="e"></param>
         protected override void OnExit(ExitEventArgs e)
         {
+            AppLog.Info("Exit");
             base.OnExit(e);
         }
 

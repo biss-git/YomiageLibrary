@@ -9,16 +9,12 @@ namespace Yomiage.SDK.Settings
     /// <summary>
     /// 整数値の設定
     /// </summary>
-    public class IntSetting : SettingBase
+    public class IntSetting : SettingBase, ISetting<int>
     {
-        /// <summary>
-        /// 設定値
-        /// </summary>
+        /// <inheritdoc/>
         public int Value { get; set; }
 
-        /// <summary>
-        /// 初期値
-        /// </summary>
+        /// <inheritdoc/>
         public int DefaultValue { get; set; }
 
         /// <summary>
@@ -38,17 +34,13 @@ namespace Yomiage.SDK.Settings
         /// </summary>
         public int SmallStep { get; set; }
 
-        /// <summary>
-        /// 初期値を設定値に代入
-        /// </summary>
+        /// <inheritdoc/>
         public override void ResetValue()
         {
             Value = DefaultValue;
         }
 
-        /// <summary>
-        /// 不正な値をはじく
-        /// </summary>
+        /// <inheritdoc/>
         public override void Fix()
         {
             Value = Value.Fix();

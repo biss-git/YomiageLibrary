@@ -15,6 +15,10 @@ namespace Yomiage.SDK.Talk
     /// </summary>
     public class Section : VoiceEffectValueBase
     {
+        /// <inheritdoc/>
+        [JsonIgnore]
+        public override string Type => "Section";
+
         /// <summary>
         /// アクセント句の直前のポーズ情報
         /// </summary>

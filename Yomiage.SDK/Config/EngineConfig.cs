@@ -37,6 +37,11 @@ namespace Yomiage.SDK.Config
         public bool EngineSaveEnable { get; set; }
 
         /// <summary>
+        /// エンジンのポーズ設定を使うかどうか
+        /// </summary>
+        public bool PauseOverride { get; set; } = false;
+
+        /// <summary>
         /// 短ポーズの設定
         /// </summary>
         public IntSetting ShortPauseSetting { get; set; } = new IntSetting();

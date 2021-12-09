@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Version>1.1.0</Version>
+    <Version>1.6.0</Version>
     <PackageProjectUrl>https://github.com/biss-git/YomiageLibrary</PackageProjectUrl>
     <Copyright />
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

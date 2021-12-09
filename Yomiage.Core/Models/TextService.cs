@@ -129,6 +129,7 @@ namespace Yomiage.Core.Models
                     if (registerdSctipt != null)
                     {
                         registerdSctipt.OriginalText = tt; // 改行の有無が違ったりするので改めてテキストを代入。
+                        registerdSctipt.PresetName = character;
                         scripts.Add(registerdSctipt);
                         continue;
                     }

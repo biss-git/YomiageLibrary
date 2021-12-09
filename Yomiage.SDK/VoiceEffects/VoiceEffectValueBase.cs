@@ -21,13 +21,7 @@ namespace Yomiage.SDK.VoiceEffects
         /// モーラかどうか
         /// </summary>
         [JsonIgnore]
-        public virtual bool IsMora => false;
-
-        /// <summary>
-        /// エンドセクションかどうか
-        /// </summary>
-        [JsonIgnore]
-        public virtual bool IsEndSection => false;
+        public virtual string Type => string.Empty;
 
         /// <summary>
         /// 音量の設定値
@@ -321,22 +315,22 @@ namespace Yomiage.SDK.VoiceEffects
         /// <param name="engineConfig">エンジンコンフィグ</param>
         public void RemoveUnnecessaryParameters(EngineConfig engineConfig)
         {
-            if (engineConfig.VolumeSetting.Hide || !engineConfig.VolumeSetting.CheckIsMora(IsMora, IsEndSection))
+            if (engineConfig.VolumeSetting.Hide || !engineConfig.VolumeSetting.CheckType(Type))
             {
                 this.Volume = null;
             }
 
-            if (engineConfig.SpeedSetting.Hide || !engineConfig.SpeedSetting.CheckIsMora(IsMora, IsEndSection))
+            if (engineConfig.SpeedSetting.Hide || !engineConfig.SpeedSetting.CheckType(Type))
             {
                 this.Speed = null;
             }
 
-            if (engineConfig.PitchSetting.Hide || !engineConfig.PitchSetting.CheckIsMora(IsMora, IsEndSection))
+            if (engineConfig.PitchSetting.Hide || !engineConfig.PitchSetting.CheckType(Type))
             {
                 this.Pitch = null;
             }
 
-            if (engineConfig.EmphasisSetting.Hide || !engineConfig.EmphasisSetting.CheckIsMora(IsMora, IsEndSection))
+            if (engineConfig.EmphasisSetting.Hide || !engineConfig.EmphasisSetting.CheckType(Type))
             {
                 this.Emphasis = null;
             }
@@ -346,7 +340,7 @@ namespace Yomiage.SDK.VoiceEffects
                 foreach (var key in keys)
                 {
                     if (!engineConfig.AdditionalSettings.Any(s =>
-                        s.Key == key && s.Type != "Curve" && !s.Hide && s.CheckIsMora(IsMora, IsEndSection)))
+                        s.Key == key && s.Type != "Curve" && !s.Hide && s.CheckType(Type)))
                     {
                         AdditionalEffect.Remove(key);
                     }
@@ -358,7 +352,7 @@ namespace Yomiage.SDK.VoiceEffects
                 foreach (var key in keys)
                 {
                     if (!engineConfig.AdditionalSettings.Any(s =>
-                        s.Key == key && s.Type == "Curve" && !s.Hide && s.CheckIsMora(IsMora, IsEndSection)))
+                        s.Key == key && s.Type == "Curve" && !s.Hide && s.CheckType(Type)))
                     {
                         AdditionalEffects.Remove(key);
                     }

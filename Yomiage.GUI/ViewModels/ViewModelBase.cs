@@ -16,10 +16,13 @@ namespace Yomiage.GUI.ViewModels
 
         public ReactiveCommand<string> OpenDialogCommand { get; }
 
+        public ReactiveCommand<string> ShowDialogCommand { get; }
+
         public ViewModelBase(IDialogService dialogService)
         {
             this.DialogService = dialogService;
             OpenDialogCommand = new ReactiveCommand<string>().WithSubscribe(OpenDialogAction).AddTo(Disposables);
+            ShowDialogCommand = new ReactiveCommand<string>().WithSubscribe(ShowDialogAction).AddTo(Disposables);
         }
         public ViewModelBase()
         {
@@ -30,6 +33,18 @@ namespace Yomiage.GUI.ViewModels
             try
             {
                 this.DialogService?.ShowDialog(param, new DialogParameters(), result => { });
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        private void ShowDialogAction(string param)
+        {
+            try
+            {
+                this.DialogService?.Show(param, new DialogParameters(), result => { });
             }
             catch (Exception)
             {

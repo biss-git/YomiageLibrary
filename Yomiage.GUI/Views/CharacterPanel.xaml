@@ -48,6 +48,7 @@
         <Grid Background="{Binding Background.Value}" Opacity="0.5">
 
         </Grid>
+        <Image Source="{Binding BackgroundImage.Value}" Stretch="Uniform" HorizontalAlignment="Center" Height="1000" Width="5000"/>
         <Image Source="{Binding Image.Value}" Stretch="Uniform" HorizontalAlignment="Center" Height="1000" Width="5000">
             <Image.LayoutTransform>
                 <ScaleTransform ScaleX="{Binding Scale.Value}" ScaleY="{Binding Scale.Value}"/>
