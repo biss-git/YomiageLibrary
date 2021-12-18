@@ -150,7 +150,12 @@ namespace Yomiage.GUI.Models
                 try
                 {
                     var config = JsonUtil.Deserialize<EngineConfig>(f);
+                    if (config == null)
+                    {
+                        AppLog.Info("ファイルの読み込みに失敗しました : " + f);
+                    }
                     if (string.IsNullOrWhiteSpace(config?.Key) || voiceEngineService.AllEngines.Any(e => e.EngineConfig.Key == config?.Key)) { continue; }
+                    AppLog.Info("エンジンのロード開始 : " + f);
                     var directory = Path.GetDirectoryName(f);
 
                     var settings = new EngineSettings();
@@ -209,9 +214,8 @@ namespace Yomiage.GUI.Models
                         voiceEngineService.Add(new Engine(directory, dllDirectory, voiceEngine, config, settings));
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    string aaa = e.ToString();
                 }
             }
         }
@@ -230,7 +234,12 @@ namespace Yomiage.GUI.Models
                 try
                 {
                     var config = JsonUtil.Deserialize<LibraryConfig>(f);
+                    if (config == null)
+                    {
+                        AppLog.Info("ファイルの読み込みに失敗しました : " + f);
+                    }
                     if (string.IsNullOrWhiteSpace(config?.Key) || voiceLibraryService.AllLibrarys.Any(l => l.LibraryConfig.Key == config?.Key)) { continue; }
+                    AppLog.Info("ライブラリのロード開始 : " + f);
                     var directory = Path.GetDirectoryName(f);
 
                     var settings = LoadLibrarySettings(Path.Combine(directory, "library.settings.json"));
@@ -255,7 +264,6 @@ namespace Yomiage.GUI.Models
                 }
                 catch (Exception)
                 {
-
                 }
             }
         }
@@ -309,9 +317,8 @@ namespace Yomiage.GUI.Models
             {
                 foreach (var engine in voiceEngineService.AllEngines)
                 {
-                    if (engine.EngineConfig.LibraryFormat == null || engine.EngineConfig.LibraryFormat.Length == 0)
                     {
-                        // エンジン単体でプリセットとなる
+                        // エンジン直下のライブラリを探す。こちらは LibraryFormatは見ない
 
                         var files = new List<string>();
                         var keys = new List<string>();
@@ -359,12 +366,14 @@ namespace Yomiage.GUI.Models
                         }
 
                     }
-                    else
+
                     {
-                        // VoiceLibrary と組み合わせる
+                        // 登録済みのライブラリから探す
                         foreach (var library in voiceLibraryService.AllLibrarys)
                         {
-                            bool match = engine.EngineConfig.LibraryFormat.Any(f => library.LibraryConfig.LibraryFormat?.Contains(f) == true);
+                            bool match = engine.EngineConfig.LibraryFormat
+                                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                                    .Any(f => library.LibraryConfig.LibraryFormat?.Contains(f) == true);
                             if (!match) { continue; }
                             if (voicePresetService.StandardPreset.Any(p => p.EngineKey == engine.EngineConfig.Key && p.LibraryKey == library.LibraryConfig.Key)) { continue; }
                             voicePresetService.Add(new VoicePreset(engine, library)

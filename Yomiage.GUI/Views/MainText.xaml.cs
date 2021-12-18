@@ -270,9 +270,16 @@ namespace Yomiage.GUI.Views
                 return ("", text, "");
             }
             var index = subText.LastIndexOf('\n');
-            var cursorText = text.Substring(index + 1);
-            var beforeText = text.Substring(0, index + 1);
-            return (beforeText, cursorText, "");
+            try
+            {
+                var cursorText = text.Substring(index + 1);
+                var beforeText = text.Substring(0, index + 1);
+                return (beforeText, cursorText, "");
+            }
+            catch (Exception)
+            {
+                return ("", "", "");
+            }
         }
 
         public (string, string, string) CtrlLeft()

@@ -264,12 +264,12 @@ namespace Yomiage.GUI.ViewModels
             if (string.IsNullOrWhiteSpace(text) && string.IsNullOrEmpty(beforeText) && string.IsNullOrEmpty(afterText))
             {
                 (beforeText, text, afterText) = MainText.GetCursorText();
-            }
-            if (string.IsNullOrWhiteSpace(text) && string.IsNullOrEmpty(beforeText) && string.IsNullOrEmpty(afterText))
-            {
-                beforeText = "";
-                afterText = "";
-                text = Content.Value;
+                if (string.IsNullOrWhiteSpace(text))
+                {
+                    beforeText = "";
+                    afterText = "";
+                    text = Content.Value;
+                }
             }
             var scripts = this.textService.Parse(
                 text,
