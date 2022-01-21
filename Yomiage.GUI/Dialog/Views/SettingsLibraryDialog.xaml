@@ -99,7 +99,7 @@
             <Label FontSize="12" Margin="0,5,0,-5">状態</Label>
             <Label FontSize="16" Content="{Binding LastState.Value}"/>
         </StackPanel>
-        <Label DockPanel.Dock="Top" Margin="20,10,20,0" Foreground="{DynamicResource MahApps.Brushes.AccentBase}">エンジン設定</Label>
+        <Label DockPanel.Dock="Top" Margin="20,10,20,0" Foreground="{DynamicResource MahApps.Brushes.AccentBase}">ライブラリ設定</Label>
         <Separator DockPanel.Dock="Top" Margin="25,0,25,5" Background="{DynamicResource MahApps.Brushes.AccentBase}"/>
 
         <!-- リスト -->

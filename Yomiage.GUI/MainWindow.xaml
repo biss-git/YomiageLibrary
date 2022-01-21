@@ -419,7 +419,7 @@
                         <Setter Property="ToolTip" Value="{Binding Model.FilePath.Value}" />
                         <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
                         <Setter Property="Visibility" Value="{Binding Model.Visibility.Value}" />
-                        <!--<Setter Property="ContentId" Value="{Binding Model.ContentId.Value}" />-->
+                        <Setter Property="ContentId" Value="{Binding Model.ContentId.Value}" />
                     </Style>
                 </DockingManager.LayoutItemContainerStyle>
                 <LayoutRoot>

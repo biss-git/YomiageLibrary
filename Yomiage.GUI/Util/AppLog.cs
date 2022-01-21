@@ -53,7 +53,7 @@ namespace Yomiage.GUI.Util
         {
             if (!string.IsNullOrWhiteSpace(e.Exception?.Message))
             {
-                if (e.Exception.Message == "ウィンドウ ハンドルが無効です。") { return; }
+                if (e.Exception.Message == "ウィンドウ ハンドルが無効です。") { return; } // AvalonDock を使ったダイアログを表示すると出続ける
                 if (e.Exception.Message.Contains("JpnKanaConversion.XmlSerializers.dll")) { return; }
                 if (e.Exception.Message.Contains("Could not load file or assembly")) { return; }
                 if (e.Exception.Message.Contains("The path is empty. (Parameter 'path')")) { return; }
