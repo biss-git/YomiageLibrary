@@ -27,7 +27,7 @@ namespace Yomiage.GUI
 
             System.Reflection.Assembly sra = System.Reflection.Assembly.GetExecutingAssembly();
             {
-                using var stream = sra.GetManifestResourceStream("Yomiage.GUI.スプラッシュ.png");
+                using var stream = sra.GetManifestResourceStream("Yomiage.GUI.splashImage.png");
                 var bf = BitmapFrame.Create(stream);
                 image2.Source = bf;
             }

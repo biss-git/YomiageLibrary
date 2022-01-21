@@ -4,5 +4,6 @@ obj
 voice
 packages
 .user
-.png
-.ico
+*.png
+*.ico
+assets

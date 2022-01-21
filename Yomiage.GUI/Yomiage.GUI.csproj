@@ -6,21 +6,35 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <Version>1.4.0</Version>
-    <PackageIcon>coloricon.png</PackageIcon>
+    <PackageIcon>icon.png</PackageIcon>
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="coloricon.png" />
+    <None Remove="icon.ico" />
     <None Remove="icon.png" />
-    <None Remove="スプラッシュ.png" />
+    <None Remove="splashImage.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="coloricon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </Resource>
     <Content Include="icon.ico" />
+    <Resource Include="icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </Resource>
+    <EmbeddedResource Include="splashImage.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="スプラッシュ.png" />
+    <None Include="..\asetts\coloricon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -43,15 +57,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="coloricon.png" />
-    <Resource Include="icon.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="coloricon.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
     <None Update="UniCoe.exe.config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
