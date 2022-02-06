@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -30,6 +31,13 @@ namespace Yomiage.GUI
                 using var stream = sra.GetManifestResourceStream("Yomiage.GUI.splashImage.png");
                 var bf = BitmapFrame.Create(stream);
                 image2.Source = bf;
+            }
+
+            {
+                var assembly = Assembly.GetExecutingAssembly();
+                var assemblyName = assembly.GetName();
+                versionLabel.Content = "version " + assemblyName.Version;
+
             }
         }
 

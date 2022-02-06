@@ -24,6 +24,7 @@
                 <Image Grid.Row="1" x:Name="image2" Source="./splashImage.png"/>
                 <TextBlock x:Name="text" Text="起動中" VerticalAlignment="Bottom"
                        Foreground="White"/>
+                <Label HorizontalAlignment="Right" Name="versionLabel" Margin="0,0,8,0">version</Label>
             </Grid>
         </DockPanel>
     </Grid>
